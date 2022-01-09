@@ -1,0 +1,11 @@
+<svg id="Group_40169" data-name="Group 40169" xmlns="http://www.w3.org/2000/svg" width="38" height="34" viewBox="0 0 38 34">
+  <path id="Icon_metro-image" data-name="Icon metro-image" d="M4.449,5.731l0,0V28.228l0,0H30.692l0,0V5.734l0,0Zm0-1.875H30.7a1.881,1.881,0,0,1,1.875,1.875v22.5A1.881,1.881,0,0,1,30.7,30.106H4.446a1.881,1.881,0,0,1-1.875-1.875V5.731A1.881,1.881,0,0,1,4.446,3.856ZM8.2,10.419a2.813,2.813,0,1,0,2.812-2.812A2.812,2.812,0,0,0,8.2,10.419ZM6.321,26.356h22.5v-3.75l-6.563-11.25-7.5,9.375H12.883L6.321,15.106Z" transform="translate(5.429 -3.856)" fill="#5c60b9"/>
+  <g id="Ellipse_83" data-name="Ellipse 83" transform="translate(0 14)" fill="#f2f3fd" stroke="#5c60b9" stroke-width="1.5">
+    <circle cx="10" cy="10" r="10" stroke="none"/>
+    <circle cx="10" cy="10" r="9.25" fill="none"/>
+  </g>
+  <g id="Group_40168" data-name="Group 40168" transform="translate(5 19)">
+    <line id="Line_15" data-name="Line 15" x1="10" transform="translate(0 5)" fill="none" stroke="#5c60b9" stroke-linecap="round" stroke-width="1.7"/>
+    <line id="Line_16" data-name="Line 16" x2="10" transform="translate(5) rotate(90)" fill="none" stroke="#5c60b9" stroke-linecap="round" stroke-width="1.7"/>
+  </g>
+</svg>

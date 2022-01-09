@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="21.459" viewBox="0 0 20 21.459">
+  <g id="shopping-basket" transform="translate(0 -16.718)">
+    <g id="Group_42215" data-name="Group 42215" transform="translate(0 19.718)">
+      <g id="Group_42214" data-name="Group 42214" transform="translate(0 0)">
+        <path id="Path_78022" data-name="Path 78022" d="M18.481,26.039H17.77L14.583,20.03a.586.586,0,1,0-1.035.549l2.9,5.46H3.642l2.9-5.46A.586.586,0,1,0,5.5,20.03L2.315,26.039h-.8a1.519,1.519,0,0,0,0,3.038h.042c0,.008,0,.017,0,.025l1.222,6.852a2.694,2.694,0,0,0,2.655,2.224h9.2A2.694,2.694,0,0,0,17.3,35.954L18.52,29.1c0-.009,0-.017,0-.026a1.519,1.519,0,0,0-.043-3.037Zm-2.337,9.709a1.524,1.524,0,0,1-1.5,1.257h-9.2a1.524,1.524,0,0,1-1.5-1.257l-1.19-6.672H17.334ZM18.481,27.9H1.519a.347.347,0,0,1,0-.694H18.481a.347.347,0,0,1,0,.694Z" transform="translate(0 -19.718)" fill="#5c60b9"/>
+        <path id="Union_4" data-name="Union 4" d="M2-2601H2v0H2v0Z" transform="translate(8.25 2600.5)" fill="none" stroke="#5c60b9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+    <g id="Group_42217" data-name="Group 42217" transform="translate(9.416 30.277)">
+      <g id="Group_42216" data-name="Group 42216">
+        <path id="Path_78023" data-name="Path 78023" d="M240.91,280.113a.559.559,0,0,0-.559.559v4.891a.559.559,0,0,0,1.117,0v-4.891A.559.559,0,0,0,240.91,280.113Z" transform="translate(-240.351 -280.113)" fill="#5c60b9"/>
+      </g>
+    </g>
+    <g id="Group_42219" data-name="Group 42219" transform="translate(5.979 30.277)">
+      <g id="Group_42218" data-name="Group 42218" transform="translate(0 0)">
+        <path id="Path_78024" data-name="Path 78024" d="M154.182,285.467l-.824-4.891a.559.559,0,1,0-1.1.186l.824,4.891a.559.559,0,1,0,1.1-.186Z" transform="translate(-152.248 -280.11)" fill="#5c60b9"/>
+      </g>
+    </g>
+    <g id="Group_42221" data-name="Group 42221" transform="translate(11.988 30.277)">
+      <g id="Group_42220" data-name="Group 42220" transform="translate(0 0)">
+        <path id="Path_78025" data-name="Path 78025" d="M306.751,280.12a.559.559,0,0,0-.644.458l-.824,4.891a.559.559,0,1,0,1.1.186l.824-4.891A.559.559,0,0,0,306.751,280.12Z" transform="translate(-305.276 -280.112)" fill="#5c60b9"/>
+      </g>
+    </g>
+  </g>
+</svg>

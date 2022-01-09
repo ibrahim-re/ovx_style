@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "191263524287",
+    "project_id": "ovx-style-de43a",
+    "storage_bucket": "ovx-style-de43a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191263524287:android:207b9ab388e6950286cd0a",
+        "android_client_info": {
+          "package_name": "com.ovx.ovx_style"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191263524287-gpq3pj8qf6pvpon3girfng88inp1thd0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ovx.ovx_style",
+            "certificate_hash": "0e63143149437a843138e2e6387a8f38e3a9da2f"
+          }
+        },
+        {
+          "client_id": "191263524287-3p8t60m3kbc16vm7o0kfd10clfk0h5kh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFOHc7027WygrVYcJ5eA_tVHdsYqQsXME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191263524287-3p8t60m3kbc16vm7o0kfd10clfk0h5kh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
