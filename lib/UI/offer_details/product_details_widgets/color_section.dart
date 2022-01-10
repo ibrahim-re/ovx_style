@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class colorSection extends StatefulWidget {
-  const colorSection({Key? key}) : super(key: key);
+  const colorSection({Key? key, required this.productColor}) : super(key: key);
 
+  final Color productColor;
   @override
   State<colorSection> createState() => _colorSectionState();
 }
@@ -25,9 +26,7 @@ class _colorSectionState extends State<colorSection> {
       ),
       child: GestureDetector(
         onTap: () {
-          setState(() {
-            selectedIndex = index;
-          });
+          setState(() => selectedIndex = index);
         },
         child: Container(
           width: 20,
@@ -53,10 +52,10 @@ class _colorSectionState extends State<colorSection> {
             style: TextStyle(color: Colors.black, fontSize: 20),
           ),
           Spacer(),
-          CircleBuilder(clr: Colors.lightBlueAccent.withOpacity(0.3), index: 0),
-          CircleBuilder(clr: Colors.black.withOpacity(.3), index: 1),
-          CircleBuilder(clr: Colors.lightGreen.withOpacity(.3), index: 2),
-          CircleBuilder(clr: Colors.red.withOpacity(.3), index: 3),
+          CircleBuilder(clr: widget.productColor, index: 0),
+          // CircleBuilder(clr: Colors.black.withOpacity(.3), index: 1),
+          // CircleBuilder(clr: Colors.lightGreen.withOpacity(.3), index: 2),
+          // CircleBuilder(clr: Colors.red.withOpacity(.3), index: 3),
         ],
       ),
     );

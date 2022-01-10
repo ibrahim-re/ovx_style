@@ -21,4 +21,7 @@ class NamedRoutes {
   static const Post_Image_Details = "Post_Image_Details";
   static const USER_PROFILE_SCREEN = "USER_PROFILE_SCREEN";
   static const OTHER_USER_PROFILE = "OTHER_USER_PROFILE";
+  static const Basket = "Basket";
+  static const CheckOut = "CheckOut";
+  static const Payment = "Payment";
 }

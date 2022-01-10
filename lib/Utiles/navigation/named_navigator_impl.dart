@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:ovx_style/UI/auth/login_screen.dart';
 import 'package:ovx_style/UI/auth/reset_password_screen.dart';
 import 'package:ovx_style/UI/auth/signup_screen.dart';
+import 'package:ovx_style/UI/basket/basket_screen.dart';
+import 'package:ovx_style/UI/checkout/checkout_screen.dart';
 import 'package:ovx_style/UI/google_maps_screen.dart';
 import 'package:ovx_style/UI/home_screen.dart';
 import 'package:ovx_style/UI/intro/auth_options_screen.dart';
@@ -11,8 +13,10 @@ import 'package:ovx_style/UI/offer_details/product_offer_details_screen.dart';
 import 'package:ovx_style/UI/offers/add_offer_screen.dart';
 import 'package:ovx_style/UI/offers/add_properties_screen.dart';
 import 'package:ovx_style/UI/offers/add_shipping_cost_screen.dart';
+import 'package:ovx_style/UI/payment/payment_screen.dart';
 import 'package:ovx_style/UI/profile/other_user_profile.dart';
 import 'package:ovx_style/UI/profile/user_profile_screen.dart';
+import 'package:ovx_style/model/offer.dart';
 import 'package:page_transition/page_transition.dart';
 import '../../UI/intro/intro_screen.dart';
 import '../../UI/intro/splash_screen.dart';
@@ -21,7 +25,8 @@ import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/model/user.dart';
 
 class NamedNavigatorImpl implements NamedNavigator {
-  static final GlobalKey<NavigatorState> navigatorState = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorState =
+      GlobalKey<NavigatorState>();
   static final GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -82,14 +87,20 @@ class NamedNavigatorImpl implements NamedNavigator {
             ),
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
-      case NamedRoutes.Product_Details:
-        return PageTransition(
-            child: ProductDetails(
-              navigator: navigatorState,
-            ),
-            type: PageTransitionType.rightToLeft,
-            duration: const Duration(milliseconds: 500));
 
+      case NamedRoutes.Product_Details:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final ProductOffer offer = data['offer'];
+
+          return PageTransition(
+              child: ProductDetails(
+                navigator: navigatorState,
+                offer: offer,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
       case NamedRoutes.Post_Image_Details:
         return PageTransition(
             child: imagePostDetails(
@@ -148,6 +159,31 @@ class NamedNavigatorImpl implements NamedNavigator {
               type: PageTransitionType.rightToLeft,
               duration: const Duration(milliseconds: 500));
         }
+
+      case NamedRoutes.Basket:
+        return PageTransition(
+            child: basketScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.rightToLeft,
+            duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.CheckOut:
+        return PageTransition(
+            child: checkOutScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.rightToLeft,
+            duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.Payment:
+        return PageTransition(
+            child: paymentScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.rightToLeft,
+            duration: const Duration(milliseconds: 500));
+
       default:
         return MaterialPageRoute(
             builder: (_) => SplashScreen(

@@ -113,5 +113,7 @@
 
   "show only": "Show only: ",
   "filter": "Filter",
-  "apply": "Apply"
+  "apply": "Apply",
+  "Products":"Products",
+  "Basket":"Basket"
 }

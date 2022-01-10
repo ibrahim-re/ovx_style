@@ -1,48 +1,43 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/model/product_property.dart';
 
 class imageSection extends StatelessWidget {
-  const imageSection({Key? key}) : super(key: key);
-  final String userImage =
-      "https://image.freepik.com/free-photo/joyful-man-with-broad-smile-has-funny-expression-indicates-aside-advertises-something-amazing_273609-17042.jpg";
+  const imageSection({
+    Key? key,
+    required this.productImages,
+    required this.descreption,
+    required this.categories,
+    required this.status,
+    required this.discount,
+    required this.proberties,
+  }) : super(key: key);
 
-  final String productImage =
-      'https://image.freepik.com/free-vector/white-product-podium-with-green-tropical-palm-leaves-golden-round-arch-green-wall_87521-3023.jpg';
+  final List<String> productImages, categories;
+  final String descreption, status;
+  final double discount;
+  final List<ProductProperty> proberties;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 160,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(productImage),
-                  fit: BoxFit.cover,
-                ),
-              ),
+        Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height / 3,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(6),
+            itemBuilder: (context, index) => Image(
+              image: NetworkImage(productImages[index]),
+              fit: BoxFit.cover,
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              height: 180,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image(
-                  image: NetworkImage(userImage),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ],
+            separatorBuilder: (context, index) => const SizedBox(width: 6),
+            itemCount: productImages.length,
+          ),
         ),
         Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
@@ -57,7 +52,7 @@ class imageSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Text(
-                  'NEW',
+                  status == OfferStatus.New ? "New" : "Used",
                   style: TextStyle(color: MyColors.primaryColor),
                 ),
               ),
@@ -78,30 +73,12 @@ class imageSection extends StatelessWidget {
             spacing: 4,
             alignment: WrapAlignment.center,
             direction: Axis.horizontal,
-            children: [
-              Text(
-                'Food',
+            children: categories.map((item) {
+              return Text(
+                item,
                 style: TextStyle(color: MyColors.lightBlue),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.black,
-                size: 14,
-              ),
-              Text(
-                'Healthy',
-                style: TextStyle(color: MyColors.lightBlue),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: Colors.black,
-              ),
-              Text(
-                'morning',
-                style: TextStyle(color: MyColors.lightBlue),
-              ),
-            ],
+              );
+            }).toList(),
           ),
         ),
         Padding(
@@ -110,24 +87,34 @@ class imageSection extends StatelessWidget {
             children: [
               Expanded(
                   child: Text(
-                'To Get The best Hand Drawn images of you',
+                descreption,
                 style: TextStyle(fontSize: 20),
               )),
-              const SizedBox(width: 10),
-              Text(
-                '124 \$',
-                style: TextStyle(
-                    fontSize: 16, decoration: TextDecoration.lineThrough),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '90 \$',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: MyColors.secondaryColor,
-                ),
-              ),
+              discount == 0
+                  ? Text('${proberties.first.sizes!.first.price} \$',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: MyColors.secondaryColor,
+                      ))
+                  : Row(
+                      children: [
+                        Text(
+                          '${proberties.first.sizes!.first.price} \$',
+                          style: TextStyle(
+                            fontSize: 16,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${Helper().priceAfterDiscount(proberties.first.sizes!.first.price!, discount)} \$',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: MyColors.secondaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),

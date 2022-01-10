@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ovx_style/UI/chat_screen.dart';
 import 'package:ovx_style/UI/profile/user_profile_screen.dart';
-import 'package:ovx_style/UI/story_screen.dart';
+import 'package:ovx_style/UI/story/story_screen.dart';
 import 'package:ovx_style/UI/widgets/custom_navigation_bar.dart';
 import 'package:ovx_style/bloc/logout_bloc/logout_bloc.dart';
 import 'offers/company_offers_screen.dart';

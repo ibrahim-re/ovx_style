@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 
 class featuresSection extends StatelessWidget {
-  const featuresSection({Key? key}) : super(key: key);
+  const featuresSection(
+      {Key? key, required this.isReturnAvailable, required this.isShippingFree})
+      : super(key: key);
+
+  final bool isReturnAvailable;
+  final bool isShippingFree;
 
   @override
   Widget build(BuildContext context) {
@@ -22,29 +28,39 @@ class featuresSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Image(image: AssetImage('assets/images/return.png')),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Text('Return Easily to all Products'),
-              ),
-              Spacer(),
-              Icon(Icons.done, color: MyColors.lightBlue),
-            ],
-          ),
+          isReturnAvailable == false && isShippingFree == false
+              ? Container(
+                  child: Center(
+                    child: Text('There Are No Features For this Product'),
+                  ),
+                )
+              : isReturnAvailable == false
+                  ? Container()
+                  : Row(
+                      children: [
+                        SvgPicture.asset('assets/images/return.svg'),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Text('Return Easily to all Products'),
+                        ),
+                        Spacer(),
+                        Icon(Icons.done, color: MyColors.lightBlue),
+                      ],
+                    ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Image(image: AssetImage('assets/images/free.png')),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Text('Free Shipping'),
-              ),
-              Spacer(),
-              Icon(Icons.done, color: MyColors.lightBlue),
-            ],
-          ),
+          isShippingFree == false
+              ? Container()
+              : Row(
+                  children: [
+                    SvgPicture.asset('assets/images/free.svg'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text('Free Shipping'),
+                    ),
+                    Spacer(),
+                    Icon(Icons.done, color: MyColors.lightBlue),
+                  ],
+                ),
         ],
       ),
     );

@@ -42,9 +42,7 @@ class PostItemBuilder extends StatelessWidget {
                 ),
               ),
             ),
-          const SizedBox(
-            height: 6,
-          ),
+          const SizedBox(height: 6),
           Text(
             postOffer.shortDesc ?? '',
             maxLines: 3,
