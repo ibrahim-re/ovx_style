@@ -44,4 +44,18 @@ class Constants {
     color: MyColors.black,
   );
 
+  static const TEXT_STYLE7 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w300,
+    color: MyColors.lightBlue,
+  );
+
+  static const TEXT_STYLE8 = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 18,
+    color: MyColors.black,
+  );
+
+
+
 }

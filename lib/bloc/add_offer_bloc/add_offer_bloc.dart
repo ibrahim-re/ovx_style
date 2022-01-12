@@ -41,7 +41,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
   Stream<AddOfferState> mapEventToState(AddOfferEvent event) async* {
     if (event is AddProductOfferButtonPressed) {
       yield AddOfferLoading();
-      if ( _offerImages.isEmpty || _offerName == '' || _status == '' || _categories == [] || _properties == []){
+      if ( _offerImages.isEmpty || _offerName == '' || _status == '' || _categories.isEmpty || _properties.isEmpty){
         yield AddOfferFailed('Please to fill all required * fields');}
       else {
         try {

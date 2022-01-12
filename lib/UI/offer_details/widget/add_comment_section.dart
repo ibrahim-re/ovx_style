@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 
-class addcommentSection extends StatelessWidget {
-  const addcommentSection({Key? key}) : super(key: key);
+class AddCommentSection extends StatelessWidget {
+  const AddCommentSection({Key? key}) : super(key: key);
   final String userImage =
       "https://image.freepik.com/free-photo/joyful-man-with-broad-smile-has-funny-expression-indicates-aside-advertises-something-amazing_273609-17042.jpg";
 

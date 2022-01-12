@@ -114,6 +114,11 @@
   "show only": "Show only: ",
   "filter": "Filter",
   "apply": "Apply",
-  "Products":"Products",
-  "Basket":"Basket"
+  "products":"Products",
+  "basket":"Basket",
+  "sizes": "Sizes",
+  "ship to": "Ship to",
+
+  "no shipping": "No shipping",
+  "no features": "There Are No Features For this Product"
 }

@@ -47,6 +47,7 @@ dependencies:
   shimmer_image: ^0.0.2
   shimmer: ^2.0.0
   flutter_svg: ^1.0.0
+  scroll_snap_list: ^0.8.4
 
   #state management
   flutter_bloc: ^7.3.1

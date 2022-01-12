@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class imagePosttopSection extends StatelessWidget {
-  const imagePosttopSection({Key? key}) : super(key: key);
+class imagePostTopSection extends StatelessWidget {
+  const imagePostTopSection({Key? key}) : super(key: key);
   final String userImage =
       "https://image.freepik.com/free-photo/joyful-man-with-broad-smile-has-funny-expression-indicates-aside-advertises-something-amazing_273609-17042.jpg";
 

@@ -8,7 +8,7 @@ import 'package:ovx_style/UI/checkout/checkout_screen.dart';
 import 'package:ovx_style/UI/google_maps_screen.dart';
 import 'package:ovx_style/UI/home_screen.dart';
 import 'package:ovx_style/UI/intro/auth_options_screen.dart';
-import 'package:ovx_style/UI/offer_details/img_post_details_screen.dart';
+import 'package:ovx_style/UI/offer_details/img_details_screen.dart';
 import 'package:ovx_style/UI/offer_details/product_offer_details_screen.dart';
 import 'package:ovx_style/UI/offers/add_offer_screen.dart';
 import 'package:ovx_style/UI/offers/add_properties_screen.dart';
@@ -102,12 +102,17 @@ class NamedNavigatorImpl implements NamedNavigator {
               duration: const Duration(milliseconds: 500));
         }
       case NamedRoutes.Post_Image_Details:
+        {
+        final data = settings.arguments as Map<String, dynamic>;
+        final ImageOffer offer = data['offer'];
         return PageTransition(
-            child: imagePostDetails(
+            child: ImageDetailsScreen(
               navigator: navigatorState,
+              offer: offer,
             ),
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
+      }
 
       case NamedRoutes.ADD_OFFER_SCREEN:
         {

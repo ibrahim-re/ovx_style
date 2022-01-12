@@ -67,31 +67,25 @@ class _OffersScreenState extends State<OffersScreen> {
         onRefresh: () async {
           context.read<OfferBloc>().add(FetchOffers(UserType.Person));
         },
-        child: RefreshIndicator(
-          color: MyColors.secondaryColor,
-          onRefresh: () async {
-            context.read<OfferBloc>().add(FetchOffers(UserType.Person));
+        child: BlocBuilder<OfferBloc, OfferState>(
+          builder: (ctx, state) {
+            if (state is FetchOffersLoading)
+              return WaitingOffersListView();
+            else if (state is FetchOffersSucceed)
+              return OffersListView(fetchedOffers: state.fetchedOffers);
+            else if (state is FetchOffersFailed)
+              return Center(
+                  child: Text(
+                state.message,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: MyColors.secondaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ));
+            else
+              return Container();
           },
-          child: BlocBuilder<OfferBloc, OfferState>(
-            builder: (ctx, state) {
-              if (state is FetchOffersLoading)
-                return WaitingOffersListView();
-              else if (state is FetchOffersSucceed)
-                return OffersListView(fetchedOffers: state.fetchedOffers);
-              else if (state is FetchOffersFailed)
-                return Center(
-                    child: Text(
-                  state.message,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: MyColors.secondaryColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ));
-              else
-                return Container();
-            },
-          ),
         ),
       ),
     );

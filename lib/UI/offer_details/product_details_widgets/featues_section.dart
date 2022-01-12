@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 
 class featuresSection extends StatelessWidget {
   const featuresSection(
@@ -12,57 +14,50 @@ class featuresSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Featues',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.w400,
+    if (isReturnAvailable == false && isShippingFree == false)
+      return Container();
+    else
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'features'.tr(),
+              style: Constants.TEXT_STYLE8,
             ),
-          ),
-          const SizedBox(height: 16),
-          isReturnAvailable == false && isShippingFree == false
-              ? Container(
-                  child: Center(
-                    child: Text('There Are No Features For this Product'),
+            const SizedBox(height: 16),
+            isReturnAvailable == false
+                ? Container()
+                : Row(
+                    children: [
+                      SvgPicture.asset('assets/images/return.svg'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text('return products'.tr()),
+                      ),
+                      Spacer(),
+                      Icon(Icons.done, color: MyColors.lightBlue),
+                    ],
                   ),
-                )
-              : isReturnAvailable == false
-                  ? Container()
-                  : Row(
-                      children: [
-                        SvgPicture.asset('assets/images/return.svg'),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Text('Return Easily to all Products'),
-                        ),
-                        Spacer(),
-                        Icon(Icons.done, color: MyColors.lightBlue),
-                      ],
-                    ),
-          const SizedBox(height: 16),
-          isShippingFree == false
-              ? Container()
-              : Row(
-                  children: [
-                    SvgPicture.asset('assets/images/free.svg'),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text('Free Shipping'),
-                    ),
-                    Spacer(),
-                    Icon(Icons.done, color: MyColors.lightBlue),
-                  ],
-                ),
-        ],
-      ),
-    );
+            const SizedBox(height: 16),
+            isShippingFree == false
+                ? Container()
+                : Row(
+                    children: [
+                      SvgPicture.asset('assets/images/free.svg'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text('free shipping'.tr()),
+                      ),
+                      Spacer(),
+                      Icon(Icons.done, color: MyColors.lightBlue),
+                    ],
+                  ),
+          ],
+        ),
+      );
   }
 }

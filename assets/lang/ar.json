@@ -110,8 +110,11 @@
   "show only": "عرض فقط: ",
   "filter": "الفلترة",
   "apply": "تأكيد",
-  "Products":"المنتجات",
-  "Basket":"السلة"
+  "products":"المنتجات",
+  "basket":"السلة",
+  "sizes": "القياسات",
+  "ship to": "شحن إلى",
 
-
+  "no shipping": "لا يوجد شحن",
+  "no features": "لا يوجد ميزات لهذا العرض"
 }

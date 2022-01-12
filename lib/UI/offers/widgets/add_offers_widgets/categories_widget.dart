@@ -77,7 +77,8 @@ class CategoriesChild extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: state.categories.length,
                         itemBuilder: (ctx, index) => InkWell(
-                          onTap: () {
+                          onTap: () async {
+
                             showSubCategoriesPicker(
                                 context,
                                 whereToUse,
@@ -116,7 +117,7 @@ class CategoriesChild extends StatelessWidget {
     );
   }
 
-  showSubCategoriesPicker(BuildContext context, String whereToUse, List<dynamic> subCategories, String categoryName) {
+  showSubCategoriesPicker(BuildContext context, String whereToUse, List<dynamic> subCategories, String categoryName) async {
     showModalBottomSheet(
         isDismissible: false,
         shape: RoundedRectangleBorder(
