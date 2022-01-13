@@ -11,19 +11,20 @@ class OffersListView extends StatelessWidget {
   final scrollPhysics;
   final shrinkWrap;
 
-  OffersListView({required this.fetchedOffers, this.scrollPhysics, this.shrinkWrap});
+  OffersListView(
+      {required this.fetchedOffers, this.scrollPhysics, this.shrinkWrap});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      physics: scrollPhysics?? const BouncingScrollPhysics(),
-      shrinkWrap: shrinkWrap?? false,
+      physics: scrollPhysics ?? const BouncingScrollPhysics(),
+      shrinkWrap: shrinkWrap ?? false,
       padding: const EdgeInsets.only(bottom: 20),
       itemCount: fetchedOffers.length,
       itemBuilder: (ctx, index) {
         if (fetchedOffers[index].offerType == OfferType.Product.toString())
           return ProductItemBuilder(
-            productOffer: fetchedOffers[index],
+            productOffer: fetchedOffers[index] as ProductOffer,
           );
         else if (fetchedOffers[index].offerType == OfferType.Post.toString())
           return PostItemBuilder(

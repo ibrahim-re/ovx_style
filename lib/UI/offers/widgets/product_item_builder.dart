@@ -9,13 +9,14 @@ import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/model/offer.dart';
 import 'package:shimmer_image/shimmer_image.dart';
 import 'offer_owner_row.dart';
 
 class ProductItemBuilder extends StatelessWidget {
-  final productOffer;
+  final ProductOffer productOffer;
 
-  const ProductItemBuilder({Key? key, @required this.productOffer})
+  const ProductItemBuilder({Key? key, required this.productOffer})
       : super(key: key);
 
   @override
@@ -53,7 +54,7 @@ class ProductItemBuilder extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15.0),
                     child: ProgressiveImage(
                       imageError: 'assets/images/default_profile.png',
-                      image: productOffer.offerMedia.first,
+                      image: productOffer.offerMedia!.first,
                       width: double.maxFinite,
                       height: screenHeight * 0.30,
                       fit: BoxFit.fitWidth,
@@ -115,7 +116,7 @@ class ProductItemBuilder extends StatelessWidget {
                     const SizedBox(width: 4),
                     productOffer.discount == 0
                         ? Text(
-                            '${productOffer.properties.first.sizes.first.price} \$',
+                            '${productOffer.properties!.first.sizes!.first.price} \$',
                             style: TextStyle(
                               fontSize: 18,
                               color: MyColors.secondaryColor,
@@ -123,7 +124,7 @@ class ProductItemBuilder extends StatelessWidget {
                         : Row(
                             children: [
                               Text(
-                                '${productOffer.properties.first.sizes.first.price} \$',
+                                '${productOffer.properties!.first.sizes!.first.price} \$',
                                 style: TextStyle(
                                   fontSize: 16,
                                   decoration: TextDecoration.lineThrough,
@@ -131,7 +132,7 @@ class ProductItemBuilder extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                '${Helper().priceAfterDiscount(productOffer.properties.first.sizes.first.price, productOffer.discount)} \$',
+                                '${Helper().priceAfterDiscount(productOffer.properties!.first.sizes!.first.price!, productOffer.discount!)} \$',
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: MyColors.secondaryColor,
@@ -149,3 +150,32 @@ class ProductItemBuilder extends StatelessWidget {
     );
   }
 }
+
+
+
+/**
+ 
+  productOffer.offerMedia!.length > 1
+                      ? Container(
+                          height: screenHeight * 0.30,
+                          width: double.maxFinite,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) => ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: Image(
+                                image: NetworkImage(
+                                  productOffer.offerMedia![index],
+                                ),
+                                height: screenHeight * 0.30,
+                                width: MediaQuery.of(context).size.width,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 20),
+                            itemCount: productOffer.offerMedia!.length,
+                          ),
+                        )
+                      :
+ */

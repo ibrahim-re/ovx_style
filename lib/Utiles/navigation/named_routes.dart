@@ -19,6 +19,9 @@ class NamedRoutes {
   static const ADD_SHIPPING_COST_SCREEN = "ADD_SHIPPING_COST_SCREEN";
   static const Product_Details = "Product_Details";
   static const Post_Image_Details = "Post_Image_Details";
+  static const Post_Details = "Post_Details";
+  static const vodeo_Details = "vodeo_Details";
+
   static const USER_PROFILE_SCREEN = "USER_PROFILE_SCREEN";
   static const OTHER_USER_PROFILE = "OTHER_USER_PROFILE";
   static const Basket = "Basket";

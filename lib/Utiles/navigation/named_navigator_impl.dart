@@ -9,7 +9,9 @@ import 'package:ovx_style/UI/google_maps_screen.dart';
 import 'package:ovx_style/UI/home_screen.dart';
 import 'package:ovx_style/UI/intro/auth_options_screen.dart';
 import 'package:ovx_style/UI/offer_details/img_details_screen.dart';
+import 'package:ovx_style/UI/offer_details/post_details_screen.dart';
 import 'package:ovx_style/UI/offer_details/product_offer_details_screen.dart';
+import 'package:ovx_style/UI/offer_details/video_details_screen.dart';
 import 'package:ovx_style/UI/offers/add_offer_screen.dart';
 import 'package:ovx_style/UI/offers/add_properties_screen.dart';
 import 'package:ovx_style/UI/offers/add_shipping_cost_screen.dart';
@@ -103,16 +105,42 @@ class NamedNavigatorImpl implements NamedNavigator {
         }
       case NamedRoutes.Post_Image_Details:
         {
-        final data = settings.arguments as Map<String, dynamic>;
-        final ImageOffer offer = data['offer'];
-        return PageTransition(
-            child: ImageDetailsScreen(
-              navigator: navigatorState,
-              offer: offer,
-            ),
-            type: PageTransitionType.rightToLeft,
-            duration: const Duration(milliseconds: 500));
-      }
+          final data = settings.arguments as Map<String, dynamic>;
+          final ImageOffer offer = data['offer'];
+          return PageTransition(
+              child: ImageDetailsScreen(
+                navigator: navigatorState,
+                offer: offer,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
+
+      case NamedRoutes.Post_Details:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final PostOffer post = data['post'];
+          return PageTransition(
+              child: postDetails(
+                navigator: navigatorState,
+                postOffer: post,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
+
+      case NamedRoutes.vodeo_Details:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final VideoOffer video = data['video'];
+          return PageTransition(
+              child: videoDetails(
+                navigator: navigatorState,
+                video: video,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
 
       case NamedRoutes.ADD_OFFER_SCREEN:
         {

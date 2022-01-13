@@ -23,7 +23,6 @@ class ProductImageSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -33,34 +32,12 @@ class ProductImageSection extends StatelessWidget {
           child: ScrollSnapList(
             itemSize: MediaQuery.of(context).size.height / 3,
             dynamicItemSize: true,
-            itemBuilder: (ctx, index) => Image.network(productImages[index], width: MediaQuery.of(context).size.height / 3),
+            itemBuilder: (ctx, index) => Image.network(productImages[index],
+                width: MediaQuery.of(context).size.height / 3),
             onItemFocus: (int) {},
             itemCount: productImages.length,
           ),
         ),
-        // if (productImages.length == 1)
-        //   Container(
-        //     width: double.infinity,
-        //     height: MediaQuery.of(context).size.height / 3,
-        //     child: Center(
-        //       child: Image.network(productImages.first),
-        //     ),
-        //   )
-        // else
-        //   Container(
-        //     width: double.infinity,
-        //     height: MediaQuery.of(context).size.height / 3,
-        //     child: ListView.separated(
-        //       scrollDirection: Axis.horizontal,
-        //       padding: const EdgeInsets.all(6),
-        //       itemBuilder: (context, index) => Image(
-        //         image: NetworkImage(productImages[index]),
-        //         fit: BoxFit.cover,
-        //       ),
-        //       separatorBuilder: (context, index) => const SizedBox(width: 6),
-        //       itemCount: productImages.length,
-        //     ),
-        //   ),
         Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
