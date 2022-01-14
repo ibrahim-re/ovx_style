@@ -37,9 +37,11 @@ class Offer {
         (offerInfo['offerCreationDate'] as Timestamp).toDate();
     this.likes =
         (offerInfo['likes'] as List<dynamic>).map((e) => e.toString()).toList();
-    this.comments = (offerInfo['comments'] as List<dynamic>)
-        .map((e) => comment.fromJson(e))
-        .toList();
+    this.comments = comments == null
+        ? []
+        : (offerInfo['comments'] as List<dynamic>)
+            .map((e) => comment.fromJson(e))
+            .toList();
   }
 }
 
