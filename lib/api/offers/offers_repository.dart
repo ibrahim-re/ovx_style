@@ -14,8 +14,10 @@ abstract class OffersRepository {
 
 class OffersRepositoryImpl extends OffersRepository {
   CollectionReference _offers = FirebaseFirestore.instance.collection('offers');
-  CollectionReference _companyOffers = FirebaseFirestore.instance.collection('company offers');
-  CollectionReference _categories = FirebaseFirestore.instance.collection('categories');
+  CollectionReference _companyOffers =
+      FirebaseFirestore.instance.collection('company offers');
+  CollectionReference _categories =
+      FirebaseFirestore.instance.collection('categories');
 
   @override
   Future<String> addOffer(Map<String, dynamic> productOffer) async {
@@ -64,9 +66,12 @@ class OffersRepositoryImpl extends OffersRepository {
       List<Offer> fetchedOffers = [];
       QuerySnapshot query;
       if (offerOwnerType == UserType.Person)
-        query = await _offers.orderBy('offerCreationDate', descending: true).get();
+        query =
+            await _offers.orderBy('offerCreationDate', descending: true).get();
       else
-        query = await _companyOffers.orderBy('offerCreationDate', descending: true).get();
+        query = await _companyOffers
+            .orderBy('offerCreationDate', descending: true)
+            .get();
 
       for (var e in query.docs) {
         final data = e.data() as Map<String, dynamic>;
@@ -99,32 +104,56 @@ class OffersRepositoryImpl extends OffersRepository {
     try {
       DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
       //check if user is person or company
-      if (SharedPref.currentUser.userType == UserType.Person.toString()){
-
+      if (SharedPref.currentUser.userType == UserType.Person.toString()) {
         //check and see if this is like or dislike
-        if(SharedPref.currentUser.offersLiked!.contains(offerId)) {
-          await _offers.doc(offerId).update({'likes': FieldValue.arrayRemove([userId])});
+        if (SharedPref.currentUser.offersLiked!.contains(offerId)) {
+          await _offers.doc(offerId).update({
+            'likes': FieldValue.arrayRemove([userId])
+          });
           await databaseRepositoryImpl.updateOfferLiked(offerId, userId, false);
         } else {
-          await _offers.doc(offerId).update({'likes': FieldValue.arrayUnion([userId])});
+          await _offers.doc(offerId).update({
+            'likes': FieldValue.arrayUnion([userId])
+          });
           await databaseRepositoryImpl.updateOfferLiked(offerId, userId, true);
         }
       } else {
-
         //check and see if this is like or dislike
-        if(SharedPref.currentUser.offersLiked!.contains(offerId)) {
-          await _companyOffers.doc(offerId).update({'likes': FieldValue.arrayRemove([userId])});
+        if (SharedPref.currentUser.offersLiked!.contains(offerId)) {
+          await _companyOffers.doc(offerId).update({
+            'likes': FieldValue.arrayRemove([userId])
+          });
           await databaseRepositoryImpl.updateOfferLiked(offerId, userId, false);
-        }
-        else{
-          await _companyOffers.doc(offerId).update({'likes': FieldValue.arrayUnion([userId])});
+        } else {
+          await _companyOffers.doc(offerId).update({
+            'likes': FieldValue.arrayUnion([userId])
+          });
           await databaseRepositoryImpl.updateOfferLiked(offerId, userId, true);
         }
-
       }
-    }catch (e) {
+    } catch (e) {
       print('error $e');
       throw e;
     }
+  }
+
+  Future<void> addCommentToOffer(
+    String offerId,
+    Map<String, dynamic> commentData,
+  ) async {
+    await _offers.doc(offerId).update({
+      'comments': FieldValue.arrayUnion([commentData]),
+    });
+  }
+
+  Future<DocumentSnapshot> fetchOfferComments(String offerId) async {
+    final data = await _offers.doc(offerId).get();
+    return data;
+  }
+
+  Future<void> deleteComment(String offerId, Map<String, dynamic> data) async {
+    await _offers.doc(offerId).update({
+      'comments': FieldValue.arrayRemove([data])
+    });
   }
 }

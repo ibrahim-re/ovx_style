@@ -11,9 +11,7 @@ import 'package:ovx_style/model/offer.dart';
 
 class postDetails extends StatelessWidget {
   final navigator;
-
   final PostOffer postOffer;
-
   const postDetails({Key? key, this.navigator, required this.postOffer})
       : super(key: key);
 
@@ -59,8 +57,11 @@ class postDetails extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          AddCommentSection(),
-          UsersComments(),
+          AddCommentSection(offerId: postOffer.id!),
+          UsersComments(
+            offerId: postOffer.id!,
+            usersComment: postOffer.comments ?? [],
+          ),
         ],
       ),
     );

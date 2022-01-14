@@ -128,8 +128,13 @@ class _videoDetailsState extends State<videoDetails> {
             },
           ),
           const SizedBox(height: 10),
-          AddCommentSection(),
-          UsersComments(),
+          AddCommentSection(
+            offerId: widget.video.id!,
+          ),
+          UsersComments(
+            offerId: widget.video.id!,
+            usersComment: widget.video.comments ?? [],
+          ),
         ],
       ),
     );

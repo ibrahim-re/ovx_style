@@ -54,8 +54,13 @@ class ProductDetails extends StatelessWidget {
           ShipToSection(
             shippingCosts: offer.shippingCosts!,
           ),
-          AddCommentSection(),
-          UsersComments(),
+          AddCommentSection(
+            offerId: offer.id!,
+          ),
+          UsersComments(
+            offerId: offer.id!,
+            usersComment: offer.comments ?? [],
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

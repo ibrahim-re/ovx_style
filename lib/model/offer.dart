@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ovx_style/model/comment_model.dart';
 import 'package:ovx_style/model/product_property.dart';
 import 'package:flutter/material.dart';
 
@@ -11,24 +12,34 @@ class Offer {
   DateTime? offerCreationDate;
   //a list contains users ids
   List<String>? likes;
+  List<comment>? comments;
 
-  Offer(
-      {this.id,
-      required this.offerMedia,
-      required this.offerType,
-      required this.offerOwnerType,
-      required this.offerOwnerId,
-      required this.offerCreationDate,
-      this.likes});
+  Offer({
+    this.id,
+    required this.offerMedia,
+    required this.offerType,
+    required this.offerOwnerType,
+    required this.offerOwnerId,
+    required this.offerCreationDate,
+    this.comments,
+    this.likes,
+  });
 
   Offer.fromMap(Map<String, dynamic> offerInfo, String offerId) {
     this.id = offerId;
-    this.offerMedia = (offerInfo['offerMedia'] as List<dynamic>).map((e) => e.toString()).toList();
+    this.offerMedia = (offerInfo['offerMedia'] as List<dynamic>)
+        .map((e) => e.toString())
+        .toList();
     this.offerType = offerInfo['offerType'];
     this.offerOwnerType = offerInfo['offerOwnerType'];
     this.offerOwnerId = offerInfo['offerOwnerId'];
-    this.offerCreationDate = (offerInfo['offerCreationDate'] as Timestamp).toDate();
-    this.likes = (offerInfo['likes'] as List<dynamic>).map((e) => e.toString()).toList();
+    this.offerCreationDate =
+        (offerInfo['offerCreationDate'] as Timestamp).toDate();
+    this.likes =
+        (offerInfo['likes'] as List<dynamic>).map((e) => e.toString()).toList();
+    this.comments = (offerInfo['comments'] as List<dynamic>)
+        .map((e) => comment.fromJson(e))
+        .toList();
   }
 }
 
@@ -64,6 +75,7 @@ class ProductOffer extends Offer {
     this.shippingCosts,
     this.isShippingFree = false,
     this.isReturnAvailable = false,
+    comments,
   }) : super(
           id: id,
           offerMedia: offerMedia,
@@ -72,6 +84,7 @@ class ProductOffer extends Offer {
           offerType: offerType,
           offerOwnerType: offerOwnerType,
           offerOwnerId: offerOwnerId,
+          comments: comments,
         );
 
   Map<String, dynamic> toMap() => {
@@ -91,21 +104,35 @@ class ProductOffer extends Offer {
         'isShippingFree': isShippingFree,
         'isReturnAvailable': isReturnAvailable,
         'likes': likes,
+        'comments': comments,
       };
 
-  ProductOffer.fromMap(Map<String, dynamic> offerInfo, String offerId) : super.fromMap(offerInfo, offerId) {
+  ProductOffer.fromMap(Map<String, dynamic> offerInfo, String offerId)
+      : super.fromMap(offerInfo, offerId) {
     this.id = offerId;
     this.offerName = offerInfo['offerName'];
-    this.categories = (offerInfo['categories'] as List<dynamic>).map((e) => e.toString()).toList();
+    this.categories = (offerInfo['categories'] as List<dynamic>)
+        .map((e) => e.toString())
+        .toList();
     this.status = offerInfo['status'];
     this.vat = offerInfo['vat'];
     this.discount = offerInfo['discount'];
     this.discountExpireDate = offerInfo['discountExpireDate'];
     this.shortDesc = offerInfo['shortDesc'];
-    this.properties = (offerInfo['properties'] as List<dynamic>).map((e) => ProductProperty(color: Color(e['color']), sizes: (e['sizes'] as List<dynamic>).map((e) => ProductSize(size: e['size'], price: e['price'])).toList())).toList();
-    this.shippingCosts = (offerInfo['shippingCosts'] as Map<String, dynamic>).map((key, value) {return MapEntry(key, value);});
+    this.properties = (offerInfo['properties'] as List<dynamic>)
+        .map((e) => ProductProperty(
+            color: Color(e['color']),
+            sizes: (e['sizes'] as List<dynamic>)
+                .map((e) => ProductSize(size: e['size'], price: e['price']))
+                .toList()))
+        .toList();
+    this.shippingCosts =
+        (offerInfo['shippingCosts'] as Map<String, dynamic>).map((key, value) {
+      return MapEntry(key, value);
+    });
     this.isReturnAvailable = offerInfo['isReturnAvailable'];
     this.isShippingFree = offerInfo['isShippingFree'];
+    this.comments = offerInfo['comments'];
   }
 }
 
@@ -116,6 +143,7 @@ class PostOffer extends Offer {
     id,
     offerMedia,
     likes,
+    comments,
     required offerOwnerType,
     required offerOwnerId,
     required offerCreationDate,
@@ -129,6 +157,7 @@ class PostOffer extends Offer {
           offerCreationDate: offerCreationDate,
           offerOwnerType: offerOwnerType,
           offerOwnerId: offerOwnerId,
+          comments: comments as List<comment>,
         );
 
   Map<String, dynamic> toMap() => {
@@ -139,6 +168,7 @@ class PostOffer extends Offer {
         'offerType': offerType,
         'shortDesc': shortDesc,
         'likes': likes,
+        'comments': comments,
       };
 
   PostOffer.fromMap(Map<String, dynamic> offerInfo, String offerId)
@@ -151,6 +181,7 @@ class ImageOffer extends Offer {
   ImageOffer({
     id,
     likes,
+    comments,
     required offerMedia,
     required offerOwnerType,
     required offerOwnerId,
@@ -164,6 +195,7 @@ class ImageOffer extends Offer {
           offerOwnerType: offerOwnerType,
           offerCreationDate: offerCreationDate,
           offerOwnerId: offerOwnerId,
+          comments: comments,
         );
 
   Map<String, dynamic> toMap() => {
@@ -173,6 +205,7 @@ class ImageOffer extends Offer {
         'offerCreationDate': offerCreationDate,
         'offerType': offerType,
         'likes': likes,
+        'comments': comments,
       };
 
   ImageOffer.fromMap(Map<String, dynamic> offerInfo, String offerId)
@@ -183,6 +216,7 @@ class VideoOffer extends Offer {
   VideoOffer({
     id,
     likes,
+    comments,
     required offerMedia,
     required offerOwnerType,
     required offerOwnerId,
@@ -196,6 +230,7 @@ class VideoOffer extends Offer {
           offerOwnerType: offerOwnerType,
           offerCreationDate: offerCreationDate,
           offerOwnerId: offerOwnerId,
+          comments: comments,
         );
 
   Map<String, dynamic> toMap() => {
@@ -205,6 +240,7 @@ class VideoOffer extends Offer {
         'offerOwnerId': offerOwnerId,
         'offerType': offerType,
         'likes': likes,
+        'comments': comments,
       };
 
   VideoOffer.fromMap(Map<String, dynamic> offerInfo, String offerId)

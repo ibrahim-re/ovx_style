@@ -20,11 +20,21 @@ class ImageDetailsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 14),
         children: [
-          OfferOwnerRow(offerOwnerId: offer.offerOwnerId, offerId: offer.id,),
-          ImageSection(offerImages: offer.offerMedia!,),
+          OfferOwnerRow(
+            offerOwnerId: offer.offerOwnerId,
+            offerId: offer.id,
+          ),
+          ImageSection(
+            offerImages: offer.offerMedia!,
+          ),
           const SizedBox(height: 10),
-          AddCommentSection(),
-          UsersComments(),
+          AddCommentSection(
+            offerId: offer.id!,
+          ),
+          UsersComments(
+            offerId: offer.id!,
+            usersComment: offer.comments ?? [],
+          ),
         ],
       ),
     );
