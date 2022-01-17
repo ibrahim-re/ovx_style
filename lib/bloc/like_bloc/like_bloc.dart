@@ -13,7 +13,7 @@ class LikeBloc extends Bloc<LikeEvent, LikeState>{
   Stream<LikeState> mapEventToState(LikeEvent event) async* {
     if(event is LikeButtonPressed){
       try {
-        await offersRepositoryImpl.updateLikes(event.offerId, event.userId);
+        await offersRepositoryImpl.updateLikes(event.offerId, event.offerOwnerId, event.userId);
         yield LikeDone();
       } catch (e) {
         yield LikeFailed('error occurred'.tr());

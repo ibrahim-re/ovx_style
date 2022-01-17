@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/story/widgets/slider.dart';
 import 'package:ovx_style/UI/story/widgets/story.dart';
+import 'package:ovx_style/UI/widgets/no_permession_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 
 class StoryScreen extends StatelessWidget {
   final List<Map<String, dynamic>> tempData = [
@@ -53,79 +56,86 @@ class StoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: true,
-      bottom: true,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Stories'.tr(),
-            style: TextStyle(
-              color: MyColors.secondaryColor,
-              fontSize: 20,
+    //no chat available for companies
+    if (SharedPref.currentUser.userType == UserType.Company.toString())
+      return NoPermissionWidget(
+        text: 'Story is not available for companies',
+        iconName: 'story',
+      );
+    else
+      return SafeArea(
+        top: true,
+        bottom: true,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Stories'.tr(),
+              style: TextStyle(
+                color: MyColors.secondaryColor,
+                fontSize: 20,
+              ),
+            ),
+            titleSpacing: 14,
+            actions: [
+              IconButton(
+                  onPressed: () {},
+                  icon: Badge(
+                    badgeColor: Colors.blue.withOpacity(0.4),
+                    badgeContent: Text(
+                      '1',
+                      style:
+                          TextStyle(fontSize: 10, color: MyColors.primaryColor),
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    showBadge: true,
+                    position: BadgePosition(
+                      isCenter: false,
+                      top: -10,
+                      start: -4,
+                    ),
+                    child: Icon(
+                      Icons.notifications,
+                    ),
+                  )),
+              IconButton(
+                  onPressed: () {
+                    showFilterSheet(context: context);
+                  },
+                  icon: Icon(
+                    Icons.filter_alt,
+                  )),
+            ],
+          ),
+          body: GridView.count(
+            crossAxisCount: 2,
+            childAspectRatio: 3 / 4,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            padding: const EdgeInsets.only(
+              bottom: 24,
+              left: 14,
+              right: 14,
+              top: 14,
+            ),
+            children: tempData.map((item) {
+              return story(
+                storyImage: item['storyImage'],
+                userImage: item['userImage'],
+                userName: item['userName'],
+              );
+            }).toList(),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {},
+            backgroundColor: MyColors.secondaryColor,
+            mini: true,
+            child: Icon(
+              Icons.add,
+              color: MyColors.primaryColor,
             ),
           ),
-          titleSpacing: 14,
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: Badge(
-                  badgeColor: Colors.blue.withOpacity(0.4),
-                  badgeContent: Text(
-                    '1',
-                    style:
-                        TextStyle(fontSize: 10, color: MyColors.primaryColor),
-                  ),
-                  padding: const EdgeInsets.all(6),
-                  showBadge: true,
-                  position: BadgePosition(
-                    isCenter: false,
-                    top: -10,
-                    start: -4,
-                  ),
-                  child: Icon(
-                    Icons.notifications,
-                  ),
-                )),
-            IconButton(
-                onPressed: () {
-                  showFilterSheet(context: context);
-                },
-                icon: Icon(
-                  Icons.filter_alt,
-                )),
-          ],
         ),
-        body: GridView.count(
-          crossAxisCount: 2,
-          childAspectRatio: 3 / 4,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          padding: const EdgeInsets.only(
-            bottom: 24,
-            left: 14,
-            right: 14,
-            top: 14,
-          ),
-          children: tempData.map((item) {
-            return story(
-              storyImage: item['storyImage'],
-              userImage: item['userImage'],
-              userName: item['userName'],
-            );
-          }).toList(),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: MyColors.secondaryColor,
-          mini: true,
-          child: Icon(
-            Icons.add,
-            color: MyColors.primaryColor,
-          ),
-        ),
-      ),
-    );
+      );
   }
 }
 

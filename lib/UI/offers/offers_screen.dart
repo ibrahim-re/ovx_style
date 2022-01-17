@@ -45,8 +45,6 @@ class _OffersScreenState extends State<OffersScreen> {
             onPressed: () {
               NamedNavigatorImpl().push(
                 NamedRoutes.Basket,
-                replace: true,
-                clean: true,
               );
             },
             icon: iconBadge(

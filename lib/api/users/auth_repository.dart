@@ -30,9 +30,12 @@ class AuthRepositoryImpl extends AuthRepository {
 
         Map<String, dynamic> userInfo = await _databaseRepositoryImpl.getUserData(uId);
 
+
         //set user id as path to his info
         if (userInfo['userType'] == UserType.Person.toString()){
           User currentUser = PersonUser.fromMap(userInfo, uId);
+
+          print(currentUser.offersAdded);
 
           return currentUser;
         } else {

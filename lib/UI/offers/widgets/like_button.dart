@@ -5,6 +5,7 @@ import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/like_bloc/like_bloc.dart';
 import 'package:ovx_style/bloc/like_bloc/like_events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ovx_style/bloc/like_bloc/like_states.dart';
 
 class LikeButton extends StatefulWidget {
   final offerId;
@@ -31,7 +32,7 @@ class _LikeButtonState extends State<LikeButton> {
       onTap: () {
         isLiked = !isLiked;
         setState(() {});
-        context.read<LikeBloc>().add(LikeButtonPressed(widget.offerId, widget.offerOwnerId));
+        context.read<LikeBloc>().add(LikeButtonPressed(widget.offerId, widget.offerOwnerId, SharedPref.currentUser.id!));
       },
       child: isLiked ? SvgPicture.asset('assets/images/like.svg') : SvgPicture.asset('assets/images/unlike.svg'),
     );

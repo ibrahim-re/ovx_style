@@ -11,7 +11,6 @@ class OfferBloc extends Bloc<OfferEvent, OfferState> {
   OfferBloc() : super(OfferStateInitial());
 
   OffersRepositoryImpl offersRepositoryImpl = OffersRepositoryImpl();
-  //AuthRepositoryImpl authRepositoryImpl = AuthRepositoryImpl();
 
   List<Offer> fetchedOffers = [];
   List<String> showOnly = [];

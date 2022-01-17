@@ -37,6 +37,7 @@ class ProductDetails extends StatelessWidget {
             offerId: offer.id,
           ),
           ProductImageSection(
+            offerOwnerId: offer.offerOwnerId!,
             productImages: offer.offerMedia!,
             categories: offer.categories!,
             description: offer.shortDesc!,
@@ -56,10 +57,11 @@ class ProductDetails extends StatelessWidget {
           ),
           AddCommentSection(
             offerId: offer.id!,
+            offerOwnerId: offer.offerOwnerId!,
           ),
           UsersComments(
             offerId: offer.id!,
-            usersComment: offer.comments ?? [],
+            offerOwnerId: offer.offerOwnerId!,
           ),
         ],
       ),
@@ -68,7 +70,6 @@ class ProductDetails extends StatelessWidget {
         onPressed: () {
           NamedNavigatorImpl().push(
             NamedRoutes.Basket,
-            clean: true,
           );
         },
         mini: true,

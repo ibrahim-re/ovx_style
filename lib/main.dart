@@ -8,10 +8,10 @@ import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
-import 'package:ovx_style/bloc/comments_bloc/add_comment.dart';
 import 'package:ovx_style/bloc/login_bloc/login_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'Utiles/navigation/named_navigator_impl.dart';
+import 'bloc/comment_bloc/comment_bloc.dart';
 import 'bloc/login_bloc/login_bloc.dart';
 
 void main() async {
@@ -27,6 +27,7 @@ void main() async {
   );
   //initialize shared pref
   await SharedPref.init();
+
   //set status bar to transparent
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -42,8 +43,8 @@ void main() async {
           BlocProvider<LoginBloc>(
             create: (context) => LoginBloc()..add(AppStarted()),
           ),
-          BlocProvider<addComment>(
-            create: (context) => addComment(),
+          BlocProvider<CommentBloc>(
+            create: (context) => CommentBloc(),
           ),
           BlocProvider<OfferBloc>(
             create: (context) => OfferBloc(),

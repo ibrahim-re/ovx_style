@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ovx_style/UI/offer_details/img_details_widget/image_section.dart';
 import 'package:ovx_style/UI/offer_details/widget/add_comment_section.dart';
+import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/UI/offer_details/widget/users_comments_section.dart';
 import 'package:ovx_style/UI/offers/widgets/offer_owner_row.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/model/offer.dart';
 
 class postDetails extends StatelessWidget {
@@ -17,17 +19,9 @@ class postDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(postOffer.comments!.length);
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              NamedNavigatorImpl().push(NamedRoutes.HOME_SCREEN, clean: true);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: MyColors.lightBlue,
-            )),
-      ),
+      appBar: AppBar(),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 14),
         children: [
@@ -50,17 +44,14 @@ class postDetails extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(
-                Icons.more_vert,
-                color: MyColors.lightBlue,
-              ),
+              CustomPopUpMenu(ownerId: postOffer.offerOwnerId,),
             ],
           ),
           const SizedBox(height: 10),
-          AddCommentSection(offerId: postOffer.id!),
+          AddCommentSection(offerId: postOffer.id!, offerOwnerId: postOffer.offerOwnerId!),
           UsersComments(
             offerId: postOffer.id!,
-            usersComment: postOffer.comments ?? [],
+            offerOwnerId: postOffer.offerOwnerId!,
           ),
         ],
       ),

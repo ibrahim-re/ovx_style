@@ -3,21 +3,25 @@ import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/model/category.dart';
+import 'package:ovx_style/model/comment_model.dart';
 import 'package:ovx_style/model/offer.dart';
 
 abstract class OffersRepository {
   Future<String> addOffer(Map<String, dynamic> productOffer);
   Future<List<Category>> getCategories();
   Future<List<Offer>> getOffers(UserType offerOwnerType);
-  Future<void> updateLikes(String offerId, String userId);
+  Future<void> deleteOffer(String offerId);
+  Future<void> updateLikes(String offerId, String offerOwnerId, String userId);
+  Future<void> addCommentToOffer(String offerId, String offerOwnerId, Map<String, dynamic> commentData);
+  Future<List<CommentModel>> fetchOfferComments(String offerId, String offerOwnerId);
+  Future<void> deleteComment(String offerId, Map<String, dynamic> data, String offerOwnerId);
+
 }
 
 class OffersRepositoryImpl extends OffersRepository {
   CollectionReference _offers = FirebaseFirestore.instance.collection('offers');
-  CollectionReference _companyOffers =
-      FirebaseFirestore.instance.collection('company offers');
-  CollectionReference _categories =
-      FirebaseFirestore.instance.collection('categories');
+  CollectionReference _companyOffers = FirebaseFirestore.instance.collection('company offers');
+  CollectionReference _categories = FirebaseFirestore.instance.collection('categories');
 
   @override
   Future<String> addOffer(Map<String, dynamic> productOffer) async {
@@ -47,8 +51,7 @@ class OffersRepositoryImpl extends OffersRepository {
         String categoryName = q.id;
         final data = q.data() as Map<String, dynamic>;
         List<dynamic> subCategories = data['subCategories'];
-        fetchedCategories
-            .add(Category(name: categoryName, subCategories: subCategories));
+        fetchedCategories.add(Category(name: categoryName, subCategories: subCategories));
       }
       return fetchedCategories;
     } on FirebaseException catch (e) {
@@ -66,12 +69,9 @@ class OffersRepositoryImpl extends OffersRepository {
       List<Offer> fetchedOffers = [];
       QuerySnapshot query;
       if (offerOwnerType == UserType.Person)
-        query =
-            await _offers.orderBy('offerCreationDate', descending: true).get();
+        query = await _offers.orderBy('offerCreationDate', descending: true).get();
       else
-        query = await _companyOffers
-            .orderBy('offerCreationDate', descending: true)
-            .get();
+        query = await _companyOffers.orderBy('offerCreationDate', descending: true).get();
 
       for (var e in query.docs) {
         final data = e.data() as Map<String, dynamic>;
@@ -100,11 +100,16 @@ class OffersRepositoryImpl extends OffersRepository {
   }
 
   @override
-  Future<void> updateLikes(String offerId, String userId) async {
+  Future<void> updateLikes(String offerId, String offerOwnerId, String userId) async {
     try {
       DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
+
+      //first get owner id type (person or company)
+      String offerOwnerType = await databaseRepositoryImpl.getUserType(offerOwnerId);
+
       //check if user is person or company
-      if (SharedPref.currentUser.userType == UserType.Person.toString()) {
+      if (offerOwnerType == UserType.Person.toString()) {
+
         //check and see if this is like or dislike
         if (SharedPref.currentUser.offersLiked!.contains(offerId)) {
           await _offers.doc(offerId).update({
@@ -118,6 +123,7 @@ class OffersRepositoryImpl extends OffersRepository {
           await databaseRepositoryImpl.updateOfferLiked(offerId, userId, true);
         }
       } else {
+
         //check and see if this is like or dislike
         if (SharedPref.currentUser.offersLiked!.contains(offerId)) {
           await _companyOffers.doc(offerId).update({
@@ -137,23 +143,99 @@ class OffersRepositoryImpl extends OffersRepository {
     }
   }
 
-  Future<void> addCommentToOffer(
-    String offerId,
-    Map<String, dynamic> commentData,
-  ) async {
-    await _offers.doc(offerId).update({
-      'comments': FieldValue.arrayUnion([commentData]),
-    });
+  @override
+  Future<void> addCommentToOffer(String offerId, String offerOwnerId, Map<String, dynamic> commentData) async {
+    try {
+      DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
+
+      //first get owner id type (person or company)
+      String offerOwnerType = await databaseRepositoryImpl.getUserType(offerOwnerId);
+
+      //check if user is person or company
+      if (offerOwnerType == UserType.Person.toString()) {
+        await _offers.doc(offerId).update({
+          'comments': FieldValue.arrayUnion([commentData]),
+        });
+      } else {
+        await _companyOffers.doc(offerId).update({
+          'comments': FieldValue.arrayUnion([commentData]),
+        });
+      }
+
+      await databaseRepositoryImpl.updateComments(offerId, commentData['userId']);
+    } catch (e) {
+      print('error $e');
+      throw e;
+    }
   }
 
-  Future<DocumentSnapshot> fetchOfferComments(String offerId) async {
-    final data = await _offers.doc(offerId).get();
-    return data;
+  @override
+  Future<List<CommentModel>> fetchOfferComments(String offerId, String offerOwnerId) async {
+    try {
+      List<CommentModel> comments = [];
+      DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
+
+      //first get owner id type (person or company)
+      String offerOwnerType = await databaseRepositoryImpl.getUserType(offerOwnerId);
+
+      //check if user is person or company
+      if (offerOwnerType == UserType.Person.toString()) {
+
+        final DocumentSnapshot data = await _offers.doc(offerId).get();
+        final d = data.data() as Map<String ,dynamic>;
+        comments = (d['comments'] as List<dynamic>).map((e) => CommentModel.fromMap(e)).toList();
+
+      } else {
+
+        final DocumentSnapshot data = await _companyOffers.doc(offerId).get();
+        final d = data.data() as Map<String ,dynamic>;
+        comments = (d['comments'] as List<dynamic>).map((e) => CommentModel.fromMap(e)).toList();
+
+      }
+
+
+
+      return comments;
+    } catch (e) {
+      print('error is $e');
+      throw e;
+    }
   }
 
-  Future<void> deleteComment(String offerId, Map<String, dynamic> data) async {
-    await _offers.doc(offerId).update({
-      'comments': FieldValue.arrayRemove([data])
-    });
+  @override
+  Future<void> deleteComment(String offerId, Map<String, dynamic> data, String offerOwnerId) async {
+
+    try {
+      DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
+
+      //first get owner id type (person or company)
+      String offerOwnerType = await databaseRepositoryImpl.getUserType(offerOwnerId);
+
+      //check if user is person or company
+      if (offerOwnerType == UserType.Person.toString()) {
+
+        await _offers.doc(offerId).update({
+          'comments': FieldValue.arrayRemove([data])
+        });
+
+      } else {
+
+        await _companyOffers.doc(offerId).update({
+          'comments': FieldValue.arrayRemove([data])
+        });
+
+      }
+
+
+      await databaseRepositoryImpl.updateComments(offerId, data['userId']);
+    } catch (e) {
+      print('error is $e');
+      throw e;
+    }
+  }
+
+  @override
+  Future<void> deleteOffer(String offerId) async {
+    //TODO
   }
 }

@@ -7,7 +7,6 @@ import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/like_bloc/like_bloc.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
-import 'package:shimmer/shimmer.dart';
 import 'like_button.dart';
 import 'package:ovx_style/model/user.dart';
 import 'package:flutter/material.dart';
@@ -57,8 +56,7 @@ class OfferOwnerRow extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 user.userName ?? '',
-                style:
-                    Constants.TEXT_STYLE4.copyWith(fontWeight: FontWeight.w500),
+                style: Constants.TEXT_STYLE4.copyWith(fontWeight: FontWeight.w500),
               ),
               Spacer(),
               BlocProvider(

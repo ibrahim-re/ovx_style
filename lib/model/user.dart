@@ -15,6 +15,7 @@ class User {
   String? userType;
   List<String>? offersAdded;
   List<String>? offersLiked;
+  List<String>? comments;
   int? points;
 
   User(
@@ -34,10 +35,10 @@ class User {
       required this.userType,
       this.offersAdded,
       this.offersLiked,
+      this.comments,
       this.points});
 
   User.fromMap(Map<String, dynamic> userInfo, String uId) {
-    print(userInfo['offersAdded']);
     this.profileImage = userInfo['profileImage'] ?? '';
     this.id = uId;
     this.userName = userInfo['userName'];
@@ -52,9 +53,10 @@ class User {
     this.longitude = userInfo['longitude'] ?? 0;
     this.password = userInfo['password'];
     this.userType = userInfo['userType'];
-    this.offersAdded = userInfo['offersAdded']?? [];
-    this.offersLiked = userInfo['offersLiked']?? [];
-    this.points = userInfo['points']?? 0;
+    this.offersAdded = ((userInfo['offerAdded'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
+    this.offersLiked = ((userInfo['offerLiked'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
+    this.comments = ((userInfo['comments'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
+    this.points = userInfo['points'] ?? 0;
   }
 
   Map<String, dynamic> toMap() => {
@@ -74,6 +76,7 @@ class User {
         'userType': userType,
         'offersAdded': offersAdded,
         'offersLiked': offersLiked,
+        'comments': comments,
         'points': points
       };
 }
@@ -94,6 +97,10 @@ class PersonUser extends User {
     city,
     latitude,
     longitude,
+    offersLiked,
+    offersAdded,
+    comments,
+    points,
     required password,
     required userType,
     id,
@@ -113,12 +120,17 @@ class PersonUser extends User {
             password: password,
             latitude: latitude,
             longitude: longitude,
-            userType: userType);
+            userType: userType,
+    offersAdded: offersAdded,
+    offersLiked: offersLiked,
+    comments: comments,
+    points: points,
+  );
 
   PersonUser.fromMap(Map<String, dynamic> userInfo, String uId)
       : super.fromMap(userInfo, uId) {
     this.gender = userInfo['gender'] ?? '';
-    this.dateBirth = userInfo['dateBirth']?? '';
+    this.dateBirth = userInfo['dateBirth'] ?? '';
   }
 
   Map<String, dynamic> toMap() => {
@@ -137,7 +149,11 @@ class PersonUser extends User {
         'password': password,
         'userType': userType,
         'gender': gender,
-        'dateBirth': dateBirth
+        'dateBirth': dateBirth,
+    'offersAdded': offersAdded,
+    'offersLiked': offersLiked,
+    'comments': comments,
+    'points': points,
       };
 }
 
@@ -157,48 +173,61 @@ class CompanyUser extends User {
     city,
     latitude,
     longitude,
+    offersLiked,
+    offersAdded,
+    comments,
+    points,
     required password,
     required userType,
     id,
     this.regImages,
     required this.regNumber,
   }) : super(
-            id: id,
-            profileImage: image,
-            userName: userName,
-            nickName: nickName,
-            userCode: userCode,
-            email: email,
-            phoneNumber: phoneNumber,
-            shortDesc: shortDesc,
-            country: country,
-            city: city,
-            password: password,
-            latitude: latitude,
-            longitude: longitude,
-            userType: userType);
+    id: id,
+    profileImage: image,
+    userName: userName,
+    nickName: nickName,
+    userCode: userCode,
+    email: email,
+    phoneNumber: phoneNumber,
+    shortDesc: shortDesc,
+    country: country,
+    city: city,
+    password: password,
+    latitude: latitude,
+    longitude: longitude,
+    userType: userType,
+    offersAdded: offersAdded,
+    offersLiked: offersLiked,
+    comments: comments,
+    points: points
+  );
 
   CompanyUser.fromMap(Map<String, dynamic> userInfo, String uId)
       : super.fromMap(userInfo, uId) {
-    this.regImages = userInfo['regImage']?? [];
-    this.regNumber = userInfo['regNumber']?? '';
+    this.regImages = userInfo['regImage'] ?? [];
+    this.regNumber = userInfo['regNumber'] ?? '';
   }
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'profileImage': profileImage,
-        'userName': userName,
-        'nickName': nickName,
-        'userCode': userCode,
-        'email': email,
-        'phoneNumber': phoneNumber,
-        'shortDesc': shortDesc,
-        'country': country,
-        'city': city,
-        'latitude': latitude,
-        'longitude': longitude,
-        'password': password,
-        'userType': userType,
+    'id': id,
+    'profileImage': profileImage,
+    'userName': userName,
+    'nickName': nickName,
+    'userCode': userCode,
+    'email': email,
+    'phoneNumber': phoneNumber,
+    'shortDesc': shortDesc,
+    'country': country,
+    'city': city,
+    'latitude': latitude,
+    'longitude': longitude,
+    'password': password,
+    'userType': userType,
+    'offersAdded': offersAdded,
+    'offersLiked': offersLiked,
+    'comments': comments,
+    'points': points,
         'regImages': regImages,
         'regNumber': regNumber
       };

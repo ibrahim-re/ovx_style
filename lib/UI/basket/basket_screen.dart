@@ -1,78 +1,79 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/basket/widgets/basket_dismissible.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 
-class basketScreen extends StatelessWidget {
+final List<Map<String, dynamic>> tempData = [
+  {
+    'image':
+    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
+    "price": 120,
+    "descreption":
+    " Lorem Ipsum has been the industry's standard dummy text ever since",
+  },
+  {
+    'image':
+    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
+    "price": 120,
+    "descreption":
+    " Lorem Ipsum has been the industry's standard dummy text ever since",
+  },
+  {
+    'image':
+    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
+    "price": 120,
+    "descreption":
+    " Lorem Ipsum has been the industry's standard dummy text ever since",
+  },
+  {
+    'image':
+    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
+    "price": 120,
+    "descreption":
+    " Lorem Ipsum has been the industry's standard dummy text ever since",
+  },
+  {
+    'image':
+    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
+    "price": 120,
+    "descreption":
+    " Lorem Ipsum has been the industry's standard dummy text ever since",
+  },
+  {
+    'image':
+    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
+    "price": 120,
+    "descreption":
+    " Lorem Ipsum has been the industry's standard dummy text ever since",
+  },
+];
+
+class BasketScreen extends StatelessWidget {
   final navigator;
 
-  basketScreen({Key? key, this.navigator}) : super(key: key);
+  BasketScreen({Key? key, this.navigator}) : super(key: key);
 
-  final List<Map<String, dynamic>> tempData = [
-    {
-      'image':
-          "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-      "price": 120,
-      "descreption":
-          " Lorem Ipsum has been the industry's standard dummy text ever since",
-    },
-    {
-      'image':
-          "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-      "price": 120,
-      "descreption":
-          " Lorem Ipsum has been the industry's standard dummy text ever since",
-    },
-    {
-      'image':
-          "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-      "price": 120,
-      "descreption":
-          " Lorem Ipsum has been the industry's standard dummy text ever since",
-    },
-    {
-      'image':
-          "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-      "price": 120,
-      "descreption":
-          " Lorem Ipsum has been the industry's standard dummy text ever since",
-    },
-    {
-      'image':
-          "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-      "price": 120,
-      "descreption":
-          " Lorem Ipsum has been the industry's standard dummy text ever since",
-    },
-    {
-      'image':
-          "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-      "price": 120,
-      "descreption":
-          " Lorem Ipsum has been the industry's standard dummy text ever since",
-    },
-  ];
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<BasketBloc>(
+      create: (context) => BasketBloc(),
+      child: BasketWidget(),
+    );
+  }
+}
+
+class BasketWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Basket'.tr()),
-        leading: IconButton(
-            padding: const EdgeInsets.all(0),
-            onPressed: () {
-              NamedNavigatorImpl().push(
-                NamedRoutes.HOME_SCREEN,
-                replace: true,
-                clean: true,
-              );
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: MyColors.secondaryColor,
-            )),
-        titleSpacing: 0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,28 +82,23 @@ class basketScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16),
             child: Text(
               'Products'.tr(),
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
+              style: Constants.TEXT_STYLE8.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
           Expanded(
             child: Container(
-              child: ListView.separated(
+              child: ListView.builder(
                 itemBuilder: (_, index) => basketDismissible(
                   imageUrl: tempData[index]['image'],
                   descreption: tempData[index]['descreption'],
                   price: tempData[index]['price'].toString(),
                 ),
-                separatorBuilder: (_, index) => const SizedBox(height: 0),
                 itemCount: tempData.length,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Divider(
               color: MyColors.grey.withOpacity(0.3),
               thickness: 2,
@@ -119,9 +115,7 @@ class basketScreen extends StatelessWidget {
               children: [
                 Text(
                   'Total',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                  style: Constants.TEXT_STYLE8.copyWith(fontSize: 20),
                 ),
                 Spacer(),
                 Text(
@@ -136,8 +130,7 @@ class basketScreen extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              NamedNavigatorImpl()
-                  .push(NamedRoutes.CheckOut, replace: true, clean: true);
+              NamedNavigatorImpl().push(NamedRoutes.CheckOut);
             },
             child: Container(
               alignment: Alignment.center,
@@ -162,3 +155,5 @@ class basketScreen extends StatelessWidget {
     );
   }
 }
+
+

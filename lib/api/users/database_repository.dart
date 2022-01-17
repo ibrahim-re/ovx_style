@@ -13,7 +13,8 @@ abstract class DatabaseRepository {
   Future<List<String>> uploadFilesToStorage(List<String> filePaths, String uId, String path);
   Future<User> getUserById(String uId);
   Future<void> updateOfferLiked(String offerId, String userId, bool likeOrDislike);
-  //Future<String> getUserType(String uId);
+  Future<void> updateComments(String offerId, String userId);
+  Future<String> getUserType(String uId);
 }
 
 class DatabaseRepositoryImpl extends DatabaseRepository {
@@ -72,10 +73,12 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
       final userData = snapshot.data() as Map<String, dynamic>;
       final User user;
 
-      if(userData['userType'] == UserType.Person.toString())
-       user = PersonUser.fromMap(userData, uId);
-      else
+      if(userData['userType'] == UserType.Person.toString()){
+        user = PersonUser.fromMap(userData, uId);
+      }
+      else{
         user = CompanyUser.fromMap(userData, uId);
+      }
 
       return user;
     } catch (e) {
@@ -99,15 +102,31 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     }
   }
 
-  // @override
-  // Future<String> getUserType(String uId) async {
-  //   final snapshot = await _users.doc(uId).get();
-  //   final data = snapshot.data() as Map<String, dynamic>;
-  //   String userType = data['userType'];
-  //
-  //   print(userType);
-  //   return userType;
-  // }
+  @override
+  Future<void> updateComments(String offerId, String userId) async {
+    try {
+      if(SharedPref.currentUser.comments!.contains(offerId))
+        await _users.doc(userId).update({'comments': FieldValue.arrayRemove([offerId]),
+      }).then((_) {SharedPref.currentUser.comments!.remove(offerId);});
+
+      else
+        await _users.doc(userId).update({'comments': FieldValue.arrayUnion([offerId]),
+        }).then((_) {SharedPref.currentUser.comments!.add(offerId);});
+
+    } catch (e) {
+    print('error is $e');
+    }
+
+  }
+
+  @override
+  Future<String> getUserType(String uId) async {
+    final snapshot = await _users.doc(uId).get();
+    final data = snapshot.data() as Map<String, dynamic>;
+    String userType = data['userType'];
+
+    return userType;
+  }
 
 
 

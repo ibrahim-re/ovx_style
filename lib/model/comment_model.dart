@@ -1,13 +1,23 @@
-class comment {
+class CommentModel {
+  String? id;
   String? ownerId;
   String? content;
   String? userName;
   String? userImage;
 
-  comment.fromJson(Map<String, dynamic> json) {
-    ownerId = json['userId'];
-    content = json['content'];
-    userName = json['userName'];
-    userImage = json['userImage'];
+  CommentModel({
+    this.id,
+    this.userName,
+    this.userImage,
+    this.content,
+    this.ownerId,
+  });
+
+  CommentModel.fromMap(Map<String, dynamic> map) {
+    id = map['id'];
+    ownerId = map['userId'];
+    content = map['content'];
+    userName = map['userName'];
+    userImage = map['userImage'];
   }
 }

@@ -195,7 +195,7 @@ class NamedNavigatorImpl implements NamedNavigator {
 
       case NamedRoutes.Basket:
         return PageTransition(
-            child: basketScreen(
+            child: BasketScreen(
               navigator: navigatorState,
             ),
             type: PageTransitionType.rightToLeft,

@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
-import 'package:ovx_style/bloc/comments_bloc/add_comment.dart';
-import 'package:ovx_style/bloc/comments_bloc/add_comment_events.dart';
-import 'package:ovx_style/bloc/comments_bloc/add_comment_states.dart';
+import 'package:ovx_style/bloc/comment_bloc/comment_bloc.dart';
+import 'package:ovx_style/bloc/comment_bloc/comment_events.dart';
+import 'package:ovx_style/bloc/comment_bloc/comment_states.dart';
 
 class AddCommentSection extends StatefulWidget {
   AddCommentSection({
     Key? key,
     required this.offerId,
+    required this.offerOwnerId,
   }) : super(key: key);
 
   final String offerId;
+  final String offerOwnerId;
+
   @override
   State<AddCommentSection> createState() => _AddCommentSectionState();
 }
@@ -22,20 +27,15 @@ class _AddCommentSectionState extends State<AddCommentSection> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<addComment>(context);
-
+    final bloc = BlocProvider.of<CommentBloc>(context, listen: false);
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      margin: const EdgeInsets.only(top: 16, bottom: 10, left: 10, right: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Comments',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
+            'comments'.tr(),
+            style: Constants.TEXT_STYLE8.copyWith(fontSize: 20),
           ),
           const SizedBox(height: 10),
           Container(
@@ -50,43 +50,67 @@ class _AddCommentSectionState extends State<AddCommentSection> {
               children: [
                 CircleAvatar(
                   radius: 15,
-                  backgroundImage: Image(
-                      image: NetworkImage(
-                    SharedPref.currentUser.profileImage!,
-                  )).image,
+                  backgroundImage: SharedPref.currentUser.profileImage! != ''
+                      ? Image.network(SharedPref.currentUser.profileImage!)
+                          .image
+                      : AssetImage('assets/images/default_profile.jpg'),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                    child: TextField(
-                  controller: commentController,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Add Comment',
-                  ),
-                  onSubmitted: (String value) {
-                    setState(
-                      () => commentController.text = value,
-                    );
-                  },
-                )),
-                IconButton(
-                    splashRadius: 10,
-                    onPressed: () {
-                      bloc.add(
-                        addCommentButtonPressed(
-                            SharedPref.currentUser.id!,
-                            widget.offerId,
-                            commentController.text.trim(),
-                            SharedPref.currentUser.userName!,
-                            SharedPref.currentUser.profileImage!),
-                      );
-
-                      commentController.clear();
+                  child: TextField(
+                    controller: commentController,
+                    cursorColor: MyColors.secondaryColor,
+                    cursorWidth: 2,
+                    style: Constants.TEXT_STYLE1.copyWith(color: MyColors.black),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'add comment'.tr(),
+                      hintStyle: Constants.TEXT_STYLE1,
+                    ),
+                    onSubmitted: (String value) {
+                      commentController.text = value;
                     },
-                    icon: Icon(
-                      Icons.send,
-                      color: MyColors.secondaryColor,
-                    ))
+                  ),
+                ),
+                BlocBuilder<CommentBloc, CommentState>(
+                  builder: (context, state) {
+                    if (state is AddCommentLoadingState)
+                      return Center(
+                        child: SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: MyColors.secondaryColor,
+                          ),
+                        ),
+                      );
+                    else
+                      return IconButton(
+                        splashRadius: 10,
+                        onPressed: () {
+                          if(commentController.text.isEmpty)
+                            return;
+                          else
+                            bloc.add(
+                            AddCommentButtonPressed(
+                              SharedPref.currentUser.id!,
+                              widget.offerId,
+                              commentController.text.trim(),
+                              SharedPref.currentUser.userName!,
+                              SharedPref.currentUser.profileImage!,
+                              widget.offerOwnerId,
+                            ),
+                          );
+
+                          commentController.clear();
+                        },
+                        icon: Icon(
+                          Icons.send,
+                          color: MyColors.secondaryColor,
+                        ),
+                      );
+                  },
+                ),
               ],
             ),
           ),

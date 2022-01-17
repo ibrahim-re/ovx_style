@@ -20,9 +20,12 @@ class _ShipToSectionState extends State<ShipToSection> {
   @override
   Widget build(BuildContext context) {
     if (widget.shippingCosts.isEmpty)
-      return Text(
-        'no shipping'.tr(),
-        style: Constants.TEXT_STYLE8,
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Text(
+          'no shipping'.tr(),
+          style: Constants.TEXT_STYLE8,
+        ),
       );
     else
       return Container(

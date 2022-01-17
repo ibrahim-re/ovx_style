@@ -19,7 +19,6 @@ class PostItemBuilder extends StatelessWidget {
       onTap: () {
         NamedNavigatorImpl().push(
           NamedRoutes.Post_Details,
-          clean: true,
           arguments: {'post': postOffer},
         );
       },

@@ -125,12 +125,15 @@ class OtherUserProfile extends StatelessWidget {
             builder: (ctx, state) {
               if (state is FetchOffersLoading)
                 return WaitingOffersListView();
-              else if (state is FetchOffersSucceed)
+              else if (state is FetchOffersSucceed) {
+                //get this user offers
+                final userOffers = state.fetchedOffers.where((offer) => offer.offerOwnerId == user.id).toList();
                 return OffersListView(
-                  fetchedOffers: state.fetchedOffers,
+                  fetchedOffers: userOffers,
                   scrollPhysics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                 );
+              }
               else if (state is FetchOffersFailed)
                 return Center(
                     child: Text(

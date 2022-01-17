@@ -1,15 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/model/product_property.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 class ProductImageSection extends StatelessWidget {
   const ProductImageSection({
     Key? key,
+    required this.offerOwnerId,
     required this.productImages,
     required this.description,
     required this.categories,
@@ -18,7 +21,7 @@ class ProductImageSection extends StatelessWidget {
   }) : super(key: key);
 
   final List<String> productImages, categories;
-  final String description, status;
+  final String description, status, offerOwnerId;
   final List<ProductProperty> properties;
 
   @override
@@ -58,13 +61,7 @@ class ProductImageSection extends StatelessWidget {
                 ),
               ),
               Spacer(),
-              GestureDetector(
-                onTap: () {},
-                child: Icon(
-                  Icons.more_vert,
-                  color: MyColors.secondaryColor,
-                ),
-              ),
+              CustomPopUpMenu(ownerId: offerOwnerId,),
             ],
           ),
         ),

@@ -8,6 +8,7 @@ import 'package:ovx_style/api/offers/offers_repository.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
+import 'package:ovx_style/model/comment_model.dart';
 import 'package:ovx_style/model/offer.dart';
 import 'package:ovx_style/model/product_property.dart';
 
@@ -23,6 +24,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
   String _offerName = '';
   List<String> _categories = [];
   List<String> likes = [];
+  List<CommentModel> comments = [];
   String _status = '';
   double _vat = 0;
   double _discount = 0;
@@ -77,6 +79,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
             offerType: event.offerType,
             offerCreationDate: DateTime.now(),
             likes: likes,
+            comments: comments,
           );
 
           //add offer then add offerId to user data
@@ -113,6 +116,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           offerType: event.offerType,
           shortDesc: event.shortDesc,
           likes: likes,
+          comments: comments,
           offerCreationDate: DateTime.now(),
         );
 
@@ -145,6 +149,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           offerOwnerId: offerOwnerId,
           offerType: event.offerType,
           likes: likes,
+          comments: comments,
           offerCreationDate: DateTime.now(),
         );
 
@@ -177,6 +182,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           offerOwnerId: offerOwnerId,
           offerType: event.offerType,
           likes: likes,
+          comments: comments,
           offerCreationDate: DateTime.now(),
         );
 

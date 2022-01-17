@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ovx_style/UI/offer_details/img_details_widget/image_section.dart';
+import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/UI/offer_details/widget/users_comments_section.dart';
 import 'widget/add_comment_section.dart';
 import 'package:ovx_style/UI/offers/widgets/offer_owner_row.dart';
@@ -27,13 +28,17 @@ class ImageDetailsScreen extends StatelessWidget {
           ImageSection(
             offerImages: offer.offerMedia!,
           ),
-          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerRight,
+            child: CustomPopUpMenu(ownerId: offer.offerOwnerId,),
+          ),
           AddCommentSection(
             offerId: offer.id!,
+            offerOwnerId: offer.offerOwnerId!,
           ),
           UsersComments(
             offerId: offer.id!,
-            usersComment: offer.comments ?? [],
+            offerOwnerId: offer.offerOwnerId!,
           ),
         ],
       ),

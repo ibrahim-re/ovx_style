@@ -62,16 +62,7 @@ class _videoDetailsState extends State<videoDetails> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () =>
-              NamedNavigatorImpl().push(NamedRoutes.HOME_SCREEN, clean: true),
-          icon: Icon(
-            Icons.arrow_back,
-            color: MyColors.lightBlue,
-          ),
-        ),
-      ),
+      appBar: AppBar(),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 14),
         children: [
@@ -130,10 +121,11 @@ class _videoDetailsState extends State<videoDetails> {
           const SizedBox(height: 10),
           AddCommentSection(
             offerId: widget.video.id!,
+            offerOwnerId: widget.video.offerOwnerId!,
           ),
           UsersComments(
             offerId: widget.video.id!,
-            usersComment: widget.video.comments ?? [],
+            offerOwnerId: widget.video.offerOwnerId!,
           ),
         ],
       ),
