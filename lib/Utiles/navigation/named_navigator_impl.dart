@@ -5,6 +5,7 @@ import 'package:ovx_style/UI/auth/reset_password_screen.dart';
 import 'package:ovx_style/UI/auth/signup_screen.dart';
 import 'package:ovx_style/UI/basket/basket_screen.dart';
 import 'package:ovx_style/UI/checkout/checkout_screen.dart';
+import 'package:ovx_style/UI/edit_profile/edit_profile_screen.dart';
 import 'package:ovx_style/UI/google_maps_screen.dart';
 import 'package:ovx_style/UI/home_screen.dart';
 import 'package:ovx_style/UI/intro/auth_options_screen.dart';
@@ -129,7 +130,7 @@ class NamedNavigatorImpl implements NamedNavigator {
               duration: const Duration(milliseconds: 500));
         }
 
-      case NamedRoutes.vodeo_Details:
+      case NamedRoutes.Video_Details:
         {
           final data = settings.arguments as Map<String, dynamic>;
           final VideoOffer video = data['video'];
@@ -201,17 +202,31 @@ class NamedNavigatorImpl implements NamedNavigator {
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
 
-      case NamedRoutes.CheckOut:
+      case NamedRoutes.CheckOut:{
+        final data = settings.arguments as Map<String, dynamic>;
+
         return PageTransition(
             child: checkOutScreen(
+              navigator: navigatorState,
+              subtotal: data['total'],
+              vat: data['vat'],
+              shippingCost: data['shipping cost'],
+            ),
+            type: PageTransitionType.rightToLeft,
+            duration: const Duration(milliseconds: 500));
+      }
+
+      case NamedRoutes.Payment:
+        return PageTransition(
+            child: PaymentScreen(
               navigator: navigatorState,
             ),
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
 
-      case NamedRoutes.Payment:
+      case NamedRoutes.EDIT_PROFILE_SCREEN:
         return PageTransition(
-            child: paymentScreen(
+            child: EditProfileScreen(
               navigator: navigatorState,
             ),
             type: PageTransitionType.rightToLeft,

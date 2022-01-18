@@ -1,6 +1,8 @@
 // offer type= product
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
@@ -10,6 +12,7 @@ import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
 import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/model/offer.dart';
 import 'package:provider/src/provider.dart';
@@ -65,6 +68,9 @@ class ProductItemBuilder extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
+                      //in case no shipping
+                      double selectedShippingPrice = productOffer.shippingCosts!.isNotEmpty ? productOffer.shippingCosts!.values.first : 0;
+                      String shipTo = productOffer.shippingCosts!.isNotEmpty ? productOffer.shippingCosts!.keys.first : '';
                       //get price and see if there is discount
                       double price = productOffer.properties!.first.sizes!.first.price!;
                       if(productOffer.discount != 0)
@@ -73,15 +79,24 @@ class ProductItemBuilder extends StatelessWidget {
                       //add item to basket
                       context.read<BasketBloc>().add(
                         AddItemToBasketEvent(
+                          productOffer.id!,
                           productOffer.offerName!,
                           productOffer.offerMedia!.first,
                           productOffer.properties!.first.sizes!.first.size!,
                           price,
                           productOffer.properties!.first.color!,
+                          productOffer.vat ?? 0,
+                          selectedShippingPrice,
+                          shipTo,
                         ),
                       );
                     },
-                    child: Padding(
+                    child: BlocListener<BasketBloc, BasketState>(
+                      listener: (context, state) {
+                        if (state is ItemAddedToBasket)
+                          EasyLoading.showToast('item added to basket'.tr());
+                      },
+                      child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: CircleAvatar(
                         backgroundColor: MyColors.primaryColor,
@@ -91,7 +106,7 @@ class ProductItemBuilder extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                         ),
                       ),
-                    ),
+                    ),),
                   ),
                 ],
               ),

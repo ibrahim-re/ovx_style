@@ -3,10 +3,10 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 
-class paymentScreen extends StatelessWidget {
+class PaymentScreen extends StatelessWidget {
   final navigator;
 
-  const paymentScreen({Key? key, this.navigator}) : super(key: key);
+  const PaymentScreen({Key? key, this.navigator}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

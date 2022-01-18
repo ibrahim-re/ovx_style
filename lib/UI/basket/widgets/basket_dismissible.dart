@@ -24,7 +24,7 @@ class basketDismissible extends StatelessWidget {
       direction: DismissDirection.startToEnd,
       background: Container(
         alignment: Alignment.centerLeft,
-        color: Colors.red.withOpacity(.7),
+        color: MyColors.red,
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: SvgPicture.asset(

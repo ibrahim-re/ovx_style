@@ -3,6 +3,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/helper/basket_helper.dart';
 
 class ShipToSection extends StatefulWidget {
   const ShipToSection({Key? key, required this.shippingCosts})
@@ -18,6 +19,12 @@ class _ShipToSectionState extends State<ShipToSection> {
   int currentIndex = 0;
 
   @override
+  void dispose() {
+    BasketHelper.tempShippingCost = 0;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (widget.shippingCosts.isEmpty)
       return Container(
@@ -27,7 +34,15 @@ class _ShipToSectionState extends State<ShipToSection> {
           style: Constants.TEXT_STYLE8,
         ),
       );
-    else
+    else {
+
+      //this is in case the user doesn't click on any country
+      if(BasketHelper.tempShippingCost ==0){
+        BasketHelper.tempShippingCost = widget.shippingCosts.values.first;
+        BasketHelper.shipTo = widget.shippingCosts.keys.first;
+      }
+
+
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Wrap(
@@ -46,34 +61,40 @@ class _ShipToSectionState extends State<ShipToSection> {
               direction: Axis.horizontal,
               children: widget.shippingCosts.keys
                   .map(
-                    (k) => GestureDetector(
-                      onTap: () {
-                        setState(() => currentIndex =
-                            widget.shippingCosts.keys.toList().indexOf(k));
-                        EasyLoading.showInfo(
-                            'Shipping cost for this country is ${widget.shippingCosts[k]} \$');
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 6),
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: currentIndex ==
-                                  widget.shippingCosts.keys.toList().indexOf(k)
-                              ? MyColors.lightBlue
-                              : MyColors.lightBlue.withOpacity(0.2),
-                        ),
-                        child: Text(k,
-                            style: TextStyle(
-                              color: Colors.black,
-                            )),
-                      ),
+                    (key) => GestureDetector(
+                  onTap: () {
+                    setState(() => currentIndex =
+                        widget.shippingCosts.keys.toList().indexOf(key));
+
+                    BasketHelper.tempShippingCost = widget.shippingCosts[key]!;
+                    BasketHelper.shipTo = key; //key is the country name
+
+                    print(BasketHelper.tempShippingCost);
+                    EasyLoading.showInfo(
+                        'Shipping cost for this country is ${widget.shippingCosts[key]} \$');
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 6),
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: currentIndex ==
+                          widget.shippingCosts.keys.toList().indexOf(key)
+                          ? MyColors.lightBlue
+                          : MyColors.lightBlue.withOpacity(0.2),
                     ),
-                  )
+                    child: Text(key,
+                        style: TextStyle(
+                          color: Colors.black,
+                        )),
+                  ),
+                ),
+              )
                   .toList(),
             ),
           ],
         ),
       );
+    }
   }
 }

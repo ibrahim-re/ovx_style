@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
+import 'package:ovx_style/helper/basket_helper.dart';
 import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/model/product_property.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,14 +16,17 @@ class PropertiesSection extends StatefulWidget {
   const PropertiesSection({
     Key? key,
     required this.offerProperties,
+    required this.productId,
     required this.discount,
     required this.title,
     required this.image,
+    required this.vat,
   }) : super(key: key);
 
   final List<ProductProperty> offerProperties;
   final double discount;
-  final String title, image;
+  final String title, image, productId;
+  final double vat;
 
   @override
   State<PropertiesSection> createState() => _PropertiesSectionState();
@@ -42,28 +48,37 @@ class _PropertiesSectionState extends State<PropertiesSection> {
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () {
-
-                      //add item to basket
-                      context.read<BasketBloc>().add(
-                            AddItemToBasketEvent(
-                              widget.title,
-                              widget.image,
-                              properties[selectedPropertyIndex]
-                                  .sizes![selectedSizeIndex]
-                                  .size!,
-                              currentItemPrice!,
-                              properties[selectedPropertyIndex].color!,
-                            ),
-                          );
+                  BlocListener<BasketBloc, BasketState>(
+                    listener: (context, state) {
+                      if (state is ItemAddedToBasket)
+                        EasyLoading.showToast('item added to basket'.tr());
                     },
-                    child: Text(
-                      'add to basket'.tr(),
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.greenAccent,
+                    child: TextButton(
+                      onPressed: () {
+                        //add item to basket
+                        context.read<BasketBloc>().add(
+                              AddItemToBasketEvent(
+                                widget.productId,
+                                widget.title,
+                                widget.image,
+                                properties[selectedPropertyIndex]
+                                    .sizes![selectedSizeIndex]
+                                    .size!,
+                                currentItemPrice!,
+                                properties[selectedPropertyIndex].color!,
+                                widget.vat,
+                                BasketHelper.tempShippingCost,
+                                BasketHelper.shipTo,
+                              ),
+                            );
+                      },
+                      child: Text(
+                        'add to basket'.tr(),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.greenAccent,
+                        ),
                       ),
                     ),
                   ),
@@ -79,29 +94,40 @@ class _PropertiesSectionState extends State<PropertiesSection> {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      double priceAfterDiscount = Helper().priceAfterDiscount(currentItemPrice!, widget.discount);
-
-                      //add item to basket
-                      context.read<BasketBloc>().add(
-                            AddItemToBasketEvent(
-                              widget.title,
-                              widget.image,
-                              properties[selectedPropertyIndex]
-                                  .sizes![selectedSizeIndex]
-                                  .size!,
-                              priceAfterDiscount,
-                              properties[selectedPropertyIndex].color!,
-                            ),
-                          );
+                  BlocListener<BasketBloc, BasketState>(
+                    listener: (context, state) {
+                      if (state is ItemAddedToBasket)
+                        EasyLoading.showToast('item added to basket'.tr());
                     },
-                    child: Text(
-                      'add to basket'.tr(),
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.greenAccent,
+                    child: TextButton(
+                      onPressed: () {
+                        double priceAfterDiscount = Helper().priceAfterDiscount(
+                            currentItemPrice!, widget.discount);
+
+                        //add item to basket
+                        context.read<BasketBloc>().add(
+                              AddItemToBasketEvent(
+                                widget.productId,
+                                widget.title,
+                                widget.image,
+                                properties[selectedPropertyIndex]
+                                    .sizes![selectedSizeIndex]
+                                    .size!,
+                                priceAfterDiscount,
+                                properties[selectedPropertyIndex].color!,
+                                widget.vat,
+                                BasketHelper.tempShippingCost,
+                                BasketHelper.shipTo,
+                              ),
+                            );
+                      },
+                      child: Text(
+                        'add to basket'.tr(),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.greenAccent,
+                        ),
                       ),
                     ),
                   ),

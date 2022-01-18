@@ -59,7 +59,7 @@ class _VideoItemBuilderState extends State<VideoItemBuilder> {
     final screenHeight = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () {
-        NamedNavigatorImpl().push(NamedRoutes.vodeo_Details, arguments: {'video': widget.videoOffer});
+        NamedNavigatorImpl().push(NamedRoutes.Video_Details, arguments: {'video': widget.videoOffer});
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),

@@ -89,6 +89,7 @@ class MarketingApp extends StatelessWidget {
             fontSize: 18,
             fontWeight: FontWeight.w400,
             color: MyColors.secondaryColor,
+            letterSpacing: 0.5
           ),
           iconTheme: IconThemeData(
             color: MyColors.secondaryColor,

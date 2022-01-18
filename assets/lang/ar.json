@@ -114,9 +114,26 @@
   "basket":"السلة",
   "sizes": "القياسات",
   "ship to": "شحن إلى",
+  "vat": "V.A.T",
 
   "no shipping": "لا يوجد شحن",
   "no features": "لا يوجد ميزات لهذا العرض",
   "comments": "التعليقات",
-  "add comment": "إضافة تعليق"
+  "add comment": "إضافة تعليق",
+  "add to basket": "إضافة إلى السلة",
+  "total": "المجموع",
+  "subtotal": "المجموع الجزئي",
+  "checkout": "نص",
+  "empty cart": "السلة فارغة، \nإبدأ بإضافة بعض المنتجات",
+  "item added to basket": "تم إضافة المنتج إلى السلة",
+  "send gift": "أرسل كهدية",
+  "settings": "الإعدادات",
+  "mute noti": "إلغاء صوت الإشعارات",
+  "policy and terms": "الخصوصية وشروط الاستخدام",
+  "help": "المساعدة",
+  "logout": "تسجيل الخروج",
+  "edit profile": "تعديل معلومات الحساب",
+  "pay": "ادفع",
+  "enter friend code": "من فضلك، أدخل كود المستخدم:",
+  "friend code": "كود المستخدم"
 }

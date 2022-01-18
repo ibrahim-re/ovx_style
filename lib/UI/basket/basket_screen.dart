@@ -25,13 +25,15 @@ class BasketScreen extends StatelessWidget {
     //get basket items and calculate total
     List<BasketItem> basket = context.read<BasketBloc>().basketItems;
     double basketTotal = BasketHelper.calculateTotal(basket);
+    double vatTotal = BasketHelper.calculateTotalVAT(basket);
+    double shippingCostTotal = BasketHelper.calculateTotalShippingCost(basket);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('basket'.tr()),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(top: 6, bottom: 16, right: 16, left: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -67,7 +69,7 @@ class BasketScreen extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: MyColors.lightGrey,
+                color: MyColors.lightGrey.withOpacity(0.8),
               ),
               child: Row(
                 children: [
@@ -76,10 +78,18 @@ class BasketScreen extends StatelessWidget {
                     style: Constants.TEXT_STYLE8.copyWith(fontSize: 20),
                   ),
                   Spacer(),
-                  Text(
-                    '$basketTotal \$',
-                    style: Constants.PRICE_TEXT_STYLE,
-                  ),
+                  BlocBuilder<BasketBloc, BasketState>(builder: (context, state) {
+
+                    //listen to basket changes and rebuild total widget
+                    basketTotal = BasketHelper.calculateTotal(basket);
+                    vatTotal = BasketHelper.calculateTotalVAT(basket);
+                    shippingCostTotal = BasketHelper.calculateTotalShippingCost(basket);
+
+                    return Text(
+                        '$basketTotal \$',
+                        style: Constants.PRICE_TEXT_STYLE,
+                      );
+                  }),
                 ],
               ),
             ),
@@ -93,7 +103,12 @@ class BasketScreen extends StatelessWidget {
                 function: basket.isEmpty
                     ? null
                     : () {
-                        NamedNavigatorImpl().push(NamedRoutes.CheckOut);
+                        NamedNavigatorImpl()
+                            .push(NamedRoutes.CheckOut, arguments: {
+                          'total': basketTotal,
+                          'vat': vatTotal,
+                          'shipping cost': shippingCostTotal,
+                        });
                       },
               ),
             ),

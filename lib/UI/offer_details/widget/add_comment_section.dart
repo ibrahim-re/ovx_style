@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
@@ -104,10 +105,7 @@ class _AddCommentSectionState extends State<AddCommentSection> {
 
                           commentController.clear();
                         },
-                        icon: Icon(
-                          Icons.send,
-                          color: MyColors.secondaryColor,
-                        ),
+                        icon: SvgPicture.asset('assets/images/comment.svg', fit: BoxFit.scaleDown,),
                       );
                   },
                 ),

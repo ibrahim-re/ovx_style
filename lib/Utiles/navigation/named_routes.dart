@@ -20,10 +20,11 @@ class NamedRoutes {
   static const Product_Details = "Product_Details";
   static const Post_Image_Details = "Post_Image_Details";
   static const Post_Details = "Post_Details";
-  static const vodeo_Details = "vodeo_Details";
+  static const Video_Details = "Video_Details";
 
   static const USER_PROFILE_SCREEN = "USER_PROFILE_SCREEN";
   static const OTHER_USER_PROFILE = "OTHER_USER_PROFILE";
+  static const EDIT_PROFILE_SCREEN = "EDIT_PROFILE_SCREEN";
   static const Basket = "Basket";
   static const CheckOut = "CheckOut";
   static const Payment = "Payment";

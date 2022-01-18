@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 
 class checkoutItem extends StatelessWidget {
   const checkoutItem({
@@ -8,7 +10,8 @@ class checkoutItem extends StatelessWidget {
     required this.value,
   }) : super(key: key);
 
-  final String text, value;
+  final String text;
+  final double value;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,14 +22,15 @@ class checkoutItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(child: Text(text)),
-          Text(
-            value + ' \$',
-            style: TextStyle(
-              color: MyColors.secondaryColor,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+          Expanded(
+            child: Text(
+              text,
+              style: Constants.TEXT_STYLE4.copyWith(fontWeight: FontWeight.w500, fontSize: 17),
             ),
+          ),
+          Text(
+            '$value \$',
+            style: Constants.PRICE_TEXT_STYLE,
           ),
         ],
       ),

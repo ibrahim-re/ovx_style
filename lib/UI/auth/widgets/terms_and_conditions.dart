@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
 
 class TermsAndConditions extends StatefulWidget {
@@ -38,7 +39,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              _showTermsAndConditions(context);
+              ModalSheets().showTermsAndConditions(context);
             },
             child: RichText(
               text: TextSpan(
@@ -68,27 +69,5 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
     );
   }
 
-  void _showTermsAndConditions(context) {
-    showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-          ),
-        ),
-        builder: (BuildContext ctx) {
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                child: Text(
-                  'terms and conds'.tr(),
-                  style: Constants.TEXT_STYLE1,
-                ),
-              ),
-            ),
-          );
-        });
-  }
+
 }

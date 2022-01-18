@@ -81,6 +81,7 @@
   "category": "Category",
   "status": "Status",
   "include vat": "Include V-A-T",
+  "vat": "V.A.T",
   "discount": "Discount (%)",
   "end date": "End Date",
   "upload offer photo": "Upload offer photos / up to 5 photos",
@@ -124,8 +125,20 @@
   "comments": "Comments",
   "add comment": "Add Comment",
   "add to basket": "Add To Basket",
+  "pay": "Pay",
 
   "checkout": "CheckOut",
   "total": "Total",
-  "empty cart": "Your cart is empty. \nStart adding some products"
+  "subtotal": "Subtotal",
+  "empty cart": "Your cart is empty. \nStart adding some products",
+  "item added to basket": "Item added to basket",
+  "send gift": "Send As a Gift",
+  "settings": "Settings",
+  "mute noti": "Mute Notifications",
+  "policy and terms": "Policy & Terms of Conditions",
+  "help": "Help",
+  "logout": "logout",
+  "edit profile": "Edit profile",
+  "enter friend code": "Kindly, Enter Your Friend Code:",
+  "friend code": "Friend Code"
 }
