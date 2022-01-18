@@ -122,5 +122,10 @@
   "no shipping": "No shipping",
   "no features": "There Are No Features For this Product",
   "comments": "Comments",
-  "add comment": "Add Comment"
+  "add comment": "Add Comment",
+  "add to basket": "Add To Basket",
+
+  "checkout": "CheckOut",
+  "total": "Total",
+  "empty cart": "Your cart is empty. \nStart adding some products"
 }

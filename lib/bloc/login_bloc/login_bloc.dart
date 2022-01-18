@@ -43,6 +43,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>{
         print('no user logged');
         yield LoginFailed('no user logged in');
       }
+    }else if(event is LoginAsGuest){
+      yield LoginLoading();
+      try {
+        User user = await _authRepositoryImpl.signInAsGuest();
+        if(user.id != null){
+          SharedPref.setUser(user);
+          yield LoginSucceed();
+        } else
+          yield LoginFailed('Login failed');
+      } catch (e) {
+        print('e is $e');
+        String message = 'something wrong'.tr();
+        switch(e){
+          case 'user-disabled': message = 'user disabled'.tr(); break;
+          case 'invalid-email': message = 'enter email'.tr(); break;
+          case 'user-not-found': message = 'user not found'.tr(); break;
+          case 'wrong-password': message = 'password wrong'.tr(); break;
+          case 'network-request-failed': message = 'network error'.tr(); break;
+        }
+        yield LoginFailed(message);
+      }
     }
   }
 }

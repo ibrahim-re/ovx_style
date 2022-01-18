@@ -3,56 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/basket/widgets/basket_dismissible.dart';
+import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
+import 'package:ovx_style/UI/widgets/no_permession_widget.dart';
+import 'package:ovx_style/UI/widgets/space_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
-
-final List<Map<String, dynamic>> tempData = [
-  {
-    'image':
-    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-    "price": 120,
-    "descreption":
-    " Lorem Ipsum has been the industry's standard dummy text ever since",
-  },
-  {
-    'image':
-    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-    "price": 120,
-    "descreption":
-    " Lorem Ipsum has been the industry's standard dummy text ever since",
-  },
-  {
-    'image':
-    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-    "price": 120,
-    "descreption":
-    " Lorem Ipsum has been the industry's standard dummy text ever since",
-  },
-  {
-    'image':
-    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-    "price": 120,
-    "descreption":
-    " Lorem Ipsum has been the industry's standard dummy text ever since",
-  },
-  {
-    'image':
-    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-    "price": 120,
-    "descreption":
-    " Lorem Ipsum has been the industry's standard dummy text ever since",
-  },
-  {
-    'image':
-    "https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg",
-    "price": 120,
-    "descreption":
-    " Lorem Ipsum has been the industry's standard dummy text ever since",
-  },
-];
+import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
+import 'package:ovx_style/helper/basket_helper.dart';
+import 'package:ovx_style/model/basket.dart';
 
 class BasketScreen extends StatelessWidget {
   final navigator;
@@ -61,99 +22,84 @@ class BasketScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BasketBloc>(
-      create: (context) => BasketBloc(),
-      child: BasketWidget(),
-    );
-  }
-}
+    //get basket items and calculate total
+    List<BasketItem> basket = context.read<BasketBloc>().basketItems;
+    double basketTotal = BasketHelper.calculateTotal(basket);
 
-class BasketWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Basket'.tr()),
+        title: Text('basket'.tr()),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(
-              'Products'.tr(),
-              style: Constants.TEXT_STYLE8.copyWith(fontWeight: FontWeight.w500),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'products'.tr(),
+              style:
+                  Constants.TEXT_STYLE8.copyWith(fontWeight: FontWeight.w500),
             ),
-          ),
-          Expanded(
-            child: Container(
-              child: ListView.builder(
-                itemBuilder: (_, index) => basketDismissible(
-                  imageUrl: tempData[index]['image'],
-                  descreption: tempData[index]['descreption'],
-                  price: tempData[index]['price'].toString(),
+            if (basket.isEmpty)
+              Expanded(
+                child: NoDataWidget(
+                  text: 'empty cart'.tr(),
+                  iconName: 'cart',
                 ),
-                itemCount: tempData.length,
+              )
+            else
+              Expanded(
+                child: BlocBuilder<BasketBloc, BasketState>(
+                  builder: (context, state) => ListView.builder(
+                    itemBuilder: (_, index) => basketDismissible(
+                      basketItem: basket[index],
+                    ),
+                    itemCount: basket.length,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Divider(
+            Divider(
               color: MyColors.grey.withOpacity(0.3),
               thickness: 2,
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: MyColors.grey.withOpacity(0.2),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  'Total',
-                  style: Constants.TEXT_STYLE8.copyWith(fontSize: 20),
-                ),
-                Spacer(),
-                Text(
-                  '300 \$',
-                  style: TextStyle(
-                    color: MyColors.secondaryColor,
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              NamedNavigatorImpl().push(NamedRoutes.CheckOut);
-            },
-            child: Container(
-              alignment: Alignment.center,
-              width: double.infinity,
-              margin: const EdgeInsets.fromLTRB(16, 50, 16, 20),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            VerticalSpaceWidget(heightPercentage: 0.02),
+            Container(
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: MyColors.secondaryColor,
+                borderRadius: BorderRadius.circular(12),
+                color: MyColors.lightGrey,
               ),
-              child: Text(
-                'CheckOut'.tr(),
-                style: TextStyle(
-                  fontSize: 20,
-                  color: MyColors.primaryColor,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    'total'.tr(),
+                    style: Constants.TEXT_STYLE8.copyWith(fontSize: 20),
+                  ),
+                  Spacer(),
+                  Text(
+                    '$basketTotal \$',
+                    style: Constants.PRICE_TEXT_STYLE,
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            VerticalSpaceWidget(heightPercentage: 0.02),
+
+            //bloc builder used to listen to basket length
+            BlocBuilder<BasketBloc, BasketState>(
+              builder: (context, state) => CustomElevatedButton(
+                color: MyColors.secondaryColor,
+                text: 'checkout'.tr(),
+                function: basket.isEmpty
+                    ? null
+                    : () {
+                        NamedNavigatorImpl().push(NamedRoutes.CheckOut);
+                      },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-

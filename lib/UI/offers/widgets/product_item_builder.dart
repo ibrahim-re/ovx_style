@@ -8,8 +8,11 @@ import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
 import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/model/offer.dart';
+import 'package:provider/src/provider.dart';
 import 'package:shimmer_image/shimmer_image.dart';
 import 'offer_owner_row.dart';
 
@@ -62,7 +65,21 @@ class ProductItemBuilder extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      print('add to cart');
+                      //get price and see if there is discount
+                      double price = productOffer.properties!.first.sizes!.first.price!;
+                      if(productOffer.discount != 0)
+                        price = Helper().priceAfterDiscount(price, productOffer.discount!);
+
+                      //add item to basket
+                      context.read<BasketBloc>().add(
+                        AddItemToBasketEvent(
+                          productOffer.offerName!,
+                          productOffer.offerMedia!.first,
+                          productOffer.properties!.first.sizes!.first.size!,
+                          price,
+                          productOffer.properties!.first.color!,
+                        ),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),

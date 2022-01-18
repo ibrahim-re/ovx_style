@@ -32,12 +32,6 @@ class Constants {
     color: MyColors.black,
   );
 
-  static const TEXT_STYLE5 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w300,
-    color: MyColors.black,
-  );
-
   static const TEXT_STYLE6 = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,
@@ -56,6 +50,9 @@ class Constants {
     color: MyColors.black,
   );
 
-
-
+  static const PRICE_TEXT_STYLE = TextStyle(
+    color: MyColors.secondaryColor,
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  );
 }

@@ -8,6 +8,7 @@ import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 import 'package:ovx_style/bloc/login_bloc/login_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'Utiles/navigation/named_navigator_impl.dart';
@@ -51,6 +52,9 @@ void main() async {
           ),
           BlocProvider<AddOfferBloc>(
             create: (context) => AddOfferBloc(),
+          ),
+          BlocProvider<BasketBloc>(
+            create: (context) => BasketBloc(),
           ),
         ],
         child: const MarketingApp(),

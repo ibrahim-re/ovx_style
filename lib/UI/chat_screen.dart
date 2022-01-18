@@ -17,7 +17,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     //no chat available for companies
     if(SharedPref.currentUser.userType == UserType.Company.toString())
-      return NoPermissionWidget(text: 'Chat is not available for companies', iconName: 'chat',);
+      return NoDataWidget(text: 'Chat is not available for companies', iconName: 'chat',);
 
     else
       return Center();

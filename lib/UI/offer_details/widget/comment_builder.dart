@@ -5,9 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
+import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/comment_bloc/comment_bloc.dart';
 import 'package:ovx_style/bloc/comment_bloc/comment_events.dart';
+import 'package:ovx_style/helper/auth_helper.dart';
+import 'package:ovx_style/model/user.dart';
 
 class CommentBuilder extends StatelessWidget {
   const CommentBuilder({
@@ -38,11 +42,24 @@ class CommentBuilder extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundImage: userImage != ''
-                ? Image.network(userImage).image
-                : AssetImage('assets/images/default_profile.jpg'),
+          GestureDetector(
+            onTap: () async {
+
+              //check if offer owner is the logged in user
+              if(userId == SharedPref.currentUser.id)
+                NamedNavigatorImpl().push(NamedRoutes.USER_PROFILE_SCREEN);
+              else{
+                User user = await AuthHelper.getUser(userId);
+                NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});
+              }
+
+            },
+            child: CircleAvatar(
+              radius: 20,
+              backgroundImage: userImage != ''
+                  ? Image.network(userImage).image
+                  : AssetImage('assets/images/default_profile.jpg'),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -71,7 +88,7 @@ class CommentBuilder extends StatelessWidget {
             ),
           ),
           CustomPopUpMenu(
-            ownerId: offerOwnerId,
+            ownerId: userId,
             deleteFunction: () {
               bloc.add(
                 DeleteCommentButtonPressed(

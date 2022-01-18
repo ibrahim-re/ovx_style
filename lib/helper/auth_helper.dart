@@ -49,17 +49,30 @@ class AuthHelper {
 
   //generate user code automatically
   static String generateUserCode() {
-    String id = '';
+    String userCode = '';
     AuthHelper.userInfo['userType'] == UserType.Person.toString()
-        ? id = MinId.getId('user{6{d}}')
-        : id = MinId.getId('com{6{d}}');
+        ? userCode = MinId.getId('user{6{d}}')
+        : userCode = MinId.getId('com{6{d}}');
 
-    return id;
+    return userCode;
   }
 
-  static Future<User> getUser(String offerOwnerId) async {
+  //generate guest code and user name
+  static List<String> generateGuestData() {
+    String guestCode = '';
+    String guestUserName = '';
+
+    String code = MinId.getId('{6{d}}');
+
+    guestCode = 'user$code';
+    guestUserName = 'Guest$code';
+
+    return [guestUserName, guestCode];
+  }
+
+  static Future<User> getUser(String userId) async {
     DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
-    User user = await databaseRepositoryImpl.getUserById(offerOwnerId);
+    User user = await databaseRepositoryImpl.getUserById(userId);
     return user;
   }
 }

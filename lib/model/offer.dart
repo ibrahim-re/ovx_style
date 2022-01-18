@@ -86,11 +86,10 @@ class ProductOffer extends Offer {
         );
 
   Map<String, dynamic> toMap() => {
-        'id': id,
         'offerMedia': offerMedia,
         'offerOwnerType': offerOwnerType,
         'offerOwnerId': offerOwnerId,
-        'offersName': offerName,
+        'offerName': offerName,
         'offerCreationDate': offerCreationDate,
         'offerType': offerType,
         'categories': categories,
@@ -159,7 +158,6 @@ class PostOffer extends Offer {
         );
 
   Map<String, dynamic> toMap() => {
-        'id': id,
         'offerMedia': offerMedia,
         'offerOwnerType': offerOwnerType,
         'offerOwnerId': offerOwnerId,
@@ -198,7 +196,6 @@ class ImageOffer extends Offer {
         );
 
   Map<String, dynamic> toMap() => {
-        'id': id,
         'offerMedia': offerMedia,
         'offerOwnerType': offerOwnerType,
         'offerOwnerId': offerOwnerId,
@@ -234,7 +231,6 @@ class VideoOffer extends Offer {
         );
 
   Map<String, dynamic> toMap() => {
-        'id': id,
         'offerMedia': offerMedia,
         'offerOwnerType': offerOwnerType,
         'offerCreationDate': offerCreationDate,

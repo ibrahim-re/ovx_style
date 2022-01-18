@@ -9,6 +9,8 @@ import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
@@ -47,9 +49,15 @@ class _OffersScreenState extends State<OffersScreen> {
                 NamedRoutes.Basket,
               );
             },
-            icon: iconBadge(
-              child: SvgPicture.asset('assets/images/cart.svg'),
-              badgeNumber: 1,
+            icon: BlocBuilder<BasketBloc, BasketState>(
+              builder: (context, state) {
+                int basketItemsCount = context.read<BasketBloc>().basketItems.length;
+
+                return iconBadge(
+                  child: SvgPicture.asset('assets/images/cart.svg'),
+                  badgeNumber: basketItemsCount,
+                );
+              },
             ),
           ),
           IconButton(

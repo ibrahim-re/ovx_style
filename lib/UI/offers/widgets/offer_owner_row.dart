@@ -38,25 +38,29 @@ class OfferOwnerRow extends StatelessWidget {
                   else
                     NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});
                 },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: user.profileImage!.isNotEmpty
-                      ? ProgressiveImage(
-                          image: user.profileImage ?? '',
-                          height: 50,
-                          width: 50,
-                        )
-                      : CircleAvatar(
-                          backgroundColor: MyColors.lightGrey,
-                          child: Image.asset('assets/images/default_profile.jpg'),
-                          radius: 25,
-                        ),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: user.profileImage!.isNotEmpty
+                          ? ProgressiveImage(
+                              image: user.profileImage ?? '',
+                              height: 50,
+                              width: 50,
+                            )
+                          : CircleAvatar(
+                              backgroundColor: MyColors.lightGrey,
+                              child: Image.asset('assets/images/default_profile.jpg'),
+                              radius: 25,
+                            ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      user.userName ?? '',
+                      style: Constants.TEXT_STYLE4.copyWith(fontWeight: FontWeight.w500),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                user.userName ?? '',
-                style: Constants.TEXT_STYLE4.copyWith(fontWeight: FontWeight.w500),
               ),
               Spacer(),
               BlocProvider(

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 class BasketItem{
   String? id;
+  String? imagePath;
   String? title;
   double? price;
   Color? color;
@@ -9,6 +10,7 @@ class BasketItem{
 
   BasketItem({
     required this.id,
+    required this.imagePath,
     required this.price,
     required this.title,
     required this.color,

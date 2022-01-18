@@ -31,15 +31,6 @@ class checkOutScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('CheckOut'.tr()),
-        titleSpacing: 0,
-        leading: IconButton(
-            onPressed: () {
-              NamedNavigatorImpl().push(NamedRoutes.Basket, replace: true);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: MyColors.secondaryColor,
-            )),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),

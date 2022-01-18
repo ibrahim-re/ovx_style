@@ -1,17 +1,26 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
 import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/model/product_property.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PropertiesSection extends StatefulWidget {
-  const PropertiesSection(
-      {Key? key, required this.offerProperties, required this.discount})
-      : super(key: key);
+  const PropertiesSection({
+    Key? key,
+    required this.offerProperties,
+    required this.discount,
+    required this.title,
+    required this.image,
+  }) : super(key: key);
 
   final List<ProductProperty> offerProperties;
   final double discount;
+  final String title, image;
 
   @override
   State<PropertiesSection> createState() => _PropertiesSectionState();
@@ -30,36 +39,88 @@ class _PropertiesSectionState extends State<PropertiesSection> {
     return Column(
       children: [
         widget.discount == 0
-            ? Align(
-                alignment: Alignment.centerRight,
-                child: Text('$currentItemPrice \$',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: MyColors.secondaryColor,
-                    )),
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+
+                      //add item to basket
+                      context.read<BasketBloc>().add(
+                            AddItemToBasketEvent(
+                              widget.title,
+                              widget.image,
+                              properties[selectedPropertyIndex]
+                                  .sizes![selectedSizeIndex]
+                                  .size!,
+                              currentItemPrice!,
+                              properties[selectedPropertyIndex].color!,
+                            ),
+                          );
+                    },
+                    child: Text(
+                      'add to basket'.tr(),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.greenAccent,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    '$currentItemPrice \$',
+                    style: Constants.PRICE_TEXT_STYLE,
+                  ),
+                ],
               )
-            : Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      '$currentItemPrice \$',
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      double priceAfterDiscount = Helper().priceAfterDiscount(currentItemPrice!, widget.discount);
+
+                      //add item to basket
+                      context.read<BasketBloc>().add(
+                            AddItemToBasketEvent(
+                              widget.title,
+                              widget.image,
+                              properties[selectedPropertyIndex]
+                                  .sizes![selectedSizeIndex]
+                                  .size!,
+                              priceAfterDiscount,
+                              properties[selectedPropertyIndex].color!,
+                            ),
+                          );
+                    },
+                    child: Text(
+                      'add to basket'.tr(),
                       style: TextStyle(
-                        fontSize: 16,
-                        decoration: TextDecoration.lineThrough,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.greenAccent,
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${Helper().priceAfterDiscount(currentItemPrice!, widget.discount)} \$',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: MyColors.secondaryColor,
-                      ),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    '$currentItemPrice \$',
+                    style: TextStyle(
+                      fontSize: 16,
+                      decoration: TextDecoration.lineThrough,
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${Helper().priceAfterDiscount(currentItemPrice!, widget.discount)} \$',
+                    style: Constants.PRICE_TEXT_STYLE,
+                  ),
+                ],
               ),
         Container(
           margin: const EdgeInsets.symmetric(vertical: 10),

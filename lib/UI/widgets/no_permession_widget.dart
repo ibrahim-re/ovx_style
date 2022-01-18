@@ -1,20 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 
-class NoPermissionWidget extends StatefulWidget {
+class NoDataWidget extends StatefulWidget {
   final String iconName;
   final String text;
 
-  NoPermissionWidget({required this.text, required this.iconName});
+  NoDataWidget({required this.text, required this.iconName});
 
   @override
-  State<NoPermissionWidget> createState() => _NoPermissionWidgetState();
+  State<NoDataWidget> createState() => _NoDataWidgetState();
 }
 
-class _NoPermissionWidgetState extends State<NoPermissionWidget> with SingleTickerProviderStateMixin {
+class _NoDataWidgetState extends State<NoDataWidget> with SingleTickerProviderStateMixin {
   AnimationController? animationController;
   Animation<Offset>? offsetAnimation;
 
@@ -27,11 +26,6 @@ class _NoPermissionWidgetState extends State<NoPermissionWidget> with SingleTick
     offsetAnimation = Tween<Offset>(
       begin: Offset(-2.5,0),
       end: Offset(0,0),
-    ).animate(animationController!);
-
-    offsetAnimation = Tween<Offset>(
-      begin: Offset(0,0),
-      end: Offset(1.5,0),
     ).animate(animationController!);
 
     animationController!.forward();
@@ -55,8 +49,8 @@ class _NoPermissionWidgetState extends State<NoPermissionWidget> with SingleTick
             child: SvgPicture.asset(
               'assets/images/${widget.iconName}.svg',
               color: MyColors.secondaryColor,
-              height: 100,
-              width: 100,
+              height: 90,
+              width: 90,
             ),
           ),
         ),
@@ -65,7 +59,7 @@ class _NoPermissionWidgetState extends State<NoPermissionWidget> with SingleTick
             widget.text,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 18,
               fontWeight: FontWeight.w500,
               color: MyColors.secondaryColor,
             ),

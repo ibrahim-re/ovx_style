@@ -12,8 +12,10 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
   @override
   Stream<BasketState> mapEventToState(BasketEvent event) async* {
     if (event is AddItemToBasketEvent) {
+
       basketItems.add(BasketItem(
           id: Helper().generateRandomName(),
+          imagePath: event.imagePath,
           price: event.price,
           title: event.title,
           color: event.color,
@@ -21,7 +23,9 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
 
       yield ItemAddedToBasket();
     } else if (event is RemoveItemFromBasketEvent) {
+      basketItems.removeWhere((basketItem) => basketItem.id == event.id);
 
+      yield ItemRemovedFromBasket();
     }
   }
 }

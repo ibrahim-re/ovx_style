@@ -22,7 +22,6 @@ class OtherUserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(user.userName);
     return Scaffold(
       appBar: AppBar(),
       body: ListView(

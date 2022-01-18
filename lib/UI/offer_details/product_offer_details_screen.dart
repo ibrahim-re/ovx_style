@@ -47,6 +47,8 @@ class ProductDetails extends StatelessWidget {
           PropertiesSection(
             offerProperties: offer.properties!,
             discount: offer.discount!,
+            title: offer.offerName!,
+            image: offer.offerMedia!.first,
           ),
           featuresSection(
             isReturnAvailable: offer.isReturnAvailable!,
