@@ -35,7 +35,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>{
         yield LoginFailed(message);
       }
     }else if(event is AppStarted){
-      User user = await SharedPref.getUser();
+      User user = SharedPref.getUser();
       if(user.id != ''){
         print('user logged in');
         yield LoginSucceed();

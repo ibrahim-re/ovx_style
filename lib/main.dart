@@ -69,6 +69,7 @@ class MarketingApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print('active lang is ${translator.activeLocale.toString()}');
     return MaterialApp(
       localizationsDelegates: translator.delegates, // Android + iOS Delegates
       locale: translator.activeLocale, // Active locale

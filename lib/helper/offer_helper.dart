@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/model/offer.dart';
 
 class OfferHelper {
@@ -71,4 +72,27 @@ class OfferHelper {
     offers.removeWhere((offer) => offersToRemove.contains(offer.id));
     return offers;
   }
+
+  //this function is to convert USD values (actual values on the database) to the currency chosen by user
+  static double convertFromUSD(double amount /*USD amount*/) {
+    String convertTo = SharedPref.getCurrency();
+    print('convert to $convertTo');
+    double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(convertTo);
+    print('price is $currencyPriceAgainstDollar');
+
+    //return total amount
+    return amount * currencyPriceAgainstDollar;
+  }
+
+  //this function is to convert NONE USD (value chosen by user) values to the currency used in database USD
+  static Future<double> convertToUSD(double amount /*Non USD amount*/) async {
+    String convertFrom = SharedPref.getCurrency();
+    print('convert from $convertFrom');
+    double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(convertFrom);
+    print('price is $currencyPriceAgainstDollar');
+
+    //return total amount
+    return amount / currencyPriceAgainstDollar;
+  }
+
 }

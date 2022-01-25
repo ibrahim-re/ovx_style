@@ -8,6 +8,7 @@ import 'package:ovx_style/api/offers/offers_repository.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/comment_model.dart';
 import 'package:ovx_style/model/offer.dart';
 import 'package:ovx_style/model/product_property.dart';
@@ -39,6 +40,9 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
   List<String> get categories => _categories;
   List<ProductProperty> get properties => _properties;
 
+
+
+
   @override
   Stream<AddOfferState> mapEventToState(AddOfferEvent event) async* {
     if (event is AddProductOfferButtonPressed) {
@@ -56,10 +60,13 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           //upload offer images to storage if existed
           List<String> urls = [];
           if (_offerImages.isNotEmpty) {
+            EasyLoading.dismiss();
             EasyLoading.show(status: 'uploading images'.tr());
             urls = await databaseRepositoryImpl.uploadFilesToStorage(
                 _offerImages, offerOwnerId, 'offers');
           }
+
+          //await OfferHelper.convertPricesToUSD(_properties);
 
           ProductOffer productOffer = ProductOffer(
             offerMedia: urls,
@@ -109,6 +116,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           urls = await databaseRepositoryImpl.uploadFilesToStorage(
               event.imagesPath, offerOwnerId, 'offers');
         }
+
         PostOffer postOffer = PostOffer(
           offerMedia: urls,
           offerOwnerType: offerOwnerType,
@@ -217,7 +225,8 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
     _offerName = offerName;
   }
 
-  updateProperties(List<ProductSize> sizes, Color color) {
+  updateProperties(List<ProductSize> sizes, Color color) async {
+    //List<Future<ProductSize>> l = sizes.map((size) async => ProductSize(size: size.size, price: size.price = await OfferHelper.convertToUSD(size.price!))).toList();
     _properties.add(ProductProperty(color: color, sizes: sizes));
   }
 

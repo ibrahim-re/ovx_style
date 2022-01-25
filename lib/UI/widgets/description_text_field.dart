@@ -9,11 +9,13 @@ class DescriptionTextField extends StatelessWidget {
   final onSaved;
   final controller;
   final onChanged;
+  final hint;
 
   DescriptionTextField({
     required this.onSaved,
     this.controller,
     this.onChanged,
+    this.hint,
 });
 
   @override
@@ -30,7 +32,7 @@ class DescriptionTextField extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(16),
-        hintText: 'short description'.tr(),
+        hintText: hint == null || hint == '' ? 'short description'.tr() : hint,
         hintStyle: TextStyle(
           fontWeight: FontWeight.w400,
           fontSize: 16,

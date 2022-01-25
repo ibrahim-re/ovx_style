@@ -19,23 +19,52 @@ import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
 import 'package:ovx_style/model/user.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends StatefulWidget {
   final navigator;
 
   const EditProfileScreen({Key? key, this.navigator}) : super(key: key);
 
   @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  final GlobalKey<FormState> _signUpFormKey = GlobalKey<FormState>();
+  late var user;
+
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController nickNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController descController = TextEditingController();
+  TextEditingController regNumberController = TextEditingController();
+
+  @override
+  void initState() {
+    String userType = SharedPref.currentUser.userType!;
+    if(userType == UserType.Person.toString())
+      user = SharedPref.currentUser as PersonUser;
+    else{
+      user = SharedPref.currentUser as CompanyUser;
+      regNumberController.text = user.regNumber;
+    }
+
+    userNameController.text = user.userName!;
+    nickNameController.text = user.nickName!;
+    emailController.text = user.email!;
+    descController.text = user.shortDesc!;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final GlobalKey<FormState> _signUpFormKey = GlobalKey<FormState>();
-    User user = SharedPref.currentUser;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('edit profile'.tr()),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.all(12),
         children: [
           // imageSection(),
           ProfileImage(),
@@ -45,11 +74,17 @@ class EditProfileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CustomTextFormField(
+                  controller: userNameController,
                   icon: 'person',
-                  hint: user.userName,
-                  validateInput: (userInput) {},
+                  hint: '',
+                  validateInput: (userInput) {
+                    if (userInput == "") return 'enter username'.tr();
+                    return null;
+                  },
                   saveInput: (userInput) {
-                    //AuthHelper.userInfo['userName'] = userInput;
+
+                    AuthHelper.userInfo['userName'] = userInput;
+
                   },
                 ),
                 SizedBox(height: screenHeight * 0.015),
@@ -57,11 +92,15 @@ class EditProfileScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextFormField(
+                        controller: nickNameController,
                         icon: 'person',
-                        hint: user.nickName,
+                        hint: '',
                         validateInput: (userInput) {},
                         saveInput: (userInput) {
-                         // AuthHelper.userInfo['nickName'] = userInput;
+
+                          if(userInput != '')
+                            print('nick name is $userInput');
+
                         },
                       ),
                     ),
@@ -74,9 +113,7 @@ class EditProfileScreen extends StatelessWidget {
                         hint: user.userCode,
                         enabled: false,
                         validateInput: (userInput) {},
-                        saveInput: (userInput) {
-                          // AuthHelper.userInfo['nickName'] = userInput;
-                        },
+                        saveInput: (userInput) {},
                       ),
                     ),
                   ],
@@ -85,11 +122,15 @@ class EditProfileScreen extends StatelessWidget {
                   height: screenHeight * 0.015,
                 ),
                 CustomTextFormField(
+                  controller: emailController,
                   icon: 'email',
-                  hint: user.email,
+                  hint: '',
                   validateInput: (userInput) {},
                   saveInput: (userInput) {
-                    //AuthHelper.userInfo['email'] = userInput;
+
+                    if(userInput != '')
+                      print('email is $userInput');
+
                   },
                 ),
                 SizedBox(
@@ -99,25 +140,10 @@ class EditProfileScreen extends StatelessWidget {
                 SizedBox(
                   height: screenHeight * 0.015,
                 ),
-                if (SharedPref.currentUser.userType == UserType.Person.toString())
-                  Row(
-                  children: [
-                    Expanded(
-                      child: GenderPicker(),
-                    ),
-                    SizedBox(
-                      width: screenHeight * 0.015,
-                    ),
-                    Expanded(
-                      child: BirthdayPicker(),
-                    ),
-                  ],
-                ),
-                if (SharedPref.currentUser.userType == UserType.Person.toString())
-                  SizedBox(height: screenHeight * 0.015),
                 DescriptionTextField(
+                  controller: descController,
+                  hint: '',
                   onSaved: (userInput) {
-                    AuthHelper.userInfo['shortDesc'] = userInput;
                   },
                 ),
                 SizedBox(height: screenHeight * 0.02),
@@ -135,13 +161,10 @@ class EditProfileScreen extends StatelessWidget {
                       RegistrationImagePicker(),
                       SizedBox(height: screenHeight * 0.018),
                       CustomTextFormField(
-                        hint: 'reg no'.tr(),
+                        hint: '',
                         validateInput: (userInput) {
-                          if (userInput == "") return 'enter reg no'.tr();
-                          return null;
                         },
                         saveInput: (userInput) {
-                          AuthHelper.userInfo['regNumber'] = userInput;
                         },
                       ),
                       SizedBox(
@@ -179,10 +202,7 @@ class EditProfileScreen extends StatelessWidget {
                     color: MyColors.secondaryColor,
                     text: 'Update'.tr(),
                     function: () {
-                      // bool isSubmitted =
-                      //     AuthHelper.submitSignUpForm(_signUpFormKey);
-                      // if (isSubmitted)
-                      //   bloc.add(SignUpButtonPressed(AuthHelper.userInfo));
+
                     }),
               ],
             ),

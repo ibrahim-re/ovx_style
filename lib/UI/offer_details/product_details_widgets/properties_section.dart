@@ -9,6 +9,7 @@ import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
 import 'package:ovx_style/helper/basket_helper.dart';
 import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/product_property.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,12 +36,28 @@ class PropertiesSection extends StatefulWidget {
 class _PropertiesSectionState extends State<PropertiesSection> {
   int selectedPropertyIndex = 0;
   int selectedSizeIndex = 0;
+  late final properties;
+  late final sizes;
+  late final currentItemPrice;
+  late final priceAfterConvert;
+
+  Future<void> initializeData()async{
+    properties = widget.offerProperties;
+    sizes = widget.offerProperties[selectedPropertyIndex].sizes;
+    currentItemPrice = properties[selectedPropertyIndex].sizes![selectedSizeIndex].price;
+    priceAfterConvert = await OfferHelper.convertFromUSD(currentItemPrice!);
+    print(priceAfterConvert);
+  }
+
+  @override
+  void initState(){
+    Future.delayed(Duration(seconds: 1), initializeData);
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    final properties = widget.offerProperties;
-    final sizes = widget.offerProperties[selectedPropertyIndex].sizes;
-    final currentItemPrice = properties[selectedPropertyIndex].sizes![selectedSizeIndex].price;
 
     return Column(
       children: [
@@ -64,7 +81,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                                 properties[selectedPropertyIndex]
                                     .sizes![selectedSizeIndex]
                                     .size!,
-                                currentItemPrice!,
+                                priceAfterConvert!,
                                 properties[selectedPropertyIndex].color!,
                                 widget.vat,
                                 BasketHelper.tempShippingCost,
@@ -86,7 +103,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                     width: 8,
                   ),
                   Text(
-                    '$currentItemPrice \$',
+                    '$priceAfterConvert \$',
                     style: Constants.PRICE_TEXT_STYLE,
                   ),
                 ],
@@ -102,7 +119,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                     child: TextButton(
                       onPressed: () {
                         double priceAfterDiscount = Helper().priceAfterDiscount(
-                            currentItemPrice!, widget.discount);
+                            priceAfterConvert!, widget.discount);
 
                         //add item to basket
                         context.read<BasketBloc>().add(
@@ -135,7 +152,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                     width: 8,
                   ),
                   Text(
-                    '$currentItemPrice \$',
+                    '$priceAfterConvert \$',
                     style: TextStyle(
                       fontSize: 16,
                       decoration: TextDecoration.lineThrough,
@@ -143,7 +160,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    '${Helper().priceAfterDiscount(currentItemPrice!, widget.discount)} \$',
+                    '${Helper().priceAfterDiscount(priceAfterConvert!, widget.discount)} \$',
                     style: Constants.PRICE_TEXT_STYLE,
                   ),
                 ],
@@ -178,6 +195,9 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                           onTap: () {
                             setState(() => selectedPropertyIndex =
                                 properties.indexOf(property));
+
+                            //reset size index
+                            selectedSizeIndex = 0;
                           },
                           child: Container(
                             width: 30,

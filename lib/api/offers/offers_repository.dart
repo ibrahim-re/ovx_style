@@ -15,6 +15,7 @@ abstract class OffersRepository {
   Future<void> addCommentToOffer(String offerId, String offerOwnerId, Map<String, dynamic> commentData);
   Future<List<CommentModel>> fetchOfferComments(String offerId, String offerOwnerId);
   Future<void> deleteComment(String offerId, Map<String, dynamic> data, String offerOwnerId);
+  Future<Map<String, double>> getCurrencies();
 
 }
 
@@ -22,6 +23,7 @@ class OffersRepositoryImpl extends OffersRepository {
   CollectionReference _offers = FirebaseFirestore.instance.collection('offers');
   CollectionReference _companyOffers = FirebaseFirestore.instance.collection('company offers');
   CollectionReference _categories = FirebaseFirestore.instance.collection('categories');
+  CollectionReference _currencies = FirebaseFirestore.instance.collection('currencies');
 
   @override
   Future<String> addOffer(Map<String, dynamic> productOffer) async {
@@ -237,5 +239,22 @@ class OffersRepositoryImpl extends OffersRepository {
   @override
   Future<void> deleteOffer(String offerId) async {
     //TODO
+  }
+
+  @override
+  Future<Map<String, double>> getCurrencies() async {
+    Map<String, double> fetchedCurrencies = {};
+    try {
+      final documentSnapshot = await _currencies.doc('currencies prices').get();
+      fetchedCurrencies = (documentSnapshot.data() as Map<String, dynamic>).cast();
+
+      return fetchedCurrencies;
+    } on FirebaseException catch (e) {
+      print('errorrrr is ${e.code}');
+      throw e.code;
+    } catch (e) {
+      print('error code is $e');
+      throw e;
+    }
   }
 }

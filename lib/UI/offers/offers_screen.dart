@@ -1,20 +1,26 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offers/widgets/offers_list_view.dart';
 import 'package:ovx_style/UI/offers/widgets/waiting_offers_list_view.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
 import 'package:badges/badges.dart';
+import 'package:intl/intl.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 
 class OffersScreen extends StatefulWidget {
   @override
@@ -22,7 +28,6 @@ class OffersScreen extends StatefulWidget {
 }
 
 class _OffersScreenState extends State<OffersScreen> {
-  void fetchOffers() {}
 
   @override
   void initState() {

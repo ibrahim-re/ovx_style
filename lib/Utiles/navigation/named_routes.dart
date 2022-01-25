@@ -27,5 +27,4 @@ class NamedRoutes {
   static const EDIT_PROFILE_SCREEN = "EDIT_PROFILE_SCREEN";
   static const Basket = "Basket";
   static const CheckOut = "CheckOut";
-  static const Payment = "Payment";
 }

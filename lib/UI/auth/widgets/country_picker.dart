@@ -17,6 +17,9 @@ class CountryPicker extends StatelessWidget {
       onCityChanged: (val) {
         //print(val);
       },
+
+      currentCity: 'Syria',
+
       flagState: CountryFlag.DISABLE,
       showCities: false,
       selectedItemStyle: Constants.TEXT_STYLE1,

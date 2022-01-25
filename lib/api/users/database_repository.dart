@@ -40,9 +40,6 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
       await _users.doc(path).update({'offerAdded': FieldValue.arrayUnion([offerId]),
       }).then((_) {SharedPref.currentUser.offersAdded!.add(offerId);});
 
-
-      print(SharedPref.currentUser.offersAdded!.length);
-
     } catch (e) {
       print('error is $e');
     }

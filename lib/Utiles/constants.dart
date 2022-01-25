@@ -1,8 +1,13 @@
 // ignore_for_file: constant_identifier_names
 import 'package:flutter/material.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'colors.dart';
 
 class Constants {
+
+  //holds user chosen currency to show in app
+ // static String currentCurrency = SharedPref.getCurrency();
+
   static var outlineBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(16),
     borderSide: const BorderSide(color: MyColors.lightGrey, width: 2),

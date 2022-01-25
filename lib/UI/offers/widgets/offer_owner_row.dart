@@ -44,6 +44,7 @@ class OfferOwnerRow extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                       child: user.profileImage!.isNotEmpty
                           ? ProgressiveImage(
+                              imageError: 'assets/images/default_profile.png',
                               image: user.profileImage ?? '',
                               height: 50,
                               width: 50,

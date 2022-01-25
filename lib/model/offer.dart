@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/comment_model.dart';
 import 'package:ovx_style/model/product_property.dart';
 import 'package:flutter/material.dart';
@@ -121,7 +122,7 @@ class ProductOffer extends Offer {
         .map((e) => ProductProperty(
             color: Color(e['color']),
             sizes: (e['sizes'] as List<dynamic>)
-                .map((e) => ProductSize(size: e['size'], price: e['price']))
+                .map((e) => ProductSize(size: e['size'], price: OfferHelper.convertFromUSD(e['price'])))
                 .toList()))
         .toList();
     this.shippingCosts =

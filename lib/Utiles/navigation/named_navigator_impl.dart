@@ -16,7 +16,6 @@ import 'package:ovx_style/UI/offer_details/video_details_screen.dart';
 import 'package:ovx_style/UI/offers/add_offer_screen.dart';
 import 'package:ovx_style/UI/offers/add_properties_screen.dart';
 import 'package:ovx_style/UI/offers/add_shipping_cost_screen.dart';
-import 'package:ovx_style/UI/payment/payment_screen.dart';
 import 'package:ovx_style/UI/profile/other_user_profile.dart';
 import 'package:ovx_style/UI/profile/user_profile_screen.dart';
 import 'package:ovx_style/model/offer.dart';
@@ -215,14 +214,6 @@ class NamedNavigatorImpl implements NamedNavigator {
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
       }
-
-      case NamedRoutes.Payment:
-        return PageTransition(
-            child: PaymentScreen(
-              navigator: navigatorState,
-            ),
-            type: PageTransitionType.rightToLeft,
-            duration: const Duration(milliseconds: 500));
 
       case NamedRoutes.EDIT_PROFILE_SCREEN:
         return PageTransition(

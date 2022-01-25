@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:ovx_style/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +21,7 @@ class SharedPref {
     await _sharedPreferences.setString('User Info', encodedMap);
   }
 
-  static Future<User> getUser() async {
+  static User getUser(){
     User user = User(
       profileImage: '',
       id: '',
@@ -68,4 +69,35 @@ class SharedPref {
     );
     _sharedPreferences.remove('User Info');
   }
+
+  static void setCurrencies(Map<String, double> currencies) async {
+
+    String encodedMap = json.encode(currencies);
+    await _sharedPreferences.setString('currencies', encodedMap);
+  }
+
+  //this function to get chosen currency price against dollar
+  static double getCurrencyPrice(String currency){
+    String currencies = _sharedPreferences.getString('currencies') ?? '';
+    Map<String, dynamic> decodedMap = json.decode(currencies);
+    double price = decodedMap[currency];
+
+    return price;
+
+  }
+
+  static void setCurrency(String currency) async {
+
+    await _sharedPreferences.setString('currency', currency);
+  }
+
+  static String getCurrency() {
+
+    String currency = _sharedPreferences.getString('currency') ?? 'USD';
+
+    return currency;
+  }
+
+
+
 }
