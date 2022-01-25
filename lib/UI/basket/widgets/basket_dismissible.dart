@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
@@ -75,7 +76,7 @@ class basketDismissible extends StatelessWidget {
           ],
         ),
         trailing: Text(
-          '${basketItem.price} \$',
+          '${basketItem.price} ${SharedPref.getCurrency()}',
           style: Constants.PRICE_TEXT_STYLE,
         ),
       ),

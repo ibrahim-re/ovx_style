@@ -32,6 +32,8 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
       basketItems.removeWhere((basketItem) => basketItem.id == event.id);
 
       yield ItemRemovedFromBasket();
+    } else if(event is ClearBasket){
+      basketItems.clear();
     }
   }
 }

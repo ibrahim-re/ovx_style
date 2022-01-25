@@ -8,11 +8,11 @@ class PaymentHelper {
   static Map<dynamic, dynamic>? tapSDKResult = {};
 
   // configure SDK
-  static void setupPayment(double amount, String userEmail, String userName) {
+  static void setupPayment(double amount, String userEmail, String userName, String currency) {
     // configure app
     _configureApp();
     // sdk session configurations
-    _setupSDKSession(amount, userEmail, userName);
+    _setupSDKSession(amount, userEmail, userName, currency);
   }
 
   // configure app key and bundle-id (You must get those keys from tap)
@@ -29,13 +29,13 @@ class PaymentHelper {
         lang: "en");
   }
 
-  static void _setupSDKSession(double amount, String userEmail, String userName) {
+  static void _setupSDKSession(double amount, String userEmail, String userName, String currency) {
     final isProduction = false;
 
     try {
       GoSellSdkFlutter.sessionConfigurations(
           trxMode: TransactionMode.PURCHASE,
-          transactionCurrency: "usd", // TODO: Currency
+          transactionCurrency: "$currency", // TODO: Currency
           amount: '$amount',
           customer: Customer(
             customerId: '',

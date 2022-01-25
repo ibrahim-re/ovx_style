@@ -3,6 +3,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/helper/basket_helper.dart';
 
 class ShipToSection extends StatefulWidget {
@@ -71,7 +72,7 @@ class _ShipToSectionState extends State<ShipToSection> {
 
                     print(BasketHelper.tempShippingCost);
                     EasyLoading.showInfo(
-                        'Shipping cost for this country is ${widget.shippingCosts[key]} \$');
+                        'Shipping cost for this country is ${widget.shippingCosts[key]} ${SharedPref.getCurrency()}');
                   },
                   child: Container(
                     margin: const EdgeInsets.only(right: 6),

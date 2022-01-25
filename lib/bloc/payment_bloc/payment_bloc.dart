@@ -9,7 +9,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   @override
   Stream<PaymentState> mapEventToState(PaymentEvent event) async* {
     if(event is InitializePayment){
-      PaymentHelper.setupPayment(event.amount, event.userEmail, event.userName);
+      PaymentHelper.setupPayment(event.amount, event.userEmail, event.userName, event.currency);
       yield PaymentInitialized();
     }else if(event is Pay){
       yield PaymentLoading();

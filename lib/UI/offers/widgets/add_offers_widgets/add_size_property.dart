@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'circular_add_button.dart';
 import 'size_picker.dart';
@@ -55,7 +56,7 @@ class _AddSizePropertyState extends State<AddSizeProperty> {
               flex: 3,
               child: CustomTextFormField(
                 controller: _priceController,
-                hint: 'price'.tr() + " \$",
+                hint: 'price'.tr() + ' (${SharedPref.getCurrency()})',
                 keyboardType: TextInputType.number,
                 validateInput: (p) {},
                 saveInput: (p) {},
@@ -105,7 +106,7 @@ class _AddSizePropertyState extends State<AddSizeProperty> {
                                 .copyWith(color: MyColors.secondaryColor),
                           ),
                           Text(
-                            _sizes[index].price.toString() + '\$',
+                            _sizes[index].price.toString() + ' ${SharedPref.getCurrency()}',
                             style: Constants.TEXT_STYLE1
                                 .copyWith(color: MyColors.secondaryColor),
                           ),

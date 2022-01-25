@@ -5,6 +5,7 @@ import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/helper/offer_helper.dart';
@@ -82,7 +83,7 @@ class _ProductPropertiesWidgetState extends State<ProductPropertiesWidget> {
                   children: context.read<AddOfferBloc>().properties[index].sizes!.map((e) {
                     return Chip(
                       backgroundColor: MyColors.lightBlue.withOpacity(0.5),
-                      label: Text('${e.size ?? ''} - ${e.price ?? 0}\$'),
+                      label: Text('${e.size ?? ''} - ${e.price ?? 0} ${SharedPref.getCurrency()}'),
                     );
                   }).toList(),
                 ),

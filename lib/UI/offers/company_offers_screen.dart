@@ -18,69 +18,69 @@ import 'package:ovx_style/bloc/offer_bloc/offer_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
 
 class CompanyOffersScreen extends StatefulWidget {
-  @override
-  State<CompanyOffersScreen> createState() => _CompanyOffersScreenState();
+ @override
+ State<CompanyOffersScreen> createState() => _CompanyOffersScreenState();
 }
 
 class _CompanyOffersScreenState extends State<CompanyOffersScreen> {
-  @override
-  void initState() {
-    context.read<OfferBloc>().add(FetchOffers(UserType.Company));
-    super.initState();
-  }
+ @override
+ void initState() {
+  context.read<OfferBloc>().add(FetchOffers(UserType.Company));
+  super.initState();
+ }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('c.offers'.tr()),
-        actions: [
-          IconButton(
-            onPressed: () {
-              ModalSheets().showOfferTypePicker(context);
-            },
-            icon: SvgPicture.asset('assets/images/notifications.svg'),
-          ),
-          IconButton(
-            onPressed: () {
-              ModalSheets().showOfferTypePicker(context);
-            },
-            icon: SvgPicture.asset('assets/images/cart.svg'),
-          ),
-          IconButton(
-            onPressed: () {
-              ModalSheets().showOfferTypePicker(context);
-            },
-            icon: SvgPicture.asset('assets/images/filter.svg'),
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        color: MyColors.secondaryColor,
-        onRefresh: () async {
-          context.read<OfferBloc>().add(FetchOffers(UserType.Company));
-        },
-        child: BlocBuilder<OfferBloc, OfferState>(
-          builder: (ctx, state) {
-            if (state is FetchOffersLoading)
-              return WaitingOffersListView();
-            else if (state is FetchOffersSucceed)
-              return OffersListView(fetchedOffers: state.fetchedOffers,);
-            else if (state is FetchOffersFailed)
-              return Center(
-                  child: Text(
-                    state.message,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: MyColors.secondaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ));
-            else
-              return Container();
-          },
-        ),
-      ),
-    );
-  }
+ @override
+ Widget build(BuildContext context) {
+  return Scaffold(
+   appBar: AppBar(
+    title: Text('c.offers'.tr()),
+    actions: [
+     IconButton(
+      onPressed: () {
+       ModalSheets().showOfferTypePicker(context);
+      },
+      icon: SvgPicture.asset('assets/images/notifications.svg'),
+     ),
+     IconButton(
+      onPressed: () {
+       ModalSheets().showOfferTypePicker(context);
+      },
+      icon: SvgPicture.asset('assets/images/cart.svg'),
+     ),
+     IconButton(
+      onPressed: () {
+       ModalSheets().showOfferTypePicker(context);
+      },
+      icon: SvgPicture.asset('assets/images/filter.svg'),
+     ),
+    ],
+   ),
+   body: RefreshIndicator(
+    color: MyColors.secondaryColor,
+    onRefresh: () async {
+     context.read<OfferBloc>().add(FetchOffers(UserType.Company));
+    },
+    child: BlocBuilder<OfferBloc, OfferState>(
+     builder: (ctx, state) {
+      if (state is FetchOffersLoading)
+       return WaitingOffersListView();
+      else if (state is FetchOffersSucceed)
+       return OffersListView(fetchedOffers: state.fetchedOffers,);
+      else if (state is FetchOffersFailed)
+       return Center(
+           child: Text(
+            state.message,
+            style: TextStyle(
+             fontSize: 18,
+             color: MyColors.secondaryColor,
+             fontWeight: FontWeight.w500,
+            ),
+           ));
+      else
+       return Container();
+     },
+    ),
+   ),
+  );
+ }
 }

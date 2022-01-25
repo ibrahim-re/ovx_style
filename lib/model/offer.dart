@@ -127,7 +127,7 @@ class ProductOffer extends Offer {
         .toList();
     this.shippingCosts =
         (offerInfo['shippingCosts'] as Map<String, dynamic>).map((key, value) {
-      return MapEntry(key, value);
+      return MapEntry(key, OfferHelper.convertFromUSD(value));
     });
     this.isReturnAvailable = offerInfo['isReturnAvailable'];
     this.isShippingFree = offerInfo['isShippingFree'];

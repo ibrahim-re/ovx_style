@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 
 class checkoutItem extends StatelessWidget {
   const checkoutItem({
@@ -29,7 +30,7 @@ class checkoutItem extends StatelessWidget {
             ),
           ),
           Text(
-            '$value \$',
+            '$value ${SharedPref.getCurrency()}',
             style: Constants.PRICE_TEXT_STYLE,
           ),
         ],

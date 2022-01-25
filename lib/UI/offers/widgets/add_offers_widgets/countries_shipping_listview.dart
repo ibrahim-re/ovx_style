@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:ovx_style/UI/widgets/space_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/helper/offer_helper.dart';
 
 
@@ -47,7 +48,7 @@ class _CountriesShippingListViewState extends State<CountriesShippingListView> {
                       OfferHelper.shippingCosts.values
                           .toList()[index]
                           .toString() +
-                          '\$',
+                          ' ${SharedPref.getCurrency()}',
                       style: Constants.TEXT_STYLE1
                           .copyWith(color: MyColors.secondaryColor),
                     ),

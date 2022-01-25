@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/model/offer.dart';
+import 'package:ovx_style/model/product_property.dart';
 
 class OfferHelper {
   //temporary variables to hold property color
@@ -16,8 +17,8 @@ class OfferHelper {
         : categories.add(categoryName);
   }
 
-  static List<Offer> filterPrices(
-      List<Offer> offers, double minPrice, double maxPrice) {
+  static List<Offer> filterPrices(List<Offer> offers, double minPrice,
+      double maxPrice) {
     List<String> offersToRemove = [];
 
     for (var offer in offers) {
@@ -46,8 +47,8 @@ class OfferHelper {
     return offers;
   }
 
-  static List<Offer> filterCategories(
-      List<Offer> offers, List<String> categories) {
+  static List<Offer> filterCategories(List<Offer> offers,
+      List<String> categories) {
     List<String> offersToRemove = [];
     print(categories);
 
@@ -76,23 +77,47 @@ class OfferHelper {
   //this function is to convert USD values (actual values on the database) to the currency chosen by user
   static double convertFromUSD(double amount /*USD amount*/) {
     String convertTo = SharedPref.getCurrency();
+
+    //already USD don't convert
+    if(convertTo == 'USD')
+      return double.parse(amount.toStringAsFixed(2));
+
     print('convert to $convertTo');
     double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(convertTo);
     print('price is $currencyPriceAgainstDollar');
+    double total = amount * currencyPriceAgainstDollar;
 
     //return total amount
-    return amount * currencyPriceAgainstDollar;
+    return double.parse(total.toStringAsFixed(2));
   }
 
   //this function is to convert NONE USD (value chosen by user) values to the currency used in database USD
-  static Future<double> convertToUSD(double amount /*Non USD amount*/) async {
+  static double convertToUSD(double amount /*Non USD amount*/) {
     String convertFrom = SharedPref.getCurrency();
+
+    //already USD don't convert
+    if(convertFrom == 'USD')
+      return amount;
+
     print('convert from $convertFrom');
-    double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(convertFrom);
+    double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(
+        convertFrom);
     print('price is $currencyPriceAgainstDollar');
+    double total = amount / currencyPriceAgainstDollar;
 
     //return total amount
-    return amount / currencyPriceAgainstDollar;
+    return total;
+  }
+
+  static void convertPricesToUSD(List<ProductProperty> properties) {
+    for (int i = 0; i < properties.length; i++) {
+      for (int j = 0; j < properties[i].sizes!.length; j++) {
+        print('old is ${properties[i].sizes![j].price}');
+        properties[i].sizes![j].price =
+            convertToUSD(properties[i].sizes![j].price!);
+        print('new is ${properties[i].sizes![j].price}');
+      }
+    }
   }
 
 }

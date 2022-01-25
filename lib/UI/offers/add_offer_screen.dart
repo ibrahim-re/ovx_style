@@ -7,30 +7,30 @@ import 'widgets/add_offers_widgets/add_product.dart';
 import 'widgets/add_offers_widgets/add_video.dart';
 
 class AddOfferScreen extends StatelessWidget {
-  final navigator;
-  final offerType;
+	final navigator;
+	final offerType;
 
-  AddOfferScreen({this.navigator, @required this.offerType});
+	AddOfferScreen({this.navigator, @required this.offerType});
 
-  Widget _buildAddOfferBody(){
-    if(offerType == OfferType.Product)
-      return AddProduct();
-    else if(offerType == OfferType.Video)
-      return AddVideo();
-    else if(offerType == OfferType.Image)
-      return AddImage();
-    else
-      return AddPost();
-  }
+	Widget _buildAddOfferBody(){
+		if(offerType == OfferType.Product)
+			return AddProduct();
+		else if(offerType == OfferType.Video)
+			return AddVideo();
+		else if(offerType == OfferType.Image)
+			return AddImage();
+		else
+			return AddPost();
+	}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text('add offer'.tr()),
-      ),
-      body: _buildAddOfferBody(),
-    );
-  }
+	@override
+	Widget build(BuildContext context) {
+		return Scaffold(
+			resizeToAvoidBottomInset: false,
+			appBar: AppBar(
+				title: Text('add offer'.tr()),
+			),
+			body: _buildAddOfferBody(),
+		);
+	}
 }

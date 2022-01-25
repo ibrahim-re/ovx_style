@@ -1,6 +1,7 @@
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'widgets/add_offers_widgets/circular_add_button.dart';
 import 'widgets/add_offers_widgets/countries_shipping_listview.dart';
@@ -11,7 +12,6 @@ import 'package:ovx_style/UI/widgets/space_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
-import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/helper/offer_helper.dart';
 
 class AddShippingCostsScreen extends StatefulWidget {
@@ -60,7 +60,7 @@ class _AddShippingCostsScreenState extends State<AddShippingCostsScreen> {
                       value: _shippingSimilarToAllCountries,
                       onChanged: (newVal) {
                         setState(
-                          () {
+                              () {
                             _shippingSimilarToAllCountries = newVal ?? false;
                           },
                         );
@@ -119,7 +119,7 @@ class _AddShippingCostsScreenState extends State<AddShippingCostsScreen> {
                           flex: 3,
                           child: CustomTextFormField(
                             controller: _priceController,
-                            hint: 'price'.tr() + " \$",
+                            hint: 'price'.tr() + ' (${SharedPref.getCurrency()})',
                             keyboardType: TextInputType.number,
                             validateInput: (p) {},
                             saveInput: (p) {},
@@ -135,7 +135,7 @@ class _AddShippingCostsScreenState extends State<AddShippingCostsScreen> {
                                 setState(() {
                                   OfferHelper.shippingCosts.addAll({
                                     _selectedCountry: double.tryParse(
-                                            _priceController.text) ??
+                                        _priceController.text) ??
                                         0,
                                   });
                                 });
@@ -162,7 +162,7 @@ class _AddShippingCostsScreenState extends State<AddShippingCostsScreen> {
                     VerticalSpaceWidget(heightPercentage: 0.02),
                     CustomTextFormField(
                       controller: _priceController,
-                      hint: 'price'.tr() + " \$",
+                      hint: 'price'.tr() + ' (${SharedPref.getCurrency()})',
                       keyboardType: TextInputType.number,
                       validateInput: (p) {},
                       saveInput: (p) {},

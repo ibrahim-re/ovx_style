@@ -10,6 +10,7 @@ import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
 import 'package:ovx_style/helper/basket_helper.dart';
@@ -86,7 +87,7 @@ class BasketScreen extends StatelessWidget {
                     shippingCostTotal = BasketHelper.calculateTotalShippingCost(basket);
 
                     return Text(
-                        '$basketTotal \$',
+                        '$basketTotal ${SharedPref.getCurrency()}',
                         style: Constants.PRICE_TEXT_STYLE,
                       );
                   }),

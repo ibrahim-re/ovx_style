@@ -66,7 +66,9 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
                 _offerImages, offerOwnerId, 'offers');
           }
 
-          //await OfferHelper.convertPricesToUSD(_properties);
+          //convert prices to store in database as USD
+          OfferHelper.convertPricesToUSD(_properties);
+          _shippingCosts.updateAll((key, value) => value = OfferHelper.convertToUSD(value));
 
           ProductOffer productOffer = ProductOffer(
             offerMedia: urls,
@@ -226,7 +228,6 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
   }
 
   updateProperties(List<ProductSize> sizes, Color color) async {
-    //List<Future<ProductSize>> l = sizes.map((size) async => ProductSize(size: size.size, price: size.price = await OfferHelper.convertToUSD(size.price!))).toList();
     _properties.add(ProductProperty(color: color, sizes: sizes));
   }
 

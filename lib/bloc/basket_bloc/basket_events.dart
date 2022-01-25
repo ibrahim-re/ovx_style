@@ -22,3 +22,5 @@ class RemoveItemFromBasketEvent extends BasketEvent {
 
   RemoveItemFromBasketEvent(this.id);
 }
+
+class ClearBasket extends BasketEvent {}

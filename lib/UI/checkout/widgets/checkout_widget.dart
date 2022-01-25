@@ -35,9 +35,7 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
     String userEmail = SharedPref.currentUser.email!;
     String userName = SharedPref.currentUser.userName!;
 
-    context
-        .read<PaymentBloc>()
-        .add(InitializePayment(total, userEmail, userName));
+    context.read<PaymentBloc>().add(InitializePayment(total, userEmail, userName, SharedPref.getCurrency()));
     super.initState();
   }
 

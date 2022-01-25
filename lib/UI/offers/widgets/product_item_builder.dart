@@ -10,6 +10,7 @@ import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
@@ -28,6 +29,7 @@ class ProductItemBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -148,7 +150,7 @@ class ProductItemBuilder extends StatelessWidget {
                     const SizedBox(width: 4),
                     productOffer.discount == 0
                         ? Text(
-                            '${productOffer.properties!.first.sizes!.first.price} \$',
+                            '${productOffer.properties!.first.sizes!.first.price} ${SharedPref.getCurrency()}',
                             style: TextStyle(
                               fontSize: 18,
                               color: MyColors.secondaryColor,
@@ -156,7 +158,7 @@ class ProductItemBuilder extends StatelessWidget {
                         : Row(
                             children: [
                               Text(
-                                '${productOffer.properties!.first.sizes!.first.price} \$',
+                                '${productOffer.properties!.first.sizes!.first.price} ${SharedPref.getCurrency()}',
                                 style: TextStyle(
                                   fontSize: 16,
                                   decoration: TextDecoration.lineThrough,
