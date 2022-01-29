@@ -22,12 +22,12 @@ class Helper{
       ..maskColor = MyColors.red
       ..userInteractions = false
       ..contentPadding = EdgeInsets.symmetric(horizontal: 25, vertical: 16)
-        ..toastPosition = EasyLoadingToastPosition.bottom
-        ..textStyle = TextStyle(
-          color: MyColors.primaryColor,
-          fontWeight: FontWeight.w300,
-          fontSize: 16,
-        );
+      ..toastPosition = EasyLoadingToastPosition.bottom
+      ..textStyle = TextStyle(
+        color: MyColors.primaryColor,
+        fontWeight: FontWeight.w300,
+        fontSize: 16,
+      );
   }
 
   Future<String> openDatePicker(BuildContext context) async {
@@ -82,7 +82,7 @@ class Helper{
   double priceAfterDiscount(double oldPrice, double discount){
     double newPrice = oldPrice - (oldPrice * (discount / 100));
 
-    return newPrice;
-    }
+    return double.parse(newPrice.toStringAsFixed(2));
+  }
 
 }

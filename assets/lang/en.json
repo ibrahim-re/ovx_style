@@ -140,5 +140,7 @@
   "logout": "logout",
   "edit profile": "Edit profile",
   "enter friend code": "Kindly, Enter Your Friend Code:",
-  "friend code": "Friend Code"
+  "friend code": "Friend Code",
+  "my offers": "My offers",
+  "my liked offers": "My liked offers"
 }

@@ -1,3 +1,4 @@
+
 class User {
   String? id;
   String? profileImage;
@@ -53,9 +54,15 @@ class User {
     this.longitude = userInfo['longitude'] ?? 0;
     this.password = userInfo['password'];
     this.userType = userInfo['userType'];
-    this.offersAdded = ((userInfo['offerAdded'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
-    this.offersLiked = ((userInfo['offerLiked'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
-    this.comments = ((userInfo['comments'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
+    this.offersAdded = ((userInfo['offerAdded'] ?? []) as List<dynamic>)
+        .map((e) => e.toString())
+        .toList();
+    this.offersLiked = ((userInfo['offerLiked'] ?? []) as List<dynamic>)
+        .map((e) => e.toString())
+        .toList();
+    this.comments = ((userInfo['comments'] ?? []) as List<dynamic>)
+        .map((e) => e.toString())
+        .toList();
     this.points = userInfo['points'] ?? 0;
   }
 
@@ -107,25 +114,25 @@ class PersonUser extends User {
     this.dateBirth,
     this.gender,
   }) : super(
-            id: id,
-            profileImage: image,
-            userName: userName,
-            nickName: nickName,
-            userCode: userCode,
-            email: email,
-            phoneNumber: phoneNumber,
-            shortDesc: shortDesc,
-            country: country,
-            city: city,
-            password: password,
-            latitude: latitude,
-            longitude: longitude,
-            userType: userType,
-    offersAdded: offersAdded,
-    offersLiked: offersLiked,
-    comments: comments,
-    points: points,
-  );
+          id: id,
+          profileImage: image,
+          userName: userName,
+          nickName: nickName,
+          userCode: userCode,
+          email: email,
+          phoneNumber: phoneNumber,
+          shortDesc: shortDesc,
+          country: country,
+          city: city,
+          password: password,
+          latitude: latitude,
+          longitude: longitude,
+          userType: userType,
+          offersAdded: offersAdded,
+          offersLiked: offersLiked,
+          comments: comments,
+          points: points,
+        );
 
   PersonUser.fromMap(Map<String, dynamic> userInfo, String uId)
       : super.fromMap(userInfo, uId) {
@@ -150,10 +157,10 @@ class PersonUser extends User {
         'userType': userType,
         'gender': gender,
         'dateBirth': dateBirth,
-    'offersAdded': offersAdded,
-    'offersLiked': offersLiked,
-    'comments': comments,
-    'points': points,
+        'offersAdded': offersAdded,
+        'offersLiked': offersLiked,
+        'comments': comments,
+        'points': points,
       };
 }
 
@@ -183,25 +190,24 @@ class CompanyUser extends User {
     this.regImages,
     required this.regNumber,
   }) : super(
-    id: id,
-    profileImage: image,
-    userName: userName,
-    nickName: nickName,
-    userCode: userCode,
-    email: email,
-    phoneNumber: phoneNumber,
-    shortDesc: shortDesc,
-    country: country,
-    city: city,
-    password: password,
-    latitude: latitude,
-    longitude: longitude,
-    userType: userType,
-    offersAdded: offersAdded,
-    offersLiked: offersLiked,
-    comments: comments,
-    points: points
-  );
+            id: id,
+            profileImage: image,
+            userName: userName,
+            nickName: nickName,
+            userCode: userCode,
+            email: email,
+            phoneNumber: phoneNumber,
+            shortDesc: shortDesc,
+            country: country,
+            city: city,
+            password: password,
+            latitude: latitude,
+            longitude: longitude,
+            userType: userType,
+            offersAdded: offersAdded,
+            offersLiked: offersLiked,
+            comments: comments,
+            points: points);
 
   CompanyUser.fromMap(Map<String, dynamic> userInfo, String uId)
       : super.fromMap(userInfo, uId) {
@@ -210,24 +216,24 @@ class CompanyUser extends User {
   }
 
   Map<String, dynamic> toMap() => {
-    'id': id,
-    'profileImage': profileImage,
-    'userName': userName,
-    'nickName': nickName,
-    'userCode': userCode,
-    'email': email,
-    'phoneNumber': phoneNumber,
-    'shortDesc': shortDesc,
-    'country': country,
-    'city': city,
-    'latitude': latitude,
-    'longitude': longitude,
-    'password': password,
-    'userType': userType,
-    'offersAdded': offersAdded,
-    'offersLiked': offersLiked,
-    'comments': comments,
-    'points': points,
+        'id': id,
+        'profileImage': profileImage,
+        'userName': userName,
+        'nickName': nickName,
+        'userCode': userCode,
+        'email': email,
+        'phoneNumber': phoneNumber,
+        'shortDesc': shortDesc,
+        'country': country,
+        'city': city,
+        'latitude': latitude,
+        'longitude': longitude,
+        'password': password,
+        'userType': userType,
+        'offersAdded': offersAdded,
+        'offersLiked': offersLiked,
+        'comments': comments,
+        'points': points,
         'regImages': regImages,
         'regNumber': regNumber
       };

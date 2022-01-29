@@ -195,8 +195,6 @@ class OffersRepositoryImpl extends OffersRepository {
 
       }
 
-
-
       return comments;
     } catch (e) {
       print('error is $e');

@@ -16,6 +16,8 @@ import 'package:ovx_style/UI/offer_details/video_details_screen.dart';
 import 'package:ovx_style/UI/offers/add_offer_screen.dart';
 import 'package:ovx_style/UI/offers/add_properties_screen.dart';
 import 'package:ovx_style/UI/offers/add_shipping_cost_screen.dart';
+import 'package:ovx_style/UI/profile/my_liked_offers_screen.dart';
+import 'package:ovx_style/UI/profile/my_offers_screen.dart';
 import 'package:ovx_style/UI/profile/other_user_profile.dart';
 import 'package:ovx_style/UI/profile/user_profile_screen.dart';
 import 'package:ovx_style/model/offer.dart';
@@ -161,6 +163,22 @@ class NamedNavigatorImpl implements NamedNavigator {
               navigator: navigatorState,
             ),
             type: PageTransitionType.rightToLeft,
+            duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.MY_OFFERS_SCREEN:
+        return PageTransition(
+            child: MyOffersScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.bottomToTop,
+            duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.MY_LIKED_OFFERS_SCREEN:
+        return PageTransition(
+            child: MyLikedOffersScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.bottomToTop,
             duration: const Duration(milliseconds: 500));
 
       case NamedRoutes.ADD_SHIPPING_COST_SCREEN:

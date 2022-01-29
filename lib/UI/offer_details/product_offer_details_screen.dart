@@ -30,7 +30,7 @@ class ProductDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
+        padding: const EdgeInsets.only(left: 14, right: 14, bottom: 100),
         children: [
           OfferOwnerRow(
             offerOwnerId: offer.offerOwnerId,

@@ -1,4 +1,3 @@
-
 abstract class SignUpEvent {}
 
 class SignUpButtonPressed extends SignUpEvent {

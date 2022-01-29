@@ -24,6 +24,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState>{
         else
           yield SignUpFailed('Sign up failed');
       }catch (e) {
+        print('rrrrrrrrrrrrrrrrrrrrrr');
         String message = 'something wrong'.tr();
         switch(e){
           case 'email-already-in-use': message = 'email in use'.tr(); break;

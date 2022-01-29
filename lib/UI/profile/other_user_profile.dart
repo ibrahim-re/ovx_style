@@ -22,6 +22,7 @@ class OtherUserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userOffers = context.read<OfferBloc>().getUserOffers(user.id!);
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
@@ -99,7 +100,7 @@ class OtherUserProfile extends StatelessWidget {
                             Text(
                               user.offersLiked!.length.toString(),
                               style:
-                              Constants.TEXT_STYLE4.copyWith(fontSize: 14),
+                                  Constants.TEXT_STYLE4.copyWith(fontSize: 14),
                             ),
                           ],
                         ),
@@ -112,7 +113,8 @@ class OtherUserProfile extends StatelessWidget {
                   child: Text(
                     user.shortDesc ?? '',
                     textAlign: TextAlign.center,
-                    style: Constants.TEXT_STYLE4,),
+                    style: Constants.TEXT_STYLE4,
+                  ),
                 ),
               ],
             ),
@@ -120,32 +122,10 @@ class OtherUserProfile extends StatelessWidget {
           const SizedBox(
             height: 16,
           ),
-          BlocBuilder<OfferBloc, OfferState>(
-            builder: (ctx, state) {
-              if (state is FetchOffersLoading)
-                return WaitingOffersListView();
-              else if (state is FetchOffersSucceed) {
-                //get this user offers
-                final userOffers = state.fetchedOffers.where((offer) => offer.offerOwnerId == user.id).toList();
-                return OffersListView(
-                  fetchedOffers: userOffers,
-                  scrollPhysics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                );
-              }
-              else if (state is FetchOffersFailed)
-                return Center(
-                    child: Text(
-                      state.message,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: MyColors.secondaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ));
-              else
-                return Container();
-            },
+          OffersListView(
+            fetchedOffers: userOffers,
+            scrollPhysics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
           ),
         ],
       ),

@@ -47,8 +47,7 @@ class OfferHelper {
     return offers;
   }
 
-  static List<Offer> filterCategories(List<Offer> offers,
-      List<String> categories) {
+  static List<Offer> filterCategories(List<Offer> offers, List<String> categories) {
     List<String> offersToRemove = [];
     print(categories);
 

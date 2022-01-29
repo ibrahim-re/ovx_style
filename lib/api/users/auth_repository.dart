@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:ovx_style/Utiles/enums.dart';
@@ -24,20 +25,16 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<User> signInUser(String email, String password) async {
     try {
-      firebase.UserCredential userCredential = await _firebaseAuth
-          .signInWithEmailAndPassword(email: email, password: password);
+      firebase.UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
 
       if (userCredential.user != null) {
         String uId = userCredential.user!.uid;
 
-        Map<String, dynamic> userInfo =
-            await _databaseRepositoryImpl.getUserData(uId);
+        Map<String, dynamic> userInfo = await _databaseRepositoryImpl.getUserData(uId);
 
         //set user id as path to his info
         if (userInfo['userType'] == UserType.Person.toString()) {
           User currentUser = PersonUser.fromMap(userInfo, uId);
-
-          print(currentUser.offersAdded);
 
           return currentUser;
         } else {
@@ -99,7 +96,6 @@ class AuthRepositoryImpl extends AuthRepository {
         //check if user type is company or person
         if (userInfo['userType'] == UserType.Person.toString()) {
           User currentUser = PersonUser.fromMap(userInfo, uId);
-
           return currentUser;
         } else {
           User currentUser = CompanyUser.fromMap(userInfo, uId);

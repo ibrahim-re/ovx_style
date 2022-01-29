@@ -166,7 +166,7 @@ class ProductItemBuilder extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                '${Helper().priceAfterDiscount(productOffer.properties!.first.sizes!.first.price!, productOffer.discount!)} \$',
+                                '${Helper().priceAfterDiscount(productOffer.properties!.first.sizes!.first.price!, productOffer.discount!)} ${SharedPref.getCurrency()}',
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: MyColors.secondaryColor,
