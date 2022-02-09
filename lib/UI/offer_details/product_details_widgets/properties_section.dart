@@ -19,6 +19,7 @@ class PropertiesSection extends StatefulWidget {
     required this.offerProperties,
     required this.productId,
     required this.discount,
+    required this.productOwnerId,
     required this.title,
     required this.image,
     required this.vat,
@@ -26,7 +27,7 @@ class PropertiesSection extends StatefulWidget {
 
   final List<ProductProperty> offerProperties;
   final double discount;
-  final String title, image, productId;
+  final String title, image, productId, productOwnerId;
   final double vat;
 
   @override
@@ -57,7 +58,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                   BlocListener<BasketBloc, BasketState>(
                     listener: (context, state) {
                       if (state is ItemAddedToBasket)
-                        EasyLoading.showToast('item added to basket'.tr());
+                        EasyLoading.showToast('item added to basket'.tr(), dismissOnTap: true);
                     },
                     child: TextButton(
                       onPressed: () {
@@ -65,6 +66,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                         context.read<BasketBloc>().add(
                               AddItemToBasketEvent(
                                 widget.productId,
+                                widget.productOwnerId,
                                 widget.title,
                                 widget.image,
                                 properties[selectedPropertyIndex]
@@ -103,7 +105,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                   BlocListener<BasketBloc, BasketState>(
                     listener: (context, state) {
                       if (state is ItemAddedToBasket)
-                        EasyLoading.showToast('item added to basket'.tr());
+                        EasyLoading.showToast('item added to basket'.tr(), dismissOnTap: true);
                     },
                     child: TextButton(
                       onPressed: () {
@@ -114,6 +116,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                         context.read<BasketBloc>().add(
                               AddItemToBasketEvent(
                                 widget.productId,
+                                widget.productOwnerId,
                                 widget.title,
                                 widget.image,
                                 properties[selectedPropertyIndex]

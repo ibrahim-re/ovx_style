@@ -1,26 +1,21 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offers/widgets/offers_list_view.dart';
 import 'package:ovx_style/UI/offers/widgets/waiting_offers_list_view.dart';
-import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/UI/widgets/basket_icon.dart';
+import 'package:ovx_style/UI/widgets/notification_icon.dart';
 import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/enums.dart';
-import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
-import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
-import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
-import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
+import 'package:ovx_style/bloc/notifications_bloc/notifications_bloc.dart';
+import 'package:ovx_style/bloc/notifications_bloc/notifications_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
 import 'package:badges/badges.dart';
-import 'package:intl/intl.dart';
-import 'package:ovx_style/helper/offer_helper.dart';
 
 class OffersScreen extends StatefulWidget {
   @override
@@ -32,6 +27,7 @@ class _OffersScreenState extends State<OffersScreen> {
   @override
   void initState() {
     context.read<OfferBloc>().add(FetchOffers(UserType.Person));
+    context.read<NotificationsBloc>().add(FetchNotifications());
     super.initState();
   }
 
@@ -41,30 +37,19 @@ class _OffersScreenState extends State<OffersScreen> {
       appBar: AppBar(
         title: Text('offers'.tr()),
         actions: [
-          IconButton(
-            onPressed: () => ModalSheets().showOfferTypePicker(context),
-            icon: iconBadge(
-              child: SvgPicture.asset('assets/images/notifications.svg'),
-              badgeNumber: 1,
+          if(SharedPref.getUser().userType == UserType.Person.toString())
+            IconButton(
+              onPressed: () => ModalSheets().showOfferTypePicker(context),
+              icon: Icon(Icons.add),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              NamedNavigatorImpl().push(
-                NamedRoutes.Basket,
-              );
-            },
-            icon: BlocBuilder<BasketBloc, BasketState>(
-              builder: (context, state) {
-                int basketItemsCount = context.read<BasketBloc>().basketItems.length;
 
-                return iconBadge(
-                  child: SvgPicture.asset('assets/images/cart.svg'),
-                  badgeNumber: basketItemsCount,
-                );
-              },
-            ),
-          ),
+          //notification icon
+          NotificationIcon(),
+
+          //basket icon
+          BasketIcon(),
+
+          //filter icon
           IconButton(
             onPressed: () {
               ModalSheets().showFilters(context);

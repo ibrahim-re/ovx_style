@@ -6,6 +6,10 @@ import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
 import 'package:ovx_style/UI/widgets/space_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
+import 'package:ovx_style/bloc/bills_bloc/bills_bloc.dart';
+import 'package:ovx_style/bloc/bills_bloc/bills_events.dart';
 import 'package:ovx_style/bloc/payment_bloc/payment_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ovx_style/bloc/payment_bloc/payment_events.dart';
@@ -32,8 +36,8 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
   @override
   void initState() {
     total = widget.subtotal + widget.vat + widget.shippingCost;
-    String userEmail = SharedPref.currentUser.email!;
-    String userName = SharedPref.currentUser.userName!;
+    String userEmail = SharedPref.getUser().email!;
+    String userName = SharedPref.getUser().userName!;
 
     context.read<PaymentBloc>().add(InitializePayment(total, userEmail, userName, SharedPref.getCurrency()));
     super.initState();
@@ -74,8 +78,11 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
           Spacer(),
           BlocConsumer<PaymentBloc, PaymentState>(
             listener: (context, state) {
-              if(state is PaymentSuccess)
+              if(state is PaymentSuccess){
                 EasyLoading.showInfo('Success');
+                final basketItems = context.read<BasketBloc>().basketItems;
+                context.read<BillsBloc>().add(AddBills(basketItems));
+              }
               else if(state is PaymentFailed)
                 EasyLoading.showError(state.message);
 

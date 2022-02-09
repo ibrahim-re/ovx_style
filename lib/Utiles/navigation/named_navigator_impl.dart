@@ -9,6 +9,7 @@ import 'package:ovx_style/UI/edit_profile/edit_profile_screen.dart';
 import 'package:ovx_style/UI/google_maps_screen.dart';
 import 'package:ovx_style/UI/home_screen.dart';
 import 'package:ovx_style/UI/intro/auth_options_screen.dart';
+import 'package:ovx_style/UI/notifications/notifications_screen.dart';
 import 'package:ovx_style/UI/offer_details/img_details_screen.dart';
 import 'package:ovx_style/UI/offer_details/post_details_screen.dart';
 import 'package:ovx_style/UI/offer_details/product_offer_details_screen.dart';
@@ -16,6 +17,7 @@ import 'package:ovx_style/UI/offer_details/video_details_screen.dart';
 import 'package:ovx_style/UI/offers/add_offer_screen.dart';
 import 'package:ovx_style/UI/offers/add_properties_screen.dart';
 import 'package:ovx_style/UI/offers/add_shipping_cost_screen.dart';
+import 'package:ovx_style/UI/profile/my_bills_screen.dart';
 import 'package:ovx_style/UI/profile/my_liked_offers_screen.dart';
 import 'package:ovx_style/UI/profile/my_offers_screen.dart';
 import 'package:ovx_style/UI/profile/other_user_profile.dart';
@@ -171,6 +173,22 @@ class NamedNavigatorImpl implements NamedNavigator {
               navigator: navigatorState,
             ),
             type: PageTransitionType.bottomToTop,
+            duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.MY_BILLS_SCREEN:
+        return PageTransition(
+            child: MyBillsScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.bottomToTop,
+            duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.NOTIFICATIONS_SCREEN:
+        return PageTransition(
+            child: NotificationsScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
 
       case NamedRoutes.MY_LIKED_OFFERS_SCREEN:

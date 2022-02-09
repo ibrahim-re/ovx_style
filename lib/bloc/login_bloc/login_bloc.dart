@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/helper/notifications_helper.dart';
 import '../../api/users/auth_repository.dart';
 import 'package:ovx_style/bloc/login_bloc/login_events.dart';
 import 'package:ovx_style/bloc/login_bloc/login_states.dart';
@@ -19,6 +20,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>{
         User user = await _authRepositoryImpl.signInUser(event.email, event.password);
         if(user.id != null){
           SharedPref.setUser(user);
+
+          //save device token to send notifications
+          NotificationsHelper.saveDeviceTokenToDatabase();
           yield LoginSucceed();
         } else
           yield LoginFailed('Login failed');

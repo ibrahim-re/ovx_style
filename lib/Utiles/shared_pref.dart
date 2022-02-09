@@ -3,8 +3,6 @@ import 'package:ovx_style/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPref {
-  //shared user data to access it from anywhere inside the app
-  static late User currentUser;
 
   static late SharedPreferences _sharedPreferences;
 
@@ -13,59 +11,71 @@ class SharedPref {
   }
 
   static void setUser(User user) async {
-    currentUser = user;
     Map<String, dynamic> userInfo = user.toMap();
     String encodedMap = json.encode(userInfo);
 
     await _sharedPreferences.setString('User Info', encodedMap);
   }
 
+  static void addOfferAdded(String offerId){
+    User user = getUser();
+    user.offersAdded!.add(offerId);
+    setUser(user);
+  }
+
+  static void deleteOfferAdded(String offerId){
+    User user = getUser();
+    user.offersAdded!.remove(offerId);
+    setUser(user);
+  }
+
+  static void addOfferLiked(String offerId){
+    User user = getUser();
+    user.offersLiked!.add(offerId);
+    setUser(user);
+  }
+
+  static void deleteOfferLiked(String offerId){
+    User user = getUser();
+    user.offersLiked!.remove(offerId);
+    setUser(user);
+  }
+
+  static void addOfferComment(String offerId){
+    User user = getUser();
+    user.comments!.add(offerId);
+    setUser(user);
+  }
+
+  static void deleteOfferComment(String offerId){
+    User user = getUser();
+    user.comments!.remove(offerId);
+    setUser(user);
+  }
+
+  static void addPoints(int amount){
+    User user = getUser();
+    user.points = user.points! + amount;
+    setUser(user);
+  }
+
+  static void deletePoints(int amount){
+    User user = getUser();
+    user.points = user.points! - amount;
+    setUser(user);
+  }
+
   static User getUser(){
-    User user = User(
-      profileImage: '',
-      id: '',
-      userName: '',
-      nickName: '',
-      userCode: '',
-      email: '',
-      phoneNumber: '',
-      country: '',
-      city: '',
-      latitude: 0,
-      longitude: 0,
-      password: '',
-      userType: '',
-      shortDesc: '',
-    );
+
     String userInfo = _sharedPreferences.getString('User Info') ?? '';
+    Map<String, dynamic> decodedMap = {};
+    if(userInfo.isNotEmpty)
+      decodedMap = json.decode(userInfo);
 
-    if (userInfo.isNotEmpty) {
-      Map<String, dynamic> decodedMap = json.decode(userInfo);
-
-      user = User.fromMap(decodedMap, decodedMap['id']);
-    }
-
-    currentUser = user;
-    return user;
+    return User.fromMap(decodedMap, decodedMap['id'] ?? '');
   }
 
   static deleteUser() {
-    currentUser = User(
-      profileImage: '',
-      id: '',
-      userName: '',
-      nickName: '',
-      userCode: '',
-      email: '',
-      phoneNumber: '',
-      country: '',
-      city: '',
-      latitude: 0,
-      longitude: 0,
-      password: '',
-      userType: '',
-      shortDesc: '',
-    );
     _sharedPreferences.remove('User Info');
   }
 

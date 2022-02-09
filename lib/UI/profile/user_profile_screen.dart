@@ -27,10 +27,7 @@ class UserProfileScreen extends StatelessWidget {
           'profile'.tr(),
         ),
         actions: [
-          BlocProvider<CurrencyBloc>(
-            create: (context) => CurrencyBloc(),
-            child: CurrencyPicker(),
-          ),
+          CurrencyPicker(),
           IconButton(
             onPressed: () {},
             icon: iconBadge(
@@ -49,7 +46,7 @@ class UserProfileScreen extends StatelessWidget {
       body: ListView(
         children: [
           ProfileImageSection(
-            profileImage: SharedPref.currentUser.profileImage,
+            profileImage: SharedPref.getUser().profileImage,
           ),
           PersonalInfo(),
           //SubscriptionSection(),

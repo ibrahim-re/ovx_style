@@ -49,13 +49,11 @@ class OfferHelper {
 
   static List<Offer> filterCategories(List<Offer> offers, List<String> categories) {
     List<String> offersToRemove = [];
-    print(categories);
 
     for (var offer in offers) {
       if (offer.offerType == OfferType.Product.toString()) {
         ProductOffer p = offer as ProductOffer;
         bool isThereMatch = false;
-        print('${p.id} ${p.categories}');
 
         for (var category in p.categories!) {
           if (categories.contains(category)) {
@@ -68,22 +66,19 @@ class OfferHelper {
       }
     }
 
-    print(offersToRemove);
     offers.removeWhere((offer) => offersToRemove.contains(offer.id));
     return offers;
   }
 
   //this function is to convert USD values (actual values on the database) to the currency chosen by user
-  static double convertFromUSD(double amount /*USD amount*/) {
+  static double convertFromUSD(dynamic amount /*USD amount*/) {
     String convertTo = SharedPref.getCurrency();
 
     //already USD don't convert
     if(convertTo == 'USD')
       return double.parse(amount.toStringAsFixed(2));
 
-    print('convert to $convertTo');
     double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(convertTo);
-    print('price is $currencyPriceAgainstDollar');
     double total = amount * currencyPriceAgainstDollar;
 
     //return total amount
@@ -98,10 +93,8 @@ class OfferHelper {
     if(convertFrom == 'USD')
       return amount;
 
-    print('convert from $convertFrom');
     double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(
         convertFrom);
-    print('price is $currencyPriceAgainstDollar');
     double total = amount / currencyPriceAgainstDollar;
 
     //return total amount
@@ -111,10 +104,8 @@ class OfferHelper {
   static void convertPricesToUSD(List<ProductProperty> properties) {
     for (int i = 0; i < properties.length; i++) {
       for (int j = 0; j < properties[i].sizes!.length; j++) {
-        print('old is ${properties[i].sizes![j].price}');
         properties[i].sizes![j].price =
             convertToUSD(properties[i].sizes![j].price!);
-        print('new is ${properties[i].sizes![j].price}');
       }
     }
   }

@@ -54,10 +54,10 @@ class User {
     this.longitude = userInfo['longitude'] ?? 0;
     this.password = userInfo['password'];
     this.userType = userInfo['userType'];
-    this.offersAdded = ((userInfo['offerAdded'] ?? []) as List<dynamic>)
+    this.offersAdded = ((userInfo['offersAdded'] ?? []) as List<dynamic>)
         .map((e) => e.toString())
         .toList();
-    this.offersLiked = ((userInfo['offerLiked'] ?? []) as List<dynamic>)
+    this.offersLiked = ((userInfo['offersLiked'] ?? []) as List<dynamic>)
         .map((e) => e.toString())
         .toList();
     this.comments = ((userInfo['comments'] ?? []) as List<dynamic>)

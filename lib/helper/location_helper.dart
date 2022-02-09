@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:geocoding/geocoding.dart' as Geo;
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -41,8 +44,8 @@ class LocationHelper {
 
 
   Future<LocationData> _getUserLocation() async {
-      LocationData locationData = await location.getLocation();
-      return locationData;
+    LocationData locationData = await location.getLocation();
+    return locationData;
   }
 
   Future<void> onMapCreated(GoogleMapController googleMapController, BuildContext context) async {
@@ -68,5 +71,18 @@ class LocationHelper {
     longitude = latLng.longitude;
     markers.clear();
     markers.add(Marker(markerId: MarkerId('id1'),position: LatLng(latLng.latitude, latLng.longitude)));
+  }
+
+
+  Future<Geo.Placemark> getUserAddress(double latitude, double longitude) async {
+    try {
+      List<Geo.Placemark> placeMarks = await Geo.placemarkFromCoordinates(latitude, longitude);
+
+      Geo.Placemark place = placeMarks[0];
+
+      return place;
+    }catch (e) {
+      throw e;
+    }
   }
 }

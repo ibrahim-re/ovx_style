@@ -17,7 +17,7 @@ class OffersListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      physics: scrollPhysics ?? const BouncingScrollPhysics(),
+      physics: scrollPhysics ?? const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       shrinkWrap: shrinkWrap ?? false,
       padding: const EdgeInsets.only(bottom: 20),
       itemCount: fetchedOffers.length,

@@ -22,7 +22,7 @@ class _LikeButtonState extends State<LikeButton> {
 
   @override
   void initState() {
-    isLiked = SharedPref.currentUser.offersLiked!.contains(widget.offerId);
+    isLiked = SharedPref.getUser().offersLiked!.contains(widget.offerId);
     super.initState();
   }
 
@@ -32,7 +32,7 @@ class _LikeButtonState extends State<LikeButton> {
       onTap: () {
         isLiked = !isLiked;
         setState(() {});
-        context.read<LikeBloc>().add(LikeButtonPressed(widget.offerId, widget.offerOwnerId, SharedPref.currentUser.id!));
+        context.read<LikeBloc>().add(LikeButtonPressed(widget.offerId, widget.offerOwnerId, SharedPref.getUser().id!));
       },
       child: isLiked ? SvgPicture.asset('assets/images/like.svg') : SvgPicture.asset('assets/images/unlike.svg'),
     );

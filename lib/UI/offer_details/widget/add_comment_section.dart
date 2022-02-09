@@ -51,8 +51,8 @@ class _AddCommentSectionState extends State<AddCommentSection> {
               children: [
                 CircleAvatar(
                   radius: 15,
-                  backgroundImage: SharedPref.currentUser.profileImage! != ''
-                      ? Image.network(SharedPref.currentUser.profileImage!)
+                  backgroundImage: SharedPref.getUser().profileImage! != ''
+                      ? Image.network(SharedPref.getUser().profileImage!)
                           .image
                       : AssetImage('assets/images/default_profile.jpg'),
                 ),
@@ -94,11 +94,11 @@ class _AddCommentSectionState extends State<AddCommentSection> {
                           else
                             bloc.add(
                             AddCommentButtonPressed(
-                              SharedPref.currentUser.id!,
+                              SharedPref.getUser().id!,
                               widget.offerId,
                               commentController.text.trim(),
-                              SharedPref.currentUser.userName!,
-                              SharedPref.currentUser.profileImage!,
+                              SharedPref.getUser().userName!,
+                              SharedPref.getUser().profileImage!,
                               widget.offerOwnerId,
                             ),
                           );

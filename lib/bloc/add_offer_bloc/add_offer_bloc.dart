@@ -52,10 +52,10 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
       else {
         try {
           //get owner id
-          String offerOwnerId = SharedPref.currentUser.id ?? '';
+          String offerOwnerId = SharedPref.getUser().id ?? '';
 
           //get owner type
-          String offerOwnerType = SharedPref.currentUser.userType ?? '';
+          String offerOwnerType = SharedPref.getUser().userType ?? '';
 
           //upload offer images to storage if existed
           List<String> urls = [];
@@ -106,10 +106,10 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
       yield AddOfferLoading();
       try {
         //get owner id
-        String offerOwnerId = SharedPref.currentUser.id ?? '';
+        String offerOwnerId = SharedPref.getUser().id ?? '';
 
         //get owner type
-        String offerOwnerType = SharedPref.currentUser.userType ?? '';
+        String offerOwnerType = SharedPref.getUser().userType ?? '';
 
         //upload offer images to storage if existed
         List<String> urls = [];
@@ -143,10 +143,10 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
       yield AddOfferLoading();
       try {
         //get owner id
-        String offerOwnerId = SharedPref.currentUser.id ?? '';
+        String offerOwnerId = SharedPref.getUser().id ?? '';
 
         //get owner type
-        String offerOwnerType = SharedPref.currentUser.userType ?? '';
+        String offerOwnerType = SharedPref.getUser().userType ?? '';
 
         //upload offer images to storage if existed
         List<String> urls = [];
@@ -176,10 +176,10 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
       yield AddOfferLoading();
       try {
         //get owner id
-        String offerOwnerId = SharedPref.currentUser.id ?? '';
+        String offerOwnerId = SharedPref.getUser().id ?? '';
 
         //get owner type
-        String offerOwnerType = SharedPref.currentUser.userType ?? '';
+        String offerOwnerType = SharedPref.getUser().userType ?? '';
 
         //upload offer images to storage if existed
         List<String> urls = [];

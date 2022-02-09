@@ -4,6 +4,7 @@ class BasketEvent {}
 
 class AddItemToBasketEvent extends BasketEvent {
   String productId;
+  String productOwnerId;
   String title;
   String imagePath;
   double price;
@@ -13,7 +14,7 @@ class AddItemToBasketEvent extends BasketEvent {
   double shippingCost;
   String shipTo;
 
-  AddItemToBasketEvent(this.productId, this.title, this.imagePath, this.size, this.price,
+  AddItemToBasketEvent(this.productId, this.productOwnerId, this.title, this.imagePath, this.size, this.price,
       this.color, this.vat, this.shippingCost, this.shipTo);
 }
 

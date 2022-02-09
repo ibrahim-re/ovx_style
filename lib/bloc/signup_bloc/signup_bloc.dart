@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/helper/notifications_helper.dart';
 import '../../api/users/auth_repository.dart';
 import 'package:ovx_style/bloc/signup_bloc/signup_events.dart';
 import 'package:ovx_style/bloc/signup_bloc/signup_states.dart';
@@ -19,6 +20,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState>{
         User user = await _authRepositoryImpl.signUpUser(event.userInfo);
         if(user.id != null){
           SharedPref.setUser(user);
+          //save device token to send notifications
+          NotificationsHelper.saveDeviceTokenToDatabase();
           yield SignUpSucceed();
         }
         else

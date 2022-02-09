@@ -82,6 +82,7 @@ class ProductItemBuilder extends StatelessWidget {
                       context.read<BasketBloc>().add(
                         AddItemToBasketEvent(
                           productOffer.id!,
+                          productOffer.offerOwnerId!,
                           productOffer.offerName!,
                           productOffer.offerMedia!.first,
                           productOffer.properties!.first.sizes!.first.size!,
@@ -96,7 +97,7 @@ class ProductItemBuilder extends StatelessWidget {
                     child: BlocListener<BasketBloc, BasketState>(
                       listener: (context, state) {
                         if (state is ItemAddedToBasket)
-                          EasyLoading.showToast('item added to basket'.tr());
+                          EasyLoading.showToast('item added to basket'.tr(), dismissOnTap: true);
                       },
                       child: Padding(
                       padding: const EdgeInsets.all(12.0),

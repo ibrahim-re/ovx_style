@@ -41,15 +41,18 @@ class _CurrencyPickerState extends State<CurrencyPicker> {
               ),
             ),
           );
-        else if (state is GetCurrenciesSucceed)
+        else if(state is GetCurrenciesFailed)
+          return Center();
+
+        else {
+          Map<String, double> currencies = context.read<CurrencyBloc>().currencies;
           return TextButton(
             onPressed: () {
               picker.showCurrencyPicker(
                 context: context,
-                currencyFilter: state.currencies + ['USD'],
+                currencyFilter: currencies.keys.toList() + ['USD'],
                 onSelect: (currency) async {
-                  //update shared pref and the value that holds it
-                  SharedPref.setCurrency(currency.code);
+                  context.read<CurrencyBloc>().add(ChangeCurrency(currency.code));
                   setState(() {});
 
                   //clear basket to add again with new prices
@@ -68,9 +71,7 @@ class _CurrencyPickerState extends State<CurrencyPicker> {
               ),
             ),
           );
-
-        else
-          return Container();
+        }
       },
     );
   }

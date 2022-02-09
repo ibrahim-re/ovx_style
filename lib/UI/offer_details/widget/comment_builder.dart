@@ -46,7 +46,7 @@ class CommentBuilder extends StatelessWidget {
             onTap: () async {
 
               //check if offer owner is the logged in user
-              if(userId == SharedPref.currentUser.id)
+              if(userId == SharedPref.getUser().id)
                 NamedNavigatorImpl().push(NamedRoutes.USER_PROFILE_SCREEN);
               else{
                 User user = await AuthHelper.getUser(userId);

@@ -33,7 +33,7 @@ class OfferOwnerRow extends StatelessWidget {
                 onTap: (){
 
                   //check if offer owner is the logged in user
-                  if(offerOwnerId == SharedPref.currentUser.id)
+                  if(offerOwnerId == SharedPref.getUser().id)
                     NamedNavigatorImpl().push(NamedRoutes.USER_PROFILE_SCREEN);
                   else
                     NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});

@@ -79,6 +79,12 @@ class Helper{
     return randomText;
   }
 
+  String generateRandomNumericId() {
+    String randomText = MinId.getId('{5{d}}');
+
+    return randomText;
+  }
+
   double priceAfterDiscount(double oldPrice, double discount){
     double newPrice = oldPrice - (oldPrice * (discount / 100));
 

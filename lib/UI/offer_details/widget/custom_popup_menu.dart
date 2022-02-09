@@ -22,7 +22,7 @@ class CustomPopUpMenu extends StatelessWidget {
       ),
       itemBuilder: (_) {
         return [
-          if (ownerId == SharedPref.currentUser.id)
+          if (ownerId == SharedPref.getUser().id)
             PopupMenuItem(
               height: 4,
               onTap: deleteFunction ?? () {},

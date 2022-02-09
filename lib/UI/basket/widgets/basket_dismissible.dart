@@ -34,7 +34,7 @@ class basketDismissible extends StatelessWidget {
           ),
         ),
       ),
-      key: ValueKey(basketItem.title! + DateTime.now().toString()),
+      key: ValueKey(basketItem.productName! + DateTime.now().toString()),
       onDismissed: (_) {
         context.read<BasketBloc>().add(RemoveItemFromBasketEvent(basketItem.id!));
       },
@@ -53,7 +53,7 @@ class basketDismissible extends StatelessWidget {
           ),
         ),
         title: Text(
-          basketItem.title!,
+          basketItem.productName!,
           style: Constants.TEXT_STYLE6.copyWith(fontWeight: FontWeight.w500),
         ),
         subtitle: Row(

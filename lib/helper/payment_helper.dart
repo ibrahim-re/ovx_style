@@ -103,6 +103,6 @@ class PaymentHelper {
 
     print('>>>> ${tapSDKResult}');
 
-    return tapSDKResult!['acquirer_response_message'];
+    return tapSDKResult!['acquirer_response_message'] ?? '';
   }
 }

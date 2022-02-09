@@ -9,6 +9,7 @@ class CurrencyBloc extends Bloc<CurrencyEvent, CurrencyState> {
   CurrencyBloc() : super(CurrenciesInitialized());
 
   OffersRepositoryImpl offersRepositoryImpl = OffersRepositoryImpl();
+  Map<String, double> currencies = {};
 
   @override
   Stream<CurrencyState> mapEventToState(CurrencyEvent event) async* {
@@ -16,14 +17,18 @@ class CurrencyBloc extends Bloc<CurrencyEvent, CurrencyState> {
       try {
         yield GetCurrenciesLoading();
 
-        Map<String, double> currencies = await offersRepositoryImpl.getCurrencies();
+        currencies = await offersRepositoryImpl.getCurrencies();
         SharedPref.setCurrencies(currencies);
 
-        yield GetCurrenciesSucceed(currencies.keys.toList());
+        yield GetCurrenciesSucceed();
       } catch (e) {
         yield GetCurrenciesFailed('error occurred'.tr());
       }
 
+    }else if(event is ChangeCurrency){
+      //update shared pref and the value that holds it
+      SharedPref.setCurrency(event.currencyCode);
+      yield CurrencyChanged();
     }
   }
 

@@ -28,16 +28,16 @@ class BasketHelper{
 
     });
 
-    return total;
+    return double.parse(total.toStringAsFixed(2));
   }
 
   //calculate VAT for each item
   static double calculateVAT(double price, double vat){
-    double vat = 0;
+    double amount = 0;
 
-    vat = (price * vat) / 100;
+    amount = (price * vat) / 100;
 
-    return vat;
+    return amount;
   }
 
   //calculate basket total

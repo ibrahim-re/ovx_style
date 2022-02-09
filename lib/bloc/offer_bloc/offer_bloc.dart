@@ -25,13 +25,13 @@ class OfferBloc extends Bloc<OfferEvent, OfferState> {
 
   List<Offer> getMyOffers() {
     return fetchedOffers
-        .where((offer) => offer.offerOwnerId == SharedPref.currentUser.id)
+        .where((offer) => offer.offerOwnerId == SharedPref.getUser().id)
         .toList();
   }
 
   List<Offer> getMyLikedOffers() {
     return fetchedOffers
-        .where((offer) => offer.likes!.contains(SharedPref.currentUser.id))
+        .where((offer) => offer.likes!.contains(SharedPref.getUser().id))
         .toList();
   }
 
@@ -44,8 +44,7 @@ class OfferBloc extends Bloc<OfferEvent, OfferState> {
     if (event is FetchOffers) {
       yield FetchOffersLoading();
       try {
-        fetchedOffers =
-            await offersRepositoryImpl.getOffers(event.offerOwnerType);
+        fetchedOffers = await offersRepositoryImpl.getOffers(event.offerOwnerType);
         showOnly.clear();
         yield FetchOffersSucceed(fetchedOffers);
       } catch (e) {

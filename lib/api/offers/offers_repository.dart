@@ -113,7 +113,7 @@ class OffersRepositoryImpl extends OffersRepository {
       if (offerOwnerType == UserType.Person.toString()) {
 
         //check and see if this is like or dislike
-        if (SharedPref.currentUser.offersLiked!.contains(offerId)) {
+        if (SharedPref.getUser().offersLiked!.contains(offerId)) {
           await _offers.doc(offerId).update({
             'likes': FieldValue.arrayRemove([userId])
           });
@@ -127,7 +127,7 @@ class OffersRepositoryImpl extends OffersRepository {
       } else {
 
         //check and see if this is like or dislike
-        if (SharedPref.currentUser.offersLiked!.contains(offerId)) {
+        if (SharedPref.getUser().offersLiked!.contains(offerId)) {
           await _companyOffers.doc(offerId).update({
             'likes': FieldValue.arrayRemove([userId])
           });

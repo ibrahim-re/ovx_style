@@ -57,7 +57,7 @@ class StoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //no chat available for companies
-    if (SharedPref.currentUser.userType == UserType.Company.toString())
+    if (SharedPref.getUser().userType == UserType.Company.toString())
       return NoDataWidget(
         text: 'Story is not available for companies',
         iconName: 'story',

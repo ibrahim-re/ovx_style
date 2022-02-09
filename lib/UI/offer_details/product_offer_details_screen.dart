@@ -46,6 +46,7 @@ class ProductDetails extends StatelessWidget {
           ),
           PropertiesSection(
             productId: offer.id!,
+            productOwnerId: offer.offerOwnerId!,
             offerProperties: offer.properties!,
             discount: offer.discount!,
             title: offer.offerName!,

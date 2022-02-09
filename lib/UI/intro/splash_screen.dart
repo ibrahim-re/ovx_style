@@ -9,6 +9,7 @@ import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/login_bloc/login_bloc.dart';
 import 'package:ovx_style/bloc/login_bloc/login_states.dart';
 import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/notifications_helper.dart';
 
 class SplashScreen extends StatefulWidget {
   final navigator;
@@ -22,6 +23,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
+    NotificationsHelper.listenToNotifications();
     Helper.customizeEasyLoading();
     // Future.delayed(Duration(seconds: 3)).then((_) {
     //   NamedNavigatorImpl().push(NamedRoutes.INTRO_SCREEN, replace: true);
@@ -34,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state){
         if(state is LoginSucceed){
-          print('user logged in ${SharedPref.currentUser.userName}');
+          print('user logged in ${SharedPref.getUser().userName}');
           Future.delayed(Duration(seconds: 3)).then((_) {
             NamedNavigatorImpl().push(NamedRoutes.HOME_SCREEN, replace: true);
           });

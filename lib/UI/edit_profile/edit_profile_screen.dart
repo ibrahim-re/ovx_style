@@ -40,11 +40,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
-    String userType = SharedPref.currentUser.userType!;
+    String userType = SharedPref.getUser().userType!;
     if(userType == UserType.Person.toString())
-      user = SharedPref.currentUser as PersonUser;
+      user = SharedPref.getUser() as PersonUser;
     else{
-      user = SharedPref.currentUser as CompanyUser;
+      user = SharedPref.getUser() as CompanyUser;
       regNumberController.text = user.regNumber;
     }
 
@@ -147,7 +147,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   },
                 ),
                 SizedBox(height: screenHeight * 0.02),
-                if (SharedPref.currentUser.userType == UserType.Company.toString())
+                if (SharedPref.getUser().userType == UserType.Company.toString())
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
