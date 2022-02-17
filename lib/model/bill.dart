@@ -43,7 +43,7 @@ class Bill{
     this.buyerCity,
     this.buyerCountry,
     this.shippingCost,
-});
+  });
 
   Bill.fromMap(Map<String, dynamic> map, String id) {
     this.id = id;

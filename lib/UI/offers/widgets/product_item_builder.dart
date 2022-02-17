@@ -61,9 +61,9 @@ class ProductItemBuilder extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15.0),
                     child: ProgressiveImage(
-                      imageError: 'assets/images/default_profile.png',
+                      imageError: 'assets/images/no_internet.png',
                       image: productOffer.offerMedia!.first,
-                      width: double.maxFinite,
+                      width: double.infinity,
                       height: screenHeight * 0.30,
                       fit: BoxFit.fitWidth,
                     ),

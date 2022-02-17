@@ -11,3 +11,5 @@ class InitializePayment extends PaymentEvent {
 }
 
 class Pay extends PaymentEvent{}
+
+class PayForGift extends PaymentEvent{}

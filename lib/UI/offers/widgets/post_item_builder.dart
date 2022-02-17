@@ -42,7 +42,7 @@ class PostItemBuilder extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
                   child: ProgressiveImage(
-                    imageError: 'assets/images/default_profile.png',
+                    imageError: 'assets/images/no_internet.png',
                     image: postOffer.offerMedia.first,
                     width: double.infinity,
                     height: screenHeight * 0.30,

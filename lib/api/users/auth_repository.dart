@@ -28,18 +28,9 @@ class AuthRepositoryImpl extends AuthRepository {
       if (userCredential.user != null) {
         String uId = userCredential.user!.uid;
 
-        Map<String, dynamic> userInfo = await _databaseRepositoryImpl.getUserData(uId);
+        User user = await _databaseRepositoryImpl.getUserData(uId);
 
-        //set user id as path to his info
-        if (userInfo['userType'] == UserType.Person.toString()) {
-          User currentUser = PersonUser.fromMap(userInfo, uId);
-
-          return currentUser;
-        } else {
-          User currentUser = CompanyUser.fromMap(userInfo, uId);
-
-          return currentUser;
-        }
+        return user;
       } else
         throw 'error';
     } on firebase.FirebaseAuthException catch (e) {
@@ -75,16 +66,14 @@ class AuthRepositoryImpl extends AuthRepository {
         if (userInfo['profileImage'] != null) {
           EasyLoading.show(status: 'Uploading profile image..');
           List<String> paths = [userInfo['profileImage']];
-          List<String> downloadUrls = await _databaseRepositoryImpl
-              .uploadFilesToStorage(paths, uId, 'profileImage');
+          List<String> downloadUrls = await _databaseRepositoryImpl.uploadFilesToStorage(paths, uId, 'profileImage');
           userInfo['profileImage'] = downloadUrls.first;
         }
 
         //upload company reg images to database
         if (userInfo['regImages'] != null) {
           EasyLoading.show(status: 'Uploading reg images..');
-          List<String> downloadUrls = await _databaseRepositoryImpl
-              .uploadFilesToStorage(userInfo['regImages'], uId, 'regImages');
+          List<String> downloadUrls = await _databaseRepositoryImpl.uploadFilesToStorage(userInfo['regImages'], uId, 'regImages');
           userInfo['regImages'] = downloadUrls;
         }
 
@@ -92,11 +81,11 @@ class AuthRepositoryImpl extends AuthRepository {
         await _databaseRepositoryImpl.addUserData(uId, userInfo);
 
         //check if user type is company or person
-        if (userInfo['userType'] == UserType.Person.toString()) {
-          User currentUser = PersonUser.fromMap(userInfo, uId);
+        if (userInfo['userType'] == UserType.Company.toString()) {
+          User currentUser = CompanyUser.fromMap(userInfo, uId);
           return currentUser;
         } else {
-          User currentUser = CompanyUser.fromMap(userInfo, uId);
+          User currentUser = PersonUser.fromMap(userInfo, uId);
 
           return currentUser;
         }
@@ -143,7 +132,7 @@ class AuthRepositoryImpl extends AuthRepository {
           'shortDesc': "",
           'userCode': data[1],
           'userName': data[0],
-          'userType': UserType.Person.toString(),
+          'userType': UserType.Guest.toString(),
         };
 
         //set user id as path to his info

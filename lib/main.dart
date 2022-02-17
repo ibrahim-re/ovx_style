@@ -16,6 +16,7 @@ import 'package:ovx_style/bloc/login_bloc/login_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'Utiles/navigation/named_navigator_impl.dart';
 import 'bloc/comment_bloc/comment_bloc.dart';
+import 'bloc/gifts_bloc/gifts_bloc.dart';
 import 'bloc/login_bloc/login_bloc.dart';
 import 'bloc/notifications_bloc/notifications_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -103,6 +104,9 @@ void main() async {
           ),
           BlocProvider<CurrencyBloc>(
             create: (context) => CurrencyBloc(),
+          ),
+          BlocProvider<GiftsBloc>(
+            create: (context) => GiftsBloc(),
           ),
         ],
         child: const MarketingApp(),

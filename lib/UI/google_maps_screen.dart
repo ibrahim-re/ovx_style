@@ -7,7 +7,10 @@ import 'package:ovx_style/helper/auth_helper.dart';
 import 'package:ovx_style/helper/location_helper.dart';
 
 class GoogleMapsScreen extends StatefulWidget {
-  const GoogleMapsScreen({Key? key, required this.navigator}) : super(key: key);
+  final onSave;
+  const GoogleMapsScreen(
+      {Key? key, required this.navigator, required this.onSave})
+      : super(key: key);
 
   final GlobalKey<NavigatorState> navigator;
 
@@ -29,8 +32,9 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              AuthHelper.userInfo['latitude'] = locationHelper.latitude;
-              AuthHelper.userInfo['longitude'] = locationHelper.longitude;
+              widget.onSave(locationHelper.latitude, locationHelper.longitude);
+              // AuthHelper.userInfo['latitude'] = locationHelper.latitude;
+              // AuthHelper.userInfo['longitude'] = locationHelper.longitude;
               NamedNavigatorImpl().pop();
             },
             child: Text(

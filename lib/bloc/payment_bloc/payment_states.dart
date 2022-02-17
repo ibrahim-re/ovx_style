@@ -13,3 +13,14 @@ class PaymentFailed extends PaymentState{
   PaymentFailed(this.message);
 
 }
+
+class PaymentForGiftSuccess extends PaymentState{}
+
+class PaymentForGiftLoading extends PaymentState{}
+
+class PaymentForGiftFailed extends PaymentState{
+  String message;
+
+  PaymentForGiftFailed(this.message);
+
+}

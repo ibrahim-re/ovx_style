@@ -7,28 +7,31 @@ import 'package:ovx_style/helper/auth_helper.dart';
 
 
 class PhoneTextField extends StatefulWidget {
+  final save;
+  final validate;
+  final controller;
+
+  PhoneTextField({required this.save, this.controller, required this.validate});
 
   @override
   State<PhoneTextField> createState() => _PhoneTextFieldState();
 }
 
 class _PhoneTextFieldState extends State<PhoneTextField> {
-  String _phoneNumber = '';
+  String _phoneNumber = '+966';
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: widget.controller,
       cursorColor: MyColors.secondaryColor,
       cursorWidth: 3,
       style: Constants.TEXT_STYLE1,
-      validator: (userInput){
-        if(userInput!.isEmpty) return 'enter phone'.tr();
-
-        return null;
-      },
+      validator: widget.validate,
       onSaved: (userInput){
-        if(userInput != null)
-          AuthHelper.userInfo['phoneNumber'] = _phoneNumber+userInput;
+        if(userInput != null){
+          widget.save(_phoneNumber+userInput);
+        }
       },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 16),

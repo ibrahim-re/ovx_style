@@ -2,6 +2,7 @@
 class User {
   String? id;
   String? profileImage;
+  String? coverImage;
   String? userName;
   String? nickName;
   String? userCode;
@@ -21,6 +22,7 @@ class User {
 
   User(
       {this.profileImage,
+        this.coverImage,
       this.id,
       required this.userName,
       required this.nickName,
@@ -41,6 +43,7 @@ class User {
 
   User.fromMap(Map<String, dynamic> userInfo, String uId) {
     this.profileImage = userInfo['profileImage'] ?? '';
+    this.coverImage = userInfo['coverImage'] ?? '';
     this.id = uId;
     this.userName = userInfo['userName'];
     this.nickName = userInfo['nickName'];
@@ -69,6 +72,7 @@ class User {
   Map<String, dynamic> toMap() => {
         'id': id,
         'profileImage': profileImage,
+    'coverImage': coverImage,
         'userName': userName,
         'nickName': nickName,
         'userCode': userCode,
@@ -143,6 +147,7 @@ class PersonUser extends User {
   Map<String, dynamic> toMap() => {
         'id': id,
         'profileImage': profileImage,
+    'coverImage': coverImage,
         'userName': userName,
         'nickName': nickName,
         'userCode': userCode,
@@ -211,13 +216,14 @@ class CompanyUser extends User {
 
   CompanyUser.fromMap(Map<String, dynamic> userInfo, String uId)
       : super.fromMap(userInfo, uId) {
-    this.regImages = userInfo['regImage'] ?? [];
+    this.regImages = ((userInfo['regImages'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
     this.regNumber = userInfo['regNumber'] ?? '';
   }
 
   Map<String, dynamic> toMap() => {
         'id': id,
         'profileImage': profileImage,
+    'coverImage': coverImage,
         'userName': userName,
         'nickName': nickName,
         'userCode': userCode,

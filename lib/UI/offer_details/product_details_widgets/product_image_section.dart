@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/Utiles/colors.dart';
@@ -17,11 +18,12 @@ class ProductImageSection extends StatelessWidget {
     required this.description,
     required this.categories,
     required this.status,
+    required this.offerName,
     required this.properties,
   }) : super(key: key);
 
   final List<String> productImages, categories;
-  final String description, status, offerOwnerId;
+  final String description, status, offerOwnerId, offerName;
   final List<ProductProperty> properties;
 
   @override
@@ -47,8 +49,7 @@ class ProductImageSection extends StatelessWidget {
             children: [
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                 decoration: BoxDecoration(
                   color: MyColors.secondaryColor,
                   borderRadius: BorderRadius.circular(10.0),
@@ -93,6 +94,13 @@ class ProductImageSection extends StatelessWidget {
                 ],
               );
             }).toList(),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            offerName,
+            style: Constants.TEXT_STYLE9,
           ),
         ),
         Padding(

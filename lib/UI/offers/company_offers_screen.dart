@@ -34,12 +34,6 @@ class _CompanyOffersScreenState extends State<CompanyOffersScreen> {
       appBar: AppBar(
         title: Text('c.offers'.tr()),
         actions: [
-          if(SharedPref.getUser().userType == UserType.Company.toString())
-            IconButton(
-              onPressed: () => ModalSheets().showOfferTypePicker(context),
-              icon: Icon(Icons.add),
-            ),
-
           //notification icon
           NotificationIcon(),
 

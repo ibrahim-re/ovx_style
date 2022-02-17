@@ -6,6 +6,10 @@ import 'package:ovx_style/helper/auth_helper.dart';
 import 'package:ovx_style/helper/helper.dart';
 
 class BirthdayPicker extends StatefulWidget {
+  final save;
+  final selectedDate;
+
+  BirthdayPicker({required this.save, this.selectedDate = ''});
   @override
   _BirthdayPickerState createState() => _BirthdayPickerState();
 }
@@ -22,7 +26,7 @@ class _BirthdayPickerState extends State<BirthdayPicker> {
         setState((){
           selectedDate = temp;
         });
-        AuthHelper.userInfo['dateBirth'] = selectedDate;
+        widget.save(selectedDate);
       },
       child: DatePickerWidget(selectedDate: selectedDate, hint: 'date birth'.tr(),),
     );

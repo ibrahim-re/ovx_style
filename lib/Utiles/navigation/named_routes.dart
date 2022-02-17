@@ -31,4 +31,6 @@ class NamedRoutes {
   static const MY_LIKED_OFFERS_SCREEN = "MY_LIKED_OFFERS_SCREEN";
   static const NOTIFICATIONS_SCREEN = "NOTIFICATIONS_SCREEN";
   static const MY_BILLS_SCREEN = "MY_BILLS_SCREEN";
+  static const MY_GIFTS_SCREEN = "MY_GIFTS_SCREEN";
+  static const HELP_SCREEN = "HELP_SCREEN";
 }

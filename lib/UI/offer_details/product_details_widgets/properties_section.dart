@@ -95,7 +95,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                   ),
                   Text(
                     '$currentItemPrice ${SharedPref.getCurrency()}',
-                    style: Constants.PRICE_TEXT_STYLE,
+                    style: Constants.TEXT_STYLE9,
                   ),
                 ],
               )
@@ -153,7 +153,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
                   const SizedBox(width: 6),
                   Text(
                     '${Helper().priceAfterDiscount(currentItemPrice!, widget.discount)} ${SharedPref.getCurrency()}',
-                    style: Constants.PRICE_TEXT_STYLE,
+                    style: Constants.TEXT_STYLE9,
                   ),
                 ],
               ),

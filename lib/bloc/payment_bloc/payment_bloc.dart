@@ -22,6 +22,18 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         yield PaymentFailed('Timed Out');
       else
         yield PaymentFailed('Failed To Pay');
+    }else if(event is PayForGift){
+      yield PaymentForGiftLoading();
+      print('payment start');
+      String result = await PaymentHelper.startPayment();
+      if(result == 'Approved')
+        yield PaymentForGiftSuccess();
+      else if(result == 'Expired Card')
+        yield PaymentForGiftFailed('Expired Card');
+      else if(result == 'Response Received Too Late')
+        yield PaymentForGiftFailed('Timed Out');
+      else
+        yield PaymentForGiftFailed('Failed To Pay');
     }
   }
 }

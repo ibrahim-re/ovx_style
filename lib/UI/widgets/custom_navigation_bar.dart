@@ -48,12 +48,12 @@ class CustomNavigationBar extends StatelessWidget {
         itemCount: 5,
         physics: NeverScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) => SizedBox(
-          width: (width - 16) / 5,
-          child: GestureDetector(
-            onTap: () {
-              changeIndex(index);
-            },
+        itemBuilder: (context, index) => GestureDetector(
+          onTap: () {
+            changeIndex(index);
+          },
+          child: SizedBox(
+            width: (width - 16) / 5,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

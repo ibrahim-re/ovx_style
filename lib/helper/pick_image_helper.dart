@@ -10,19 +10,19 @@ class PickImageHelper {
       return showCupertinoModalPopup<ImageSource>(
           context: context,
           builder: (BuildContext ctx) => CupertinoActionSheet(
-                actions: [
-                  CupertinoActionSheetAction(
-                    onPressed: () =>
-                        Navigator.of(context).pop(ImageSource.gallery),
-                    child: Text('Photo Library'),
-                  ),
-                  CupertinoActionSheetAction(
-                    onPressed: () =>
-                        Navigator.of(context).pop(ImageSource.camera),
-                    child: Text('Camera'),
-                  )
-                ],
-              ));
+            actions: [
+              CupertinoActionSheetAction(
+                onPressed: () =>
+                    Navigator.of(context).pop(ImageSource.gallery),
+                child: Text('Photo Library'),
+              ),
+              CupertinoActionSheetAction(
+                onPressed: () =>
+                    Navigator.of(context).pop(ImageSource.camera),
+                child: Text('Camera'),
+              )
+            ],
+          ));
     else
       return showModalBottomSheet(
         context: context,
@@ -47,45 +47,60 @@ class PickImageHelper {
   }
 
   Future<File> pickImageFromSource(ImageSource imageSource) async {
-    final image = await ImagePicker().pickImage(source: imageSource, imageQuality: 50);
-    if (image == null) return File('');
+    try {
+      final image = await ImagePicker().pickImage(source: imageSource, imageQuality: 50);
+      if (image == null) return File('');
 
-    return File(image.path);
+      return File(image.path);
+    }  catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   Future<File> pickVideoFromSource(ImageSource imageSource) async {
-    final video = await ImagePicker().pickVideo(source: imageSource, maxDuration: Duration(seconds: 15));
-    if (video == null) return File('');
+    try {
+      final video = await ImagePicker().pickVideo(source: imageSource, maxDuration: Duration(seconds: 15));
+      if (video == null) return File('');
 
-    return File(video.path);
+      return File(video.path);
+    }  catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   Future<List<File>> pickMultiImages() async {
-    List<File> pickedImages = [];
-    final images = await ImagePicker().pickMultiImage(imageQuality: 50);
+    try {
+      List<File> pickedImages = [];
+      final images = await ImagePicker().pickMultiImage(imageQuality: 50);
 
-    if(images != null) {
-      pickedImages.addAll(images.map((image) => File(image.path)).toList());
+      if(images != null) {
+        pickedImages.addAll(images.map((image) => File(image.path)).toList());
+      }
+
+      return pickedImages;
+    }  catch (e) {
+      print(e);
+      throw e;
     }
-
-    return pickedImages;
   }
 
-  // Future<File> imgFromCamera() async {
-  //   final image = await ImagePicker()
-  //       .pickImage(source: ImageSource.camera, imageQuality: 50);
-  //
-  //   if (image == null) return File('');
-  //
-  //   return File(image.path);
-  // }
-  //
-  // Future<File> imgFromGallery() async {
-  //   final image = await ImagePicker()
-  //       .pickImage(source: ImageSource.gallery, imageQuality: 50);
-  //
-  //   if (image == null) return File('');
-  //
-  //   return File(image.path);
-  // }
+// Future<File> imgFromCamera() async {
+//   final image = await ImagePicker()
+//       .pickImage(source: ImageSource.camera, imageQuality: 50);
+//
+//   if (image == null) return File('');
+//
+//   return File(image.path);
+// }
+//
+// Future<File> imgFromGallery() async {
+//   final image = await ImagePicker()
+//       .pickImage(source: ImageSource.gallery, imageQuality: 50);
+//
+//   if (image == null) return File('');
+//
+//   return File(image.path);
+// }
 }

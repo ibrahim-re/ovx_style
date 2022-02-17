@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -9,9 +10,11 @@ import 'package:ovx_style/UI/offers/widgets/waiting_offers_list_view.dart';
 import 'package:ovx_style/UI/profile/widgets/profile_image_section.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
 import 'package:ovx_style/model/user.dart';
+import 'package:shimmer_image/shimmer_image.dart';
 
 class OtherUserProfile extends StatelessWidget {
   final navigator;
@@ -22,13 +25,54 @@ class OtherUserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     final userOffers = context.read<OfferBloc>().getUserOffers(user.id!);
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
         children: [
-          ProfileImageSection(
-            profileImage: user.profileImage,
+          // BlocProvider<CoverPhotoBloc>(
+          //   create: (context) => CoverPhotoBloc(),
+          //   child: ProfileImageSection(
+          //     uId: user.id,
+          //     coverImage: user.coverImage,
+          //     profileImage: user.profileImage,
+          //   ),
+          // ),
+          Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            width: double.infinity,
+            height: screenHeight * 0.3,
+            alignment: Alignment.topCenter,
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.bottomCenter,
+              children: [
+                CoverImage(
+                  coverImage: user.coverImage!,
+                ),
+                //if user if current logged in, he can change his cover photo
+                Positioned(
+                  bottom: -70,
+                  child: user.profileImage != ''
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(75),
+                          child: ProgressiveImage(
+                            imageError: 'assets/images/no_internet.png',
+                            image: user.profileImage!,
+                            height: screenHeight * 0.19,
+                            width: screenHeight * 0.19,
+                          ),
+                        )
+                      : CircleAvatar(
+                          radius: 75,
+                          //child: Image.asset('assets/images/add_image.png', fit: BoxFit.fill,),
+                          backgroundImage:
+                              AssetImage('assets/images/default_profile.jpg'),
+                        ),
+                ),
+              ],
+            ),
           ),
           Container(
             margin: const EdgeInsets.only(top: 12),
@@ -122,11 +166,22 @@ class OtherUserProfile extends StatelessWidget {
           const SizedBox(
             height: 16,
           ),
-          OffersListView(
-            fetchedOffers: userOffers,
-            scrollPhysics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-          ),
+          if (userOffers.isNotEmpty)
+            OffersListView(
+              fetchedOffers: userOffers,
+              scrollPhysics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+            )
+          else
+            Center(
+              child: Text(
+                'no offers yet'.tr(),
+                style: Constants.TEXT_STYLE8.copyWith(
+                  color: MyColors.secondaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
         ],
       ),
     );

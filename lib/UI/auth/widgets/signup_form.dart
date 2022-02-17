@@ -119,7 +119,16 @@ class _SignupFormState extends State<SignupForm> {
             SizedBox(
               height: screenHeight * 0.015,
             ),
-            PhoneTextField(),
+            PhoneTextField(
+              validate: (userInput){
+                if(userInput!.isEmpty) return 'enter phone'.tr();
+
+                return null;
+              },
+              save: (phoneNumber){
+                AuthHelper.userInfo['phoneNumber'] = phoneNumber;
+              },
+            ),
             SizedBox(
               height: screenHeight * 0.015,
             ),
@@ -127,13 +136,21 @@ class _SignupFormState extends State<SignupForm> {
               Row(
                 children: [
                   Expanded(
-                    child: GenderPicker(),
+                    child: GenderPicker(
+                      onSaved: (val){
+                        AuthHelper.userInfo['gender'] = val;
+                      },
+                    ),
                   ),
                   SizedBox(
                     width: screenHeight * 0.015,
                   ),
                   Expanded(
-                    child: BirthdayPicker(),
+                    child: BirthdayPicker(
+                      save: (selectedDate){
+                        AuthHelper.userInfo['dateBirth'] = selectedDate;
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -160,7 +177,11 @@ class _SignupFormState extends State<SignupForm> {
                   SizedBox(
                     height: screenHeight * 0.02,
                   ),
-                  RegistrationImagePicker(),
+                  RegistrationImagePicker(
+                    save: (imagesPath){
+                      AuthHelper.userInfo['regImages'] = imagesPath;
+                    },
+                  ),
                   SizedBox(
                     height: screenHeight * 0.018,
                   ),
@@ -186,13 +207,25 @@ class _SignupFormState extends State<SignupForm> {
             SizedBox(
               height: screenHeight * 0.02,
             ),
-            CountryPicker(),
+            CountryPicker(
+              saveCountry: (val) {
+                AuthHelper.userInfo['country'] = val;
+              },
+              saveCity: (val) {
+                AuthHelper.userInfo['city'] = val;
+              },
+            ),
             SizedBox(
               height: screenHeight * 0.003,
             ),
             GestureDetector(
               onTap: () {
-                NamedNavigatorImpl().push(NamedRoutes.GOOGLE_MAPS_SCREEN);
+                NamedNavigatorImpl().push(NamedRoutes.GOOGLE_MAPS_SCREEN, arguments: {
+                  'onSave': (latitude, longitude) {
+                    AuthHelper.userInfo['latitude'] = latitude;
+                    AuthHelper.userInfo['longitude'] = longitude;
+                  },
+                });
               },
               child: CustomRedirectWidget(
                 title: 'location on map'.tr(),

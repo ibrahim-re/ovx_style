@@ -18,7 +18,7 @@ class LogoutBloc extends Bloc<LogoutEvent, LogoutState>{
       yield LogoutLoading();
       try {
         //delete device token when user sign out
-        //NotificationsHelper.deleteDeviceTokenFromDatabase();
+        NotificationsHelper.deleteDeviceTokenFromDatabase();
         await _authRepositoryImpl.signOutUser();
         await SharedPref.deleteUser();
         print('user signed out');

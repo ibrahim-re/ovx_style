@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,15 +54,9 @@ class SharedPref {
     setUser(user);
   }
 
-  static void addPoints(int amount){
+  static void updateCoverImage(String coverImageUrl){
     User user = getUser();
-    user.points = user.points! + amount;
-    setUser(user);
-  }
-
-  static void deletePoints(int amount){
-    User user = getUser();
-    user.points = user.points! - amount;
+    user.coverImage = coverImageUrl;
     setUser(user);
   }
 
@@ -72,7 +67,11 @@ class SharedPref {
     if(userInfo.isNotEmpty)
       decodedMap = json.decode(userInfo);
 
-    return User.fromMap(decodedMap, decodedMap['id'] ?? '');
+
+    if(decodedMap['userType'] == UserType.Company.toString())
+      return CompanyUser.fromMap(decodedMap, decodedMap['id'] ?? '');
+    else
+      return PersonUser.fromMap(decodedMap, decodedMap['id'] ?? '');
   }
 
   static deleteUser() {

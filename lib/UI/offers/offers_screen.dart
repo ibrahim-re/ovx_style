@@ -10,6 +10,7 @@ import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/notifications_bloc/notifications_bloc.dart';
 import 'package:ovx_style/bloc/notifications_bloc/notifications_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
@@ -37,12 +38,6 @@ class _OffersScreenState extends State<OffersScreen> {
       appBar: AppBar(
         title: Text('offers'.tr()),
         actions: [
-          if(SharedPref.getUser().userType == UserType.Person.toString())
-            IconButton(
-              onPressed: () => ModalSheets().showOfferTypePicker(context),
-              icon: Icon(Icons.add),
-            ),
-
           //notification icon
           NotificationIcon(),
 

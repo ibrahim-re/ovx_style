@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 
 
 class OfferTypeWidget extends StatelessWidget {
@@ -21,10 +25,15 @@ class OfferTypeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
+        //close bottom sheet
         NamedNavigatorImpl().pop();
-        NamedNavigatorImpl().push(NamedRoutes.ADD_OFFER_SCREEN, arguments: {
-          'offerType': offerType,
-        });
+        if(SharedPref.getUser().userType != UserType.Guest.toString())
+          NamedNavigatorImpl().push(NamedRoutes.ADD_OFFER_SCREEN, arguments: {
+            'offerType': offerType,
+          });
+
+        else
+          EasyLoading.showToast('login to add'.tr());
       },
       highlightColor: MyColors.lightBlue,
       child: Column(

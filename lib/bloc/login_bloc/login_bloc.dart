@@ -20,7 +20,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>{
         User user = await _authRepositoryImpl.signInUser(event.email, event.password);
         if(user.id != null){
           SharedPref.setUser(user);
-
           //save device token to send notifications
           NotificationsHelper.saveDeviceTokenToDatabase();
           yield LoginSucceed();

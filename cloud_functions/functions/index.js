@@ -1,12 +1,81 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
 
 admin.initializeApp();
 const db = admin.firestore();
 const fcm = admin.messaging();
+
+exports.sendGifts = functions.https.onCall((data, context) => {
+	const productNames = data.productNames;
+	const from = data.from;
+	const to = data.to;
+	const giftId = data.id;
+	const date = admin.firestore.FieldValue.serverTimestamp();
+
+	db.doc(`users/${from}/gifts/${giftId}`).set({
+    "productNames": productNames,
+    "date": date,
+    "from": from,
+    "to": to,
+    });
+
+	db.doc(`users/${to}/gifts/${giftId}`).set({
+    "productNames": productNames,
+    "date": date,
+    "from": from,
+    "to": to,
+    });
+});
+
+exports.sendGiftNotification = functions.firestore
+    .document("users/{userId}/gifts/{giftId}")
+    .onCreate(async(snapshot, context) => {
+      const date = admin.firestore.FieldValue.serverTimestamp();
+      const userId = context.params.userId;
+      const productNames = snapshot.data().productNames;
+      const from = snapshot.data().from;
+      const to = snapshot.data().to;
+
+      // send notification only to the gift receiver
+      if(userId == to){
+        const querySnapshot = await db.collection(`users/${userId}/device tokens`).get();
+        const tokens = [];
+        querySnapshot.forEach((tokenDoc) => {
+          console.log(`${tokenDoc.data().token}`);
+          tokens.push(tokenDoc.data().token);
+      });
+
+        if(tokens.length > 0){
+            const snapshot = await db.doc(`users/${from}`).get();
+            const fromName = snapshot.data().userName;
+
+            const payload = {
+                notification : {
+                	title: "Gift Received",
+                	body: `Gift received from ${fromName},
+click here to see more information.`,
+                    sound: "default",
+                },
+                data: {
+                	click_action: "Flutter_NOTIFICATION_CLICK"
+                },
+            };
+
+            db.collection(`users/${userId}/notifications`).add({
+            	"date": date,
+            	"content": `Gift received from ${fromName},
+click here to see more information.`,
+                "title": "Gift Received",
+            });
+
+            return fcm.sendToDevice(tokens, payload);
+
+        }
+
+     
+    }
+
+    });
 
 exports.sendSellNotification = functions.firestore
     .document("users/{userId}/bills/{billId}")
@@ -15,7 +84,6 @@ exports.sendSellNotification = functions.firestore
       const userId = context.params.userId;
       const productName = snapshot.data().productName;
       const buyerName = snapshot.data().buyerName;
-      console.log(`${productName} and ${buyerName} and usre is ${userId}`);
       const querySnapshot = await db.collection(`users/${userId}/device tokens`).get();
       const tokens = [];
       querySnapshot.forEach((tokenDoc) => {
@@ -23,8 +91,9 @@ exports.sendSellNotification = functions.firestore
         tokens.push(tokenDoc.data().token);
       });
 
-
-      const payload = {
+      if(tokens.length > 0){
+      	console.log(`not empty tokens ${tokens.length}`);
+      	const payload = {
       	notification : {
       		title: "Product Sold",
       		body: `A product you added ${productName} has been sold to ${buyerName},
@@ -43,8 +112,10 @@ click here to see more information.`,
         "title": "Product Sold",
   });
 
-
       return fcm.sendToDevice(tokens, payload);
+
+  }
+
     });
 
 exports.sendBills = functions.https.onCall((data, context) => {
@@ -94,4 +165,39 @@ exports.sendBills = functions.https.onCall((data, context) => {
   });
 
   return [date];
+});
+
+exports.sendPointsNotification = functions.https.onCall(async(data, context) => {
+  // get data from the mobile app
+  const userId = data.userId;
+  const userName = data.userName;
+  const pointsAmount = data.pointsAmount;
+  const date = admin.firestore.FieldValue.serverTimestamp();
+  const querySnapshot = await db.collection(`users/${userId}/device tokens`).get();
+  const tokens = [];
+  querySnapshot.forEach((tokenDoc) => {
+          tokens.push(tokenDoc.data().token);
+      });
+
+  if(tokens.length > 0){
+    const payload = {
+        notification : {
+            title: "Points Received",
+            body: `${pointsAmount} points received from ${userName},`,
+            sound: "default",
+        },
+        data: {
+            click_action: "Flutter_NOTIFICATION_CLICK"
+      	},
+      };
+
+      db.collection(`users/${userId}/notifications`).add({
+        "date": date,
+        "content": `${pointsAmount} points received from ${userName},`,
+        "title": "Points Received",
+  });
+
+      return fcm.sendToDevice(tokens, payload);
+  }
+
 });

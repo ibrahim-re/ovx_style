@@ -35,47 +35,50 @@ class NotificationItem extends StatelessWidget {
           NamedNavigatorImpl().push(NamedRoutes.MY_BILLS_SCREEN);
         }
       },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        height: screenHeight * 0.25,
-        decoration: BoxDecoration(
-          color: MyColors.lightBlue.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: Text(
-                DateFormat('dd MMM yyyy').format(date),
-                style: Constants.TEXT_STYLE7.copyWith(color: MyColors.secondaryColor),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          height: screenHeight * 0.25,
+          decoration: BoxDecoration(
+            color: MyColors.lightBlue.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Text(
+                  DateFormat('dd MMM yyyy').format(date),
+                  style: Constants.TEXT_STYLE7.copyWith(color: MyColors.secondaryColor),
+                ),
               ),
-            ),
-            Text(
-              title,
-              style: Constants.TEXT_STYLE4.copyWith(fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(
-              height: 6,
-            ),
-            Expanded(
-              child: Text(
-                content,
-                overflow: TextOverflow.fade,
-                softWrap: true,
-                style: Constants.TEXT_STYLE6,
+              Text(
+                title,
+                style: Constants.TEXT_STYLE4.copyWith(fontWeight: FontWeight.w500),
               ),
-            ),
-            GestureDetector(
-              onTap: (){
-                context.read<NotificationsBloc>().add(DeleteNotification(id, SharedPref.getUser().id!));
-              },
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: SvgPicture.asset('assets/images/trash.svg', fit: BoxFit.scaleDown,),),
-            ),
-          ],
+              const SizedBox(
+                height: 6,
+              ),
+              Expanded(
+                child: Text(
+                  content,
+                  overflow: TextOverflow.visible,
+                  softWrap: true,
+                  style: Constants.TEXT_STYLE6,
+                ),
+              ),
+              GestureDetector(
+                onTap: (){
+                  context.read<NotificationsBloc>().add(DeleteNotification(id, SharedPref.getUser().id!));
+                },
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: SvgPicture.asset('assets/images/trash.svg', fit: BoxFit.scaleDown,),),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -15,7 +15,7 @@ class BasketHelper{
       total += item.price!;
     });
 
-    return total;
+    return double.parse(total.toStringAsFixed(2));
   }
 
   //calculate VAT total
@@ -57,7 +57,7 @@ class BasketHelper{
 
     });
 
-    return total;
+    return double.parse(total.toStringAsFixed(2));
   }
 
 

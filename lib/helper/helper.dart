@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +90,21 @@ class Helper{
     double newPrice = oldPrice - (oldPrice * (discount / 100));
 
     return double.parse(newPrice.toStringAsFixed(2));
+  }
+
+  Future<void> sendEmail(String subject, String body, List<String> attachmentsPath) async {
+    final Email email = Email(
+      attachmentPaths: attachmentsPath,
+      body: body,
+      subject: subject,
+      recipients: ['ovxstyle@gmail.com'],
+    );
+
+    try {
+      await FlutterEmailSender.send(email);
+    } catch (e) {
+      print('error is $e');
+    }
   }
 
 }

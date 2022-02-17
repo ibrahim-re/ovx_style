@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
@@ -40,6 +41,23 @@ class AddProduct extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: MyColors.lightBlue.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    'company share'.tr(),
+                    textAlign: TextAlign.center,
+                    style: Constants.TEXT_STYLE6.copyWith(color: MyColors.grey),
+                  ),
+                ),
+              ),
+              VerticalSpaceWidget(
+                heightPercentage: 0.025,
+              ),
               ProductImagesPicker(),
               VerticalSpaceWidget(
                 heightPercentage: 0.025,

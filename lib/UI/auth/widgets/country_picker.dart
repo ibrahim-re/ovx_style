@@ -5,20 +5,25 @@ import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
 
 class CountryPicker extends StatelessWidget {
+  final saveCountry, saveCity;
+  final currentCity, currentCountry;
+
+  CountryPicker({required this.saveCountry, required this.saveCity, this.currentCountry, this.currentCity,});
   @override
   Widget build(BuildContext context) {
     return CSCPicker(
-      onCountryChanged: (val) {
-        AuthHelper.userInfo['country'] = val;
+      onCountryChanged: (val){
+        saveCountry(val);
       },
-      onStateChanged: (val) {
-        AuthHelper.userInfo['city'] = val;
+      onStateChanged: (val){
+        saveCity(val);
       },
       onCityChanged: (val) {
         //print(val);
       },
 
-      currentCity: 'Syria',
+      currentState: currentCity,
+      currentCountry: currentCountry,
 
       flagState: CountryFlag.DISABLE,
       showCities: false,

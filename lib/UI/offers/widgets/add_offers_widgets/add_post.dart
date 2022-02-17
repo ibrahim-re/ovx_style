@@ -37,48 +37,48 @@ class _AddPostState extends State<AddPost> {
 
       },
       child: Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          GestureDetector(
-            onTap: () async {
-              //take the images and add its path to user info
-              final temporaryImages = await pickImageHelper.pickMultiImages();
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                //take the images and add its path to user info
+                final temporaryImages = await pickImageHelper.pickMultiImages();
 
-              setState(() {
-                _imagesPath.addAll(temporaryImages.map((e) => e.path).toList());
-              });
+                setState(() {
+                  _imagesPath.addAll(temporaryImages.map((e) => e.path).toList());
+                });
 
-            },
-            child: CustomMultiImageWidget(
-              imagesPath: _imagesPath,
-              hint: 'upload offer photo'.tr(),
+              },
+              child: CustomMultiImageWidget(
+                imagesPath: _imagesPath,
+                hint: 'upload offer photo'.tr(),
+              ),
             ),
-          ),
-          VerticalSpaceWidget(
-            heightPercentage: 0.025,
-          ),
-          DescriptionTextField(
-            onSaved: (p) {},
-            controller: _descController,
-          ),
-          VerticalSpaceWidget(
-            heightPercentage: 0.02,
-          ),
-          CustomElevatedButton(
-            color: MyColors.secondaryColor,
-            text: 'add offer'.tr(),
-            function: () {
-              if(_descController.text.isEmpty){
-                EasyLoading.showError('please fill desc'.tr());
-              } else
-                bloc.add(AddPostOfferButtonPressed(_imagesPath, _descController.text, OfferType.Post.toString()));
-            },
-          ),
-        ],
+            VerticalSpaceWidget(
+              heightPercentage: 0.025,
+            ),
+            DescriptionTextField(
+              onSaved: (p) {},
+              controller: _descController,
+            ),
+            VerticalSpaceWidget(
+              heightPercentage: 0.02,
+            ),
+            CustomElevatedButton(
+              color: MyColors.secondaryColor,
+              text: 'add offer'.tr(),
+              function: () {
+                if(_descController.text.isEmpty){
+                  EasyLoading.showError('please fill desc'.tr());
+                } else
+                  bloc.add(AddPostOfferButtonPressed(_imagesPath, _descController.text, OfferType.Post.toString()));
+              },
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 }

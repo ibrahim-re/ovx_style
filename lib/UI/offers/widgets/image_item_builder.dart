@@ -50,7 +50,7 @@ class ImageItemBuilder extends StatelessWidget {
                       width: 6,
                     ),
                     itemBuilder: (ctx, index) => ProgressiveImage(
-                      imageError: 'assets/images/default_profile.png',
+                      imageError: 'assets/images/no_internet.png',
                       image: imageOffer.offerMedia[index],
                       width: screenWidth,
                       height: screenHeight * 0.30,

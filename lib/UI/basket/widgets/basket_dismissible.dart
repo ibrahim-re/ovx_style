@@ -77,7 +77,7 @@ class basketDismissible extends StatelessWidget {
         ),
         trailing: Text(
           '${basketItem.price} ${SharedPref.getCurrency()}',
-          style: Constants.PRICE_TEXT_STYLE,
+          style: Constants.TEXT_STYLE9,
         ),
       ),
     );

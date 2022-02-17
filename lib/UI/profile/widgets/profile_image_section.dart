@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_bloc.dart';
+import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_events.dart';
+import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_states.dart';
+import 'package:ovx_style/helper/pick_image_helper.dart';
+import 'dart:io';
+
+import 'package:provider/src/provider.dart';
+import 'package:shimmer_image/shimmer_image.dart';
 
 class ProfileImageSection extends StatelessWidget {
   final profileImage;
 
-  const ProfileImageSection({Key? key, @required this.profileImage}) : super(key: key);
-
-  final String coverImage =
-      "https://image.freepik.com/free-vector/realistic-black-backgrounds-with-hexagonal-frames_23-2149164531.jpg";
+  const ProfileImageSection({
+    Key? key,
+    required this.profileImage,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,34 +33,112 @@ class ProfileImageSection extends StatelessWidget {
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
         children: [
-          Image(
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: screenHeight * 0.22,
-            image: NetworkImage(coverImage),
+          BlocConsumer<CoverPhotoBloc, CoverPhotoState>(
+            listener: (context, state) {
+              if (state is ChangeCoverPhotoLoading)
+                EasyLoading.show(status: 'please wait'.tr());
+              else if (state is ChangeCoverPhotoFailed)
+                EasyLoading.showError(state.message);
+              else if (state is ChangeCoverPhotoSuccess)
+                EasyLoading.showSuccess('cover changed'.tr());
+            },
+            builder: (context, state) => CoverImage(
+              coverImage: SharedPref.getUser().coverImage!,
+            ),
           ),
+          //if user if current logged in, he can change his cover photo
           Positioned(
             top: 10,
             left: 10,
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.edit),
+            child: GestureDetector(
+              onTap: () async {
+                final imageSource = await PickImageHelper().showPicker(context);
+                if (imageSource == null) return;
+
+                File temporaryImage = await PickImageHelper().pickImageFromSource(imageSource);
+
+                context.read<CoverPhotoBloc>().add(ChangeCoverPhotoButtonPressed(temporaryImage.path));
+
+                },
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.edit,
+                  color: MyColors.secondaryColor,
+                ),
+              ),
             ),
           ),
           Positioned(
             bottom: -70,
-            child: profileImage != '' ? CircleAvatar(
-              radius: 75,
-              backgroundImage: NetworkImage(profileImage!),
-            ) : CircleAvatar(
-              radius: 75,
-              //child: Image.asset('assets/images/add_image.png', fit: BoxFit.fill,),
-              backgroundImage: AssetImage('assets/images/default_profile.jpg'),
-            ),
+            child: profileImage != ''
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(75),
+                    child: ProgressiveImage(
+                      imageError: 'assets/images/no_internet.png',
+                      image: profileImage,
+                      height: screenHeight * 0.19,
+                      width: screenHeight * 0.19,
+                    ),
+                  )
+                : CircleAvatar(
+                    radius: 75,
+                    //child: Image.asset('assets/images/add_image.png', fit: BoxFit.fill,),
+                    backgroundImage:
+                        AssetImage('assets/images/default_profile.jpg'),
+                  ),
           ),
         ],
       ),
     );
+  }
+}
+
+/*
+* BlocBuilder<EditUserBloc, EditUserState>(
+            builder: (ctx, state) => Positioned(
+              bottom: -70,
+              child: profileImage != ''
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(75),
+                      child: ProgressiveImage(
+                        imageError: 'assets/images/no_internet.png',
+                        image: profileImage,
+                        height: screenHeight * 0.19,
+                        width: screenHeight * 0.19,
+                      ),
+                    )
+                  : CircleAvatar(
+                      radius: 75,
+                      //child: Image.asset('assets/images/add_image.png', fit: BoxFit.fill,),
+                      backgroundImage:
+                          AssetImage('assets/images/default_profile.jpg'),
+                    ),
+            ),
+          )*/
+
+class CoverImage extends StatelessWidget {
+  final String coverImage;
+
+  CoverImage({required this.coverImage});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return coverImage.isNotEmpty
+        ? ProgressiveImage(
+            imageError: 'assets/images/no_internet.png',
+            image: coverImage,
+            width: double.infinity,
+            height: screenHeight * 0.22,
+            fit: BoxFit.fitWidth,
+          )
+        : Image.asset(
+            'assets/images/cover.png',
+            fit: BoxFit.fitWidth,
+            width: double.infinity,
+            height: screenHeight * 0.22,
+          );
   }
 }

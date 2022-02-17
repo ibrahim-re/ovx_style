@@ -20,35 +20,41 @@ class Settings extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          settingsItemBuilder(
+          SettingsItemBuilder(
             icon: 'settings',
             text: 'settings'.tr(),
-            child: Container(),
+            toDo: null,
           ),
-          settingsItemBuilder(
+          // settingsItemBuilder(
+          //   icon: '',
+          //   text: 'mute noti'.tr(),
+          //   child: Switch(
+          //     value: true,
+          //     activeColor: Colors.indigo,
+          //     activeTrackColor: Colors.grey.shade200,
+          //     onChanged: (bool val) {},
+          //   ),
+          // ),
+          SettingsItemBuilder(
+            toDo: (){
+              ModalSheets().showLanguagePicker(context);
+            },
             icon: '',
-            text: 'mute noti'.tr(),
-            child: Switch(
-              value: true,
-              activeColor: Colors.indigo,
-              activeTrackColor: Colors.grey.shade200,
-              onChanged: (bool val) {},
-            ),
+            text: 'language'.tr() + ': ${translator.activeLanguageCode.toUpperCase()}',
           ),
-          GestureDetector(
-            onTap: (){
+          SettingsItemBuilder(
+            toDo: (){
               ModalSheets().showTermsAndConditions(context);
             },
-            child: settingsItemBuilder(
-              icon: 'privacy',
-              text: 'policy and terms'.tr(),
-              child: Container(),
-            ),
+            icon: 'privacy',
+            text: 'policy and terms'.tr(),
           ),
-          settingsItemBuilder(
+          SettingsItemBuilder(
+            toDo: (){
+              NamedNavigatorImpl().push(NamedRoutes.HELP_SCREEN);
+            },
             icon: 'help',
             text: 'help'.tr(),
-            child: Container(),
           ),
           BlocProvider.value(
             value: BlocProvider.of<LogoutBloc>(context),
@@ -63,15 +69,13 @@ class Settings extends StatelessWidget {
                 } else if (state is LogoutFailed)
                   EasyLoading.showError(state.message);
               },
-              child: GestureDetector(
-                  onTap: () {
-                    context.read<LogoutBloc>().add(LogoutButtonPressed());
-                  },
-                  child: settingsItemBuilder(
-                    icon: 'logout',
-                    text: 'logout'.tr(),
-                    child: Container(),
-                  )),
+              child: SettingsItemBuilder(
+                toDo: () {
+                  context.read<LogoutBloc>().add(LogoutButtonPressed());
+                },
+                icon: 'logout',
+                text: 'logout'.tr(),
+              ),
             ),
           ),
         ],
@@ -80,40 +84,41 @@ class Settings extends StatelessWidget {
   }
 }
 
-class settingsItemBuilder extends StatelessWidget {
+class SettingsItemBuilder extends StatelessWidget {
 
-  settingsItemBuilder({
-    required this.text, required this.icon, required this.child,
-});
+  SettingsItemBuilder({
+    required this.text, required this.icon, required this.toDo,
+  });
 
   final String icon;
   final String text;
-  final Widget child;
+  final toDo;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: text == 'Settings'
-            ? Colors.white
-            : Colors.blue.shade100.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          icon.isEmpty
-              ? Container()
-              : SvgPicture.asset('assets/images/$icon.svg', fit: BoxFit.scaleDown,),
-          const SizedBox(width: 10),
-          Text(
-            text,
-            style: Constants.TEXT_STYLE4,
-          ),
-          Spacer(),
-          child,
-        ],
+    return GestureDetector(
+      onTap: toDo,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: text == 'settings'.tr()
+              ? Colors.white
+              : Colors.blue.shade100.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            icon.isEmpty
+                ? Container()
+                : SvgPicture.asset('assets/images/$icon.svg', fit: BoxFit.scaleDown,),
+            const SizedBox(width: 10),
+            Text(
+              text,
+              style: Constants.TEXT_STYLE4,
+            ),
+          ],
+        ),
       ),
     );
   }

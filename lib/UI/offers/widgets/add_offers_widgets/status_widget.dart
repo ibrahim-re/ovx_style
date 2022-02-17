@@ -33,7 +33,7 @@ class StatusWidget extends StatelessWidget {
       ),
       context: context,
       builder: (ctx) => StatefulBuilder(
-            builder: (ctx, setNewState) {
+          builder: (ctx, setNewState) {
             return SafeArea(
               child: Container(
                 child: Wrap(
@@ -75,7 +75,7 @@ class StatusWidget extends StatelessWidget {
               ),
             );
           }
-        ),
+      ),
     );
   }
 }

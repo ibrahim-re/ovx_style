@@ -42,7 +42,7 @@ class MyBillsScreen extends StatelessWidget {
                       child: Text(
                         'ID'.tr(),
                         style:
-                            Constants.TEXT_STYLE1.copyWith(color: Colors.white),
+                        Constants.TEXT_STYLE1.copyWith(color: Colors.white),
                       ),
                     ),
                   ),
@@ -51,7 +51,7 @@ class MyBillsScreen extends StatelessWidget {
                       child: Text(
                         'value'.tr(),
                         style:
-                            Constants.TEXT_STYLE1.copyWith(color: Colors.white),
+                        Constants.TEXT_STYLE1.copyWith(color: Colors.white),
                       ),
                     ),
                   ),
@@ -60,7 +60,7 @@ class MyBillsScreen extends StatelessWidget {
                       child: Text(
                         'date'.tr(),
                         style:
-                            Constants.TEXT_STYLE1.copyWith(color: Colors.white),
+                        Constants.TEXT_STYLE1.copyWith(color: Colors.white),
                       ),
                     ),
                   ),
@@ -79,8 +79,10 @@ class MyBillsScreen extends StatelessWidget {
                 },
                 builder: (context, state) {
                   if (state is FetchBillsLoading)
-                    return CircularProgressIndicator(
-                      color: MyColors.secondaryColor,
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: MyColors.secondaryColor,
+                      ),
                     );
                   else if (state is FetchBillsFailed)
                     return Center(
@@ -236,14 +238,28 @@ class _BillRowState extends State<BillRow> {
                         subtitle: Text(widget.bill.productSize!.toString()),
                       ),
                     ),
+                  ],
+                ),
+                Row(
+                  children: [
                     Expanded(
-                      flex: 1,
+                      flex: 3,
                       child: ListTile(
                         title: Text(
                           'vat'.tr(),
                           style: Constants.TEXT_STYLE6,
                         ),
                         subtitle: Text('${widget.bill.vat!} %'),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: ListTile(
+                        title: Text(
+                          'our share'.tr(),
+                          style: Constants.TEXT_STYLE6,
+                        ),
+                        subtitle: Text('15%'),
                       ),
                     ),
                   ],
@@ -311,7 +327,7 @@ class _BillRowState extends State<BillRow> {
                           style: Constants.TEXT_STYLE6,
                         ),
                         subtitle:
-                            Text(widget.bill.buyerPhoneNumber!.toString()),
+                        Text(widget.bill.buyerPhoneNumber!.toString()),
                       ),
                     ),
                   ],
@@ -412,8 +428,7 @@ class _AddressListTileState extends State<AddressListTile> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future:
-          LocationHelper().getUserAddress(widget.latitude, widget.longitude),
+      future: LocationHelper().getUserAddress(widget.latitude, widget.longitude),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting)
           return LinearProgressIndicator();

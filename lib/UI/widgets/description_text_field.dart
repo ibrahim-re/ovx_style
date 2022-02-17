@@ -10,13 +10,15 @@ class DescriptionTextField extends StatelessWidget {
   final controller;
   final onChanged;
   final hint;
+  final initialValue;
 
   DescriptionTextField({
     required this.onSaved,
     this.controller,
     this.onChanged,
     this.hint,
-});
+    this.initialValue,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,7 @@ class DescriptionTextField extends StatelessWidget {
       controller: controller,
       cursorColor: MyColors.secondaryColor,
       cursorWidth: 3,
+      initialValue: initialValue,
       style: Constants.TEXT_STYLE1,
       maxLines: 3,
       keyboardType: TextInputType.text,

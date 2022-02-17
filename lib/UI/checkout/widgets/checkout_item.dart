@@ -31,7 +31,7 @@ class checkoutItem extends StatelessWidget {
           ),
           Text(
             '$value ${SharedPref.getCurrency()}',
-            style: Constants.PRICE_TEXT_STYLE,
+            style: Constants.TEXT_STYLE9,
           ),
         ],
       ),

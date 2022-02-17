@@ -47,7 +47,7 @@ class CommentBuilder extends StatelessWidget {
 
               //check if offer owner is the logged in user
               if(userId == SharedPref.getUser().id)
-                NamedNavigatorImpl().push(NamedRoutes.USER_PROFILE_SCREEN);
+                return;
               else{
                 User user = await AuthHelper.getUser(userId);
                 NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});

@@ -5,6 +5,9 @@ import 'package:ovx_style/helper/auth_helper.dart';
 import 'package:ovx_style/helper/pick_image_helper.dart';
 
 class RegistrationImagePicker extends StatefulWidget {
+  final save;
+
+  RegistrationImagePicker({required this.save});
   @override
   _RegistrationImagePickerState createState() =>
       _RegistrationImagePickerState();
@@ -25,8 +28,8 @@ class _RegistrationImagePickerState extends State<RegistrationImagePicker> {
           _imagesPath.addAll(temporaryImages.map((e) => e.path).toList());
         });
 
-        AuthHelper.userInfo['regImages'] = _imagesPath;
-        },
+        widget.save(_imagesPath);
+      },
       child: CustomMultiImageWidget(imagesPath: _imagesPath, hint: 'upload reg photo'.tr(),),
     );
   }

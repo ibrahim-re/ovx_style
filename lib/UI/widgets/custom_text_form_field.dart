@@ -15,6 +15,7 @@ class CustomTextFormField extends StatelessWidget {
   final saveInput;
   final enabled;
   final onChanged;
+  final initialValue;
 
   CustomTextFormField({
     this.controller,
@@ -26,6 +27,7 @@ class CustomTextFormField extends StatelessWidget {
     this.showPasswordFunction,
     this.enabled = true,
     this.onChanged,
+    this.initialValue,
     @required this.validateInput,
     @required this.saveInput,
   });
@@ -43,6 +45,7 @@ class CustomTextFormField extends StatelessWidget {
       validator: validateInput,
       onSaved: saveInput,
       onChanged: onChanged,
+      initialValue: initialValue,
       decoration: InputDecoration(
         contentPadding: icon != null
             ? const EdgeInsets.symmetric(vertical: 16)

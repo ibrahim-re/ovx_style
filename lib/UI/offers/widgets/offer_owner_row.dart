@@ -34,7 +34,7 @@ class OfferOwnerRow extends StatelessWidget {
 
                   //check if offer owner is the logged in user
                   if(offerOwnerId == SharedPref.getUser().id)
-                    NamedNavigatorImpl().push(NamedRoutes.USER_PROFILE_SCREEN);
+                    return;
                   else
                     NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});
                 },
@@ -44,7 +44,7 @@ class OfferOwnerRow extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                       child: user.profileImage!.isNotEmpty
                           ? ProgressiveImage(
-                              imageError: 'assets/images/default_profile.png',
+                              imageError: 'assets/images/no_internet.png',
                               image: user.profileImage ?? '',
                               height: 50,
                               width: 50,

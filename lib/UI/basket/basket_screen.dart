@@ -88,7 +88,7 @@ class BasketScreen extends StatelessWidget {
 
                     return Text(
                         '$basketTotal ${SharedPref.getCurrency()}',
-                        style: Constants.PRICE_TEXT_STYLE,
+                        style: Constants.TEXT_STYLE9,
                       );
                   }),
                 ],

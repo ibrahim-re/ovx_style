@@ -8,6 +8,7 @@ import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/bloc/signup_bloc/signup_bloc.dart';
+import 'package:ovx_style/helper/auth_helper.dart';
 
 class SignupScreen extends StatelessWidget {
   final navigator;
@@ -44,8 +45,12 @@ class SignupScreen extends StatelessWidget {
                   Text(
                     'signup desc'.tr(),
                     style: Constants.TEXT_STYLE4,
-                    ),
-                  ProfileImage(),
+                  ),
+                  ProfileImage(
+                    saveImage: (imagePath){
+                      AuthHelper.userInfo['profileImage'] = imagePath;
+                    },
+                  ),
                   SignupForm(),
                   SizedBox(
                     height: screenHeight * 0.025,
@@ -55,7 +60,7 @@ class SignupScreen extends StatelessWidget {
                       Text(
                         'already has account'.tr(),
                         style: Constants.TEXT_STYLE4,
-                        ),
+                      ),
                       GestureDetector(
                         onTap: () {
                           NamedNavigatorImpl().push(NamedRoutes.LOGIN_SCREEN, replace: true);

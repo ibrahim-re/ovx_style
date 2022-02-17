@@ -17,7 +17,9 @@ import 'package:ovx_style/UI/offer_details/video_details_screen.dart';
 import 'package:ovx_style/UI/offers/add_offer_screen.dart';
 import 'package:ovx_style/UI/offers/add_properties_screen.dart';
 import 'package:ovx_style/UI/offers/add_shipping_cost_screen.dart';
+import 'package:ovx_style/UI/profile/help_screen.dart';
 import 'package:ovx_style/UI/profile/my_bills_screen.dart';
+import 'package:ovx_style/UI/profile/my_gifts_screen.dart';
 import 'package:ovx_style/UI/profile/my_liked_offers_screen.dart';
 import 'package:ovx_style/UI/profile/my_offers_screen.dart';
 import 'package:ovx_style/UI/profile/other_user_profile.dart';
@@ -72,13 +74,19 @@ class NamedNavigatorImpl implements NamedNavigator {
             ),
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
-      case NamedRoutes.GOOGLE_MAPS_SCREEN:
+      case NamedRoutes.GOOGLE_MAPS_SCREEN: {
+        final data = settings.arguments as Map<String, dynamic>;
+        final onSave = data['onSave'];
+
         return PageTransition(
             child: GoogleMapsScreen(
+              onSave: onSave,
               navigator: navigatorState,
             ),
             type: PageTransitionType.leftToRight,
             duration: const Duration(milliseconds: 500));
+        }
+
       case NamedRoutes.HOME_SCREEN:
         return PageTransition(
             child: HomeScreen(
@@ -258,6 +266,23 @@ class NamedNavigatorImpl implements NamedNavigator {
             ),
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.MY_GIFTS_SCREEN:
+        return PageTransition(
+            child: MyGiftsScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.rightToLeft,
+            duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.HELP_SCREEN:
+        return PageTransition(
+            child: HelpScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.bottomToTop,
+            duration: const Duration(milliseconds: 500));
+
 
       default:
         return MaterialPageRoute(
