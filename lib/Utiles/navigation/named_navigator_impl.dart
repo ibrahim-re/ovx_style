@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ovx_style/UI/auth/login_screen.dart';
 import 'package:ovx_style/UI/auth/reset_password_screen.dart';
@@ -24,7 +23,9 @@ import 'package:ovx_style/UI/profile/my_liked_offers_screen.dart';
 import 'package:ovx_style/UI/profile/my_offers_screen.dart';
 import 'package:ovx_style/UI/profile/other_user_profile.dart';
 import 'package:ovx_style/UI/profile/user_profile_screen.dart';
+import 'package:ovx_style/UI/story/story_details_screen.dart';
 import 'package:ovx_style/model/offer.dart';
+import 'package:ovx_style/model/story_model.dart';
 import 'package:page_transition/page_transition.dart';
 import '../../UI/intro/intro_screen.dart';
 import '../../UI/intro/splash_screen.dart';
@@ -74,17 +75,18 @@ class NamedNavigatorImpl implements NamedNavigator {
             ),
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
-      case NamedRoutes.GOOGLE_MAPS_SCREEN: {
-        final data = settings.arguments as Map<String, dynamic>;
-        final onSave = data['onSave'];
+      case NamedRoutes.GOOGLE_MAPS_SCREEN:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final onSave = data['onSave'];
 
-        return PageTransition(
-            child: GoogleMapsScreen(
-              onSave: onSave,
-              navigator: navigatorState,
-            ),
-            type: PageTransitionType.leftToRight,
-            duration: const Duration(milliseconds: 500));
+          return PageTransition(
+              child: GoogleMapsScreen(
+                onSave: onSave,
+                navigator: navigatorState,
+              ),
+              type: PageTransitionType.leftToRight,
+              duration: const Duration(milliseconds: 500));
         }
 
       case NamedRoutes.HOME_SCREEN:
@@ -245,19 +247,20 @@ class NamedNavigatorImpl implements NamedNavigator {
             type: PageTransitionType.rightToLeft,
             duration: const Duration(milliseconds: 500));
 
-      case NamedRoutes.CheckOut:{
-        final data = settings.arguments as Map<String, dynamic>;
+      case NamedRoutes.CheckOut:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
 
-        return PageTransition(
-            child: checkOutScreen(
-              navigator: navigatorState,
-              subtotal: data['total'],
-              vat: data['vat'],
-              shippingCost: data['shipping cost'],
-            ),
-            type: PageTransitionType.rightToLeft,
-            duration: const Duration(milliseconds: 500));
-      }
+          return PageTransition(
+              child: checkOutScreen(
+                navigator: navigatorState,
+                subtotal: data['total'],
+                vat: data['vat'],
+                shippingCost: data['shipping cost'],
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
 
       case NamedRoutes.EDIT_PROFILE_SCREEN:
         return PageTransition(
@@ -283,6 +286,18 @@ class NamedNavigatorImpl implements NamedNavigator {
             type: PageTransitionType.bottomToTop,
             duration: const Duration(milliseconds: 500));
 
+      case NamedRoutes.StroyDetailsScreen:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final oneStoryModel story = data['oneStory'];
+          return PageTransition(
+              child: StoryDetails(
+                navigator: navigatorState,
+                model: story,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
 
       default:
         return MaterialPageRoute(

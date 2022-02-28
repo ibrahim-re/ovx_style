@@ -55,7 +55,8 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
     String userEmail = SharedPref.getUser().email!;
     String userName = SharedPref.getUser().userName!;
 
-    context.read<PaymentBloc>().add(InitializePayment(total, userEmail, userName, SharedPref.getCurrency()));
+    context.read<PaymentBloc>().add(InitializePayment(
+        total, userEmail, userName, SharedPref.getCurrency()));
     super.initState();
   }
 
@@ -69,7 +70,7 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if(isGuest)
+            if (isGuest)
               Form(
                 key: _formKey,
                 child: Column(
@@ -94,12 +95,12 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
                       height: 12,
                     ),
                     PhoneTextField(
-                      validate: (userInput){
-                        if(userInput!.isEmpty) return 'enter phone'.tr();
+                      validate: (userInput) {
+                        if (userInput!.isEmpty) return 'enter phone'.tr();
 
                         return null;
                       },
-                      save: (phoneNumber){
+                      save: (phoneNumber) {
                         phone = phone;
                       },
                     ),
@@ -114,16 +115,21 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
                       height: 12,
                     ),
                     CountryPicker(
-                      saveCountry: (val){ country = val; },
-                      saveCity: (val){ city = val ?? ''; },
+                      saveCountry: (val) {
+                        country = val;
+                      },
+                      saveCity: (val) {
+                        city = val ?? '';
+                      },
                     ),
                     const SizedBox(
                       height: 12,
                     ),
                     GestureDetector(
                       onTap: () {
-                        NamedNavigatorImpl().push(NamedRoutes.GOOGLE_MAPS_SCREEN, arguments: {
-                          'onSave': (lat, long){
+                        NamedNavigatorImpl()
+                            .push(NamedRoutes.GOOGLE_MAPS_SCREEN, arguments: {
+                          'onSave': (lat, long) {
                             latitude = lat;
                             longitude = long;
                           },
@@ -172,41 +178,41 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
               text: 'total'.tr(),
               value: total,
             ),
-            const SizedBox(height: 60,),
+            const SizedBox(
+              height: 60,
+            ),
             BlocConsumer<PaymentBloc, PaymentState>(
               listener: (context, state) {
-                if(state is PaymentSuccess){
+                if (state is PaymentSuccess) {
                   EasyLoading.showInfo('Success');
                   final basketItems = context.read<BasketBloc>().basketItems;
 
                   //if user is guest, take info from the form above
                   // if not take info from sharedPref
-                  if(isGuest)
+                  if (isGuest)
                     context.read<BillsBloc>().add(AddBills(
-                      basketItems,
-                      name,
-                      '',
-                      phone,
-                      country,
-                      city,
-                      latitude,
-                      longitude,
-                    ));
+                          basketItems,
+                          name,
+                          '',
+                          phone,
+                          country,
+                          city,
+                          latitude,
+                          longitude,
+                        ));
                   else
                     context.read<BillsBloc>().add(AddBills(
-                      basketItems,
-                      SharedPref.getUser().userName!,
-                      SharedPref.getUser().email!,
-                      SharedPref.getUser().phoneNumber!,
-                      SharedPref.getUser().country!,
-                      SharedPref.getUser().city!,
-                      SharedPref.getUser().latitude!,
-                      SharedPref.getUser().longitude!,
-                    ));
-                }
-                else if(state is PaymentFailed)
+                          basketItems,
+                          SharedPref.getUser().userName!,
+                          SharedPref.getUser().email!,
+                          SharedPref.getUser().phoneNumber!,
+                          SharedPref.getUser().country!,
+                          SharedPref.getUser().city!,
+                          SharedPref.getUser().latitude!,
+                          SharedPref.getUser().longitude!,
+                        ));
+                } else if (state is PaymentFailed)
                   EasyLoading.showError(state.message);
-
               },
               builder: (context, state) {
                 if (state is PaymentLoading)
@@ -220,18 +226,19 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
                     color: MyColors.secondaryColor,
                     text: 'pay'.tr(),
                     function: () {
+                      if (isGuest) {
+                        bool valid = _formKey.currentState!.validate() &&
+                            latitude != 0 &&
+                            longitude != 0 &&
+                            city.isNotEmpty &&
+                            country.isNotEmpty;
 
-                      if(isGuest){
-                        bool valid = _formKey.currentState!.validate() && latitude != 0 && longitude != 0 && city.isNotEmpty && country.isNotEmpty;
-
-                        if(!valid){
+                        if (!valid) {
                           EasyLoading.showToast('fill all info'.tr());
                           return;
                         }
                       }
-
                       context.read<PaymentBloc>().add(Pay());
-
                     },
                   );
               },

@@ -14,6 +14,7 @@ import 'package:ovx_style/bloc/bills_bloc/bills_bloc.dart';
 import 'package:ovx_style/bloc/currencies_bloc/currencies_bloc.dart';
 import 'package:ovx_style/bloc/login_bloc/login_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
+import 'package:ovx_style/bloc/stories_bloc/bloc.dart';
 import 'Utiles/navigation/named_navigator_impl.dart';
 import 'bloc/comment_bloc/comment_bloc.dart';
 import 'bloc/gifts_bloc/gifts_bloc.dart';
@@ -51,14 +52,14 @@ void main() async {
   );
 
   channel = const AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title
-      description: 'This channel is used for important notifications.', // description
-      importance: Importance.high,
-    );
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    description:
+        'This channel is used for important notifications.', // description
+    importance: Importance.high,
+  );
 
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
 
   /// Create an Android Notification Channel.
   ///
@@ -66,7 +67,7 @@ void main() async {
   /// default FCM channel to enable heads up notifications.
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   /// Update the iOS foreground notification presentation options to allow
@@ -107,6 +108,9 @@ void main() async {
           ),
           BlocProvider<GiftsBloc>(
             create: (context) => GiftsBloc(),
+          ),
+          BlocProvider<StoriesBloc>(
+            create: (context) => StoriesBloc(),
           ),
         ],
         child: const MarketingApp(),

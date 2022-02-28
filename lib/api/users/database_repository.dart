@@ -15,11 +15,13 @@ abstract class DatabaseRepository {
   Future<void> updateUserData(Map<String, dynamic> userData, String userId);
   Future<void> updateOfferAdded(String path, String offerId);
   Future<void> updateCoverImage(String coverImageURL, String userId);
-  Future<List<String>> uploadFilesToStorage(List<String> filePaths, String uId, String path);
+  Future<List<String>> uploadFilesToStorage(
+      List<String> filePaths, String uId, String path);
   Future<void> deleteFilesFromStorage(List<String> urls);
   Future<User> getUserById(String uId);
   Future<User> getUserByUserCode(String userCode);
-  Future<void> updateOfferLiked(String offerId, String userId, bool likeOrDislike);
+  Future<void> updateOfferLiked(
+      String offerId, String userId, bool likeOrDislike);
   Future<void> updateComments(String offerId, String userId);
   Future<String> getUserType(String uId);
   Future<List<MyNotification>> fetchNotifications(String userId);
@@ -89,14 +91,17 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<List<String>> uploadFilesToStorage(List<String> filePaths, String folderName, String path) async {
+  Future<List<String>> uploadFilesToStorage(
+      List<String> filePaths, String folderName, String path) async {
     try {
       List<String> urls = [];
       for (String s in filePaths) {
         String fileName = Helper().generateRandomName();
+
         UploadTask uploadTask = _firebaseStorage
             .ref('$folderName/$path/$fileName}')
             .putFile(File(s));
+
         TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
         String url = await taskSnapshot.ref.getDownloadURL();
         urls.add(url);
@@ -139,10 +144,9 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         });
 
         //if not guest add points
-        if(SharedPref.getUser().userType != UserType.Guest.toString())
+        if (SharedPref.getUser().userType != UserType.Guest.toString())
           addPoints(1, userId);
-
-      } else{
+      } else {
         await _users.doc(userId).update({
           'offersLiked': FieldValue.arrayRemove([offerId]),
         }).then((_) {
@@ -150,7 +154,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         });
 
         //if not guest remove points
-        if(SharedPref.getUser().userType != UserType.Guest.toString())
+        if (SharedPref.getUser().userType != UserType.Guest.toString())
           removePoints(1, userId);
       }
     } catch (e) {
@@ -298,7 +302,6 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
       await _users.doc(userId).update({
         'points': FieldValue.increment(amount),
       });
-
     } catch (e) {
       print('error is $e');
       return;
@@ -344,7 +347,8 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   @override
   Future<User> getUserByUserCode(String userCode) async {
     try {
-      final querySnapshot = await _users.where('userCode', isEqualTo: userCode).get();
+      final querySnapshot =
+          await _users.where('userCode', isEqualTo: userCode).get();
 
       final userData = querySnapshot.docs.first.data() as Map<String, dynamic>;
       final uId = querySnapshot.docs.first.id;
@@ -366,10 +370,13 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<void> updateUserData(Map<String, dynamic> userData, String userId) async {
+  Future<void> updateUserData(
+      Map<String, dynamic> userData, String userId) async {
     try {
-      await _users.doc(userId).update(userData).then((_) =>
-      SharedPref.setUser(User.fromMap(userData, userId)));
+      await _users
+          .doc(userId)
+          .update(userData)
+          .then((_) => SharedPref.setUser(User.fromMap(userData, userId)));
     } catch (e) {
       print('error is $e');
     }
@@ -377,37 +384,35 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
 
   @override
   Future<void> deleteFilesFromStorage(List<String> urls) async {
-    try{
+    try {
       urls.forEach((url) async {
         await _firebaseStorage.refFromURL(url).delete();
       });
-    }catch (e){
+    } catch (e) {
       throw e;
     }
   }
 
   @override
   Future<void> updateCoverImage(String coverImageURL, String userId) async {
-    try{
+    try {
       await _users.doc(userId).update({
         'coverImage': coverImageURL,
-      }).then((_) =>
-          SharedPref.updateCoverImage(coverImageURL));
-    }catch (e) {
+      }).then((_) => SharedPref.updateCoverImage(coverImageURL));
+    } catch (e) {
       throw e;
     }
   }
 
   @override
-  Future<void> sendPoints(String senderId, String receiverId, int pointsAmount) async {
-    try{
-
+  Future<void> sendPoints(
+      String senderId, String receiverId, int pointsAmount) async {
+    try {
       //remove points from sender
-     await removePoints(pointsAmount, senderId);
-     //add points to receiver
-     await addPoints(pointsAmount, receiverId);
-
-    }catch (e) {
+      await removePoints(pointsAmount, senderId);
+      //add points to receiver
+      await addPoints(pointsAmount, receiverId);
+    } catch (e) {
       print('error is is $e');
       throw e;
     }
@@ -415,13 +420,12 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
 
   @override
   Future<int> getPoints(String uId) async {
-    try{
-
+    try {
       final docSnapshot = await _users.doc(uId).get();
       final data = docSnapshot.data() as Map<String, dynamic>;
 
       return data['points'] ?? 0;
-    }catch (e) {
+    } catch (e) {
       print('error is is $e');
       throw e;
     }

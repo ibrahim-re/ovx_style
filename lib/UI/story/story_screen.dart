@@ -1,62 +1,42 @@
+import 'dart:io';
+
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/story/widgets/slider.dart';
 import 'package:ovx_style/UI/story/widgets/story.dart';
 import 'package:ovx_style/UI/widgets/no_permession_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
+import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/bloc/stories_bloc/bloc.dart';
+import 'package:ovx_style/bloc/stories_bloc/events.dart';
+import 'package:ovx_style/bloc/stories_bloc/states.dart';
+import 'package:ovx_style/helper/pick_image_helper.dart';
+import 'package:ovx_style/model/story_model.dart';
 
-class StoryScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> tempData = [
-    {
-      'storyImage':
-          'https://image.freepik.com/free-photo/close-up-people-preparing-christmas-dinner_23-2149144980.jpg',
-      'userName': 'Ali zamzam',
-      'userImage':
-          'https://image.freepik.com/free-photo/portrait-lovely-ethnic-woman-holds-modern-mobile-phone-uses-electronic-device-surfing-web-looks-positively-connected-wireless-internet-wears-casual-sweater-poses-indoor_273609-42443.jpg',
-    },
-    {
-      'storyImage':
-          'https://image.freepik.com/free-psd/merry-christmas-happy-new-year-with-3d-christmas-ornaments_106244-1813.jpg',
-      'userName': 'yahia Zamzam',
-      'userImage':
-          'https://image.freepik.com/free-photo/portrait-lovely-ethnic-woman-holds-modern-mobile-phone-uses-electronic-device-surfing-web-looks-positively-connected-wireless-internet-wears-casual-sweater-poses-indoor_273609-42443.jpg',
-    },
-    {
-      'storyImage':
-          'https://image.freepik.com/free-photo/happy-new-year-2022-decoration-background-with-firework-rocket-clock_257995-799.jpg',
-      'userName': 'youshaa Assad',
-      'userImage':
-          'https://image.freepik.com/free-photo/portrait-lovely-ethnic-woman-holds-modern-mobile-phone-uses-electronic-device-surfing-web-looks-positively-connected-wireless-internet-wears-casual-sweater-poses-indoor_273609-42443.jpg',
-    },
-    {
-      'storyImage':
-          'https://image.freepik.com/free-photo/girl-with-megaphone-jumping-shouting_8087-2707.jpg',
-      'userName': 'Ahmad dali',
-      'userImage':
-          'https://image.freepik.com/free-photo/portrait-lovely-ethnic-woman-holds-modern-mobile-phone-uses-electronic-device-surfing-web-looks-positively-connected-wireless-internet-wears-casual-sweater-poses-indoor_273609-42443.jpg',
-    },
-    {
-      'storyImage':
-          'https://image.freepik.com/free-vector/merry-christmas-decorative-festival-wishes-greeting-design_1017-34907.jpg',
-      'userName': 'Ashraf Dali',
-      'userImage':
-          'https://image.freepik.com/free-photo/portrait-lovely-ethnic-woman-holds-modern-mobile-phone-uses-electronic-device-surfing-web-looks-positively-connected-wireless-internet-wears-casual-sweater-poses-indoor_273609-42443.jpg',
-    },
-    {
-      'storyImage':
-          'https://image.freepik.com/free-photo/mother-with-her-baby-daughter-reading-book-by-christmas-tree_1303-29647.jpg',
-      'userName': 'Ali Ibrahim',
-      'userImage':
-          'https://image.freepik.com/free-photo/portrait-lovely-ethnic-woman-holds-modern-mobile-phone-uses-electronic-device-surfing-web-looks-positively-connected-wireless-internet-wears-casual-sweater-poses-indoor_273609-42443.jpg',
-    },
-  ];
+class StoryScreen extends StatefulWidget {
+  @override
+  State<StoryScreen> createState() => _StoryScreenState();
+}
+
+class _StoryScreenState extends State<StoryScreen> {
+  bool isLoading = true;
+  List<oneStoryModel> stories = [];
+  @override
+  void initState() {
+    BlocProvider.of<StoriesBloc>(context).add(FetchALLStories());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    //no chat available for companies
+    //no Story available for companies
     if (SharedPref.getUser().userType == UserType.Company.toString())
       return Center(
         child: NoDataWidget(
@@ -65,78 +45,111 @@ class StoryScreen extends StatelessWidget {
         ),
       );
     else
-      return SafeArea(
-        top: true,
-        bottom: true,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'Stories'.tr(),
-              style: TextStyle(
-                color: MyColors.secondaryColor,
-                fontSize: 20,
+      return BlocConsumer<StoriesBloc, StoriesBlocStates>(
+        listener: (context, state) {
+          if (state is FetchAllStoriesLoadingState) {
+            isLoading = true;
+          }
+
+          if (state is FetchAllStoriesDoneState) {
+            isLoading = false;
+            stories = state.model.allStories;
+          }
+
+          if (state is AddStroyLoadingState) {
+            EasyLoading.show(status: 'Uploading Story ...');
+          }
+
+          if (state is AddStroyDoneState) {
+            BlocProvider.of<StoriesBloc>(context).add(FetchALLStories());
+            EasyLoading.showSuccess('Story Added Successfully');
+          }
+        },
+        builder: (context, state) {
+          return SafeArea(
+            top: true,
+            bottom: true,
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  'Stories'.tr(),
+                  style: TextStyle(
+                    color: MyColors.secondaryColor,
+                    fontSize: 20,
+                  ),
+                ),
+                titleSpacing: 14,
+                actions: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: Badge(
+                        badgeColor: Colors.blue.withOpacity(0.4),
+                        badgeContent: Text(
+                          '1',
+                          style: TextStyle(
+                              fontSize: 10, color: MyColors.primaryColor),
+                        ),
+                        padding: const EdgeInsets.all(6),
+                        showBadge: true,
+                        position: BadgePosition(
+                          isCenter: false,
+                          top: -10,
+                          start: -4,
+                        ),
+                        child: Icon(
+                          Icons.notifications,
+                        ),
+                      )),
+                  IconButton(
+                      onPressed: () => showFilterSheet(context: context),
+                      icon: Icon(Icons.filter_alt)),
+                ],
+              ),
+              body: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : GridView.count(
+                      crossAxisCount: 2,
+                      childAspectRatio: 3 / 4,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      padding: const EdgeInsets.only(
+                        bottom: 24,
+                        left: 14,
+                        right: 14,
+                        top: 14,
+                      ),
+                      children: stories.map((item) {
+                        return GestureDetector(
+                          onTap: () {
+                            NamedNavigatorImpl().push(
+                                NamedRoutes.StroyDetailsScreen,
+                                arguments: {"oneStory": item});
+                          },
+                          child: story(
+                            storyImage: item.storyUrl!,
+                            userImage: item.ownerImage!,
+                            userName: item.ownerName!,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () async {
+                  File pickedFile = await PickImageHelper()
+                      .pickImageFromSource(ImageSource.gallery);
+                  BlocProvider.of<StoriesBloc>(context)
+                      .add(AddStory(pickedFile));
+                },
+                backgroundColor: MyColors.secondaryColor,
+                mini: true,
+                child: Icon(
+                  Icons.add,
+                  color: MyColors.primaryColor,
+                ),
               ),
             ),
-            titleSpacing: 14,
-            actions: [
-              IconButton(
-                  onPressed: () {},
-                  icon: Badge(
-                    badgeColor: Colors.blue.withOpacity(0.4),
-                    badgeContent: Text(
-                      '1',
-                      style:
-                          TextStyle(fontSize: 10, color: MyColors.primaryColor),
-                    ),
-                    padding: const EdgeInsets.all(6),
-                    showBadge: true,
-                    position: BadgePosition(
-                      isCenter: false,
-                      top: -10,
-                      start: -4,
-                    ),
-                    child: Icon(
-                      Icons.notifications,
-                    ),
-                  )),
-              IconButton(
-                  onPressed: () {
-                    showFilterSheet(context: context);
-                  },
-                  icon: Icon(
-                    Icons.filter_alt,
-                  )),
-            ],
-          ),
-          body: GridView.count(
-            crossAxisCount: 2,
-            childAspectRatio: 3 / 4,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            padding: const EdgeInsets.only(
-              bottom: 24,
-              left: 14,
-              right: 14,
-              top: 14,
-            ),
-            children: tempData.map((item) {
-              return story(
-                storyImage: item['storyImage'],
-                userImage: item['userImage'],
-                userName: item['userName'],
-              );
-            }).toList(),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            backgroundColor: MyColors.secondaryColor,
-            mini: true,
-            child: Icon(
-              Icons.add,
-              color: MyColors.primaryColor,
-            ),
-          ),
-        ),
+          );
+        },
       );
   }
 }
@@ -213,9 +226,7 @@ void showFilterSheet({required BuildContext context}) {
                     offset: Offset(-10, 40),
                     padding: const EdgeInsets.all(0),
                     shape: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: MyColors.primaryColor,
-                      ),
+                      borderSide: BorderSide(color: MyColors.primaryColor),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     itemBuilder: (ctx) {
