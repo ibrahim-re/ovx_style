@@ -26,6 +26,7 @@ class StoryScreen extends StatefulWidget {
 }
 
 class _StoryScreenState extends State<StoryScreen> {
+  final TextEditingController descCon = TextEditingController();
   bool isLoading = true;
   List<oneStoryModel> stories = [];
   @override
@@ -66,87 +67,143 @@ class _StoryScreenState extends State<StoryScreen> {
           }
         },
         builder: (context, state) {
-          return SafeArea(
-            top: true,
-            bottom: true,
-            child: Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  'Stories'.tr(),
-                  style: TextStyle(
-                    color: MyColors.secondaryColor,
-                    fontSize: 20,
-                  ),
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              title: Text(
+                'Stories'.tr(),
+                style: TextStyle(
+                  color: MyColors.secondaryColor,
+                  fontSize: 20,
                 ),
-                titleSpacing: 14,
-                actions: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Badge(
-                        badgeColor: Colors.blue.withOpacity(0.4),
-                        badgeContent: Text(
-                          '1',
-                          style: TextStyle(
-                              fontSize: 10, color: MyColors.primaryColor),
-                        ),
-                        padding: const EdgeInsets.all(6),
-                        showBadge: true,
-                        position: BadgePosition(
-                          isCenter: false,
-                          top: -10,
-                          start: -4,
-                        ),
-                        child: Icon(
-                          Icons.notifications,
-                        ),
-                      )),
-                  IconButton(
-                      onPressed: () => showFilterSheet(context: context),
-                      icon: Icon(Icons.filter_alt)),
-                ],
               ),
-              body: isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : GridView.count(
-                      crossAxisCount: 2,
-                      childAspectRatio: 3 / 4,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      padding: const EdgeInsets.only(
-                        bottom: 24,
-                        left: 14,
-                        right: 14,
-                        top: 14,
+              titleSpacing: 14,
+              actions: [
+                IconButton(
+                    onPressed: () {},
+                    icon: Badge(
+                      badgeColor: Colors.blue.withOpacity(0.4),
+                      badgeContent: Text(
+                        '1',
+                        style: TextStyle(
+                            fontSize: 10, color: MyColors.primaryColor),
                       ),
-                      children: stories.map((item) {
-                        return GestureDetector(
-                          onTap: () {
-                            NamedNavigatorImpl().push(
-                                NamedRoutes.StroyDetailsScreen,
-                                arguments: {"oneStory": item});
-                          },
-                          child: story(
-                            storyImage: item.storyUrl!,
-                            userImage: item.ownerImage!,
-                            userName: item.ownerName!,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () async {
-                  File pickedFile = await PickImageHelper()
-                      .pickImageFromSource(ImageSource.gallery);
-                  BlocProvider.of<StoriesBloc>(context)
-                      .add(AddStory(pickedFile));
-                },
-                backgroundColor: MyColors.secondaryColor,
-                mini: true,
-                child: Icon(
-                  Icons.add,
-                  color: MyColors.primaryColor,
-                ),
+                      padding: const EdgeInsets.all(6),
+                      showBadge: true,
+                      position: BadgePosition(
+                        isCenter: false,
+                        top: -10,
+                        start: -4,
+                      ),
+                      child: Icon(
+                        Icons.notifications,
+                      ),
+                    )),
+                IconButton(
+                    onPressed: () => showFilterSheet(context: context),
+                    icon: Icon(Icons.filter_alt)),
+              ],
+            ),
+            body: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : stories.isEmpty
+                    ? Center(
+                        child: Text(
+                          'There is no Added Stories Yet\n Add your First One',
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    : GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 3 / 4,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        padding: const EdgeInsets.only(
+                          bottom: 24,
+                          left: 14,
+                          right: 14,
+                          top: 14,
+                        ),
+                        children: stories.map((item) {
+                          return GestureDetector(
+                            onTap: () {
+                              NamedNavigatorImpl().push(
+                                  NamedRoutes.StroyDetailsScreen,
+                                  arguments: {"oneStory": item});
+                            },
+                            child: Story(model: item),
+                          );
+                        }).toList(),
+                      ),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: MyColors.secondaryColor,
+              mini: true,
+              child: Icon(
+                Icons.add,
+                color: MyColors.primaryColor,
               ),
+              onPressed: () async {
+                File pickedFile = await PickImageHelper()
+                    .pickImageFromSource(ImageSource.gallery);
+
+                showModalBottomSheet<void>(
+                    isDismissible: false,
+                    shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Form(
+                        child: SingleChildScrollView(
+                          child: AnimatedPadding(
+                            padding: MediaQuery.of(context).viewPadding,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.decelerate,
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(height: 20),
+                                Text('Story Descreption '),
+                                SizedBox(height: 20),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: TextFormField(
+                                    autofocus: true,
+                                    controller: descCon,
+                                    keyboardType: TextInputType.text,
+                                    decoration: InputDecoration(
+                                      hintText: 'Story Descreption',
+                                      hintStyle:
+                                          TextStyle(color: MyColors.grey),
+                                      enabled: true,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                          color: MyColors.secondaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                    onFieldSubmitted: (String val) {
+                                      if (val.isNotEmpty) {
+                                        Navigator.of(context).pop();
+                                        BlocProvider.of<StoriesBloc>(context)
+                                            .add(
+                                          AddStory(
+                                            pickedFile,
+                                            descCon.text.trim(),
+                                          ),
+                                        );
+                                        descCon.clear();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+              },
             ),
           );
         },

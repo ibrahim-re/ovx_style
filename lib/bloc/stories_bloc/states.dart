@@ -18,3 +18,12 @@ class AddStroyLoadingState extends StoriesBlocStates {}
 class AddStroyDoneState extends StoriesBlocStates {}
 
 class AddStroyFailedState extends StoriesBlocStates {}
+
+class MakeStroyFavoriteLoadingingState extends StoriesBlocStates {}
+
+class MakeStroyFavoriteDoneState extends StoriesBlocStates {
+  final String storyId;
+  MakeStroyFavoriteDoneState(this.storyId);
+}
+
+class MakeStroyFavoriteFailedState extends StoriesBlocStates {}

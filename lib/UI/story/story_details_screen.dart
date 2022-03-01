@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/model/story_model.dart';
 
 class StoryDetails extends StatefulWidget {
@@ -21,51 +22,62 @@ class _StoryDetailsState extends State<StoryDetails> {
   }
 
   @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
+      SystemUiOverlay.bottom,
+      SystemUiOverlay.top,
+    ]);
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      body: Container(
-        width: w,
-        height: h,
-        child: Stack(
-          children: [
-            Container(
-              width: w,
-              height: h,
-              decoration: BoxDecoration(
-                image: DecorationImage(
+    return GestureDetector(
+      onTap: () {},
+      child: Scaffold(
+        body: Container(
+          width: w,
+          height: h,
+          child: Stack(
+            children: [
+              Container(
+                width: w,
+                height: h,
+                child: Image(
                   image: NetworkImage(widget.model.storyUrl!),
                   fit: BoxFit.fill,
                 ),
               ),
-            ),
-            Positioned(
-              top: h * 0.05,
-              left: 0,
-              right: 0,
-              child: topProgress(),
-            ),
-            Positioned(
-              bottom: h * 0.15,
-              left: w * 0.05,
-              right: w * 0.05,
-              child: ownerRow(widget.model),
-            ),
-            Positioned(
-              bottom: h * 0.10,
-              left: w * 0.05,
-              right: w * 0.15,
-              child: descreption(),
-            ),
-            Positioned(
-              bottom: h * 0.05,
-              left: 0,
-              right: 0,
-              child: reply(),
-            ),
-          ],
+              Positioned(
+                top: h * 0.05,
+                left: 0,
+                right: 0,
+                child: topProgress(),
+              ),
+              Positioned(
+                bottom: h * 0.15,
+                left: w * 0.05,
+                right: w * 0.05,
+                child: ownerRow(widget.model),
+              ),
+              Positioned(
+                bottom: h * 0.10,
+                left: w * 0.05,
+                right: w * 0.15,
+                child: descreption(widget.model.storyDesc!),
+              ),
+              Positioned(
+                bottom: h * 0.05,
+                left: 0,
+                right: 0,
+                child: reply(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -90,7 +102,7 @@ class _StoryDetailsState extends State<StoryDetails> {
             Container(
               width: MediaQuery.of(context).size.width,
               child: TweenAnimationBuilder(
-                duration: Duration(seconds: 3),
+                duration: Duration(seconds: 5),
                 onEnd: () => Navigator.of(context).pop(),
                 tween: Tween(begin: 0.0, end: 1.0),
                 curve: Curves.ease,
@@ -161,7 +173,9 @@ class _StoryDetailsState extends State<StoryDetails> {
           IconButton(
             onPressed: () {},
             icon: Icon(
-              Icons.favorite,
+              model.liked.contains(SharedPref.getUser().id)
+                  ? Icons.favorite
+                  : Icons.favorite_border,
               color: Colors.white,
             ),
           )
@@ -170,11 +184,11 @@ class _StoryDetailsState extends State<StoryDetails> {
     );
   }
 
-  Widget descreption() {
+  Widget descreption(String desc) {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Text(
-        'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        desc,
         style: TextStyle(color: Colors.white),
       ),
     );

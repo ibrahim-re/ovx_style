@@ -200,4 +200,26 @@ exports.sendPointsNotification = functions.https.onCall(async(data, context) => 
       return fcm.sendToDevice(tokens, payload);
   }
 
-});
+}
+
+
+
+
+
+
+
+
+
+
+);
+
+exports.deleteOldItems = functions.firestore
+    .document('stories')
+    .onWrite(async (change, context) => {
+        const querySnapshot = await db.collection('stories').where('createdAt', '>', Date.now()).get();
+        const promises = [];
+        querySnapshot.forEach((doc) => {
+            promises.push(doc.ref.delete());
+        });
+        return Promise.all(promises);
+    });

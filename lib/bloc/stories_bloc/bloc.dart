@@ -29,6 +29,7 @@ class StoriesBloc extends Bloc<StoriesBlocEvents, StoriesBlocStates> {
           await _storiesReop.addStory(
             pickedFile: event.Image,
             storyOwnerId: SharedPref.getUser().id!,
+            storydesc: event.desc,
             storyOwnerImage: SharedPref.getUser().profileImage!,
             storyOwnername: SharedPref.getUser().userName! +
                 ' ' +
@@ -40,6 +41,16 @@ class StoriesBloc extends Bloc<StoriesBlocEvents, StoriesBlocStates> {
           print('error');
           print(e.toString());
           emit(AddStroyFailedState());
+        }
+      }
+
+      if (event is MakeStoryFavorite) {
+        emit(MakeStroyFavoriteLoadingingState());
+        try {
+          await _storiesReop.setStoryFavorite(event.storyId, event.deleted);
+          emit(MakeStroyFavoriteDoneState(event.storyId));
+        } catch (e) {
+          emit(MakeStroyFavoriteFailedState());
         }
       }
     });
