@@ -116,7 +116,7 @@ class PaymentHelper {
     return tapSDKResult!['acquirer_response_message'] ?? '';
   }
 
-  static generateAndSendBills(
+  static Future<void> generateAndSendBills(
       List<BasketItem> basketItems,
       String buyerId,
       String buyerName,

@@ -32,7 +32,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       print('staaaaaaaaaaaart');
       try {
 
-        PaymentHelper.generateAndSendBills(
+        await PaymentHelper.generateAndSendBills(
           event.basketItems,
           SharedPref.getUser().id!,
           event.buyerName,
@@ -43,7 +43,6 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
           event.latitude,
           event.longitude,
         );
-
         yield AddBillsSucceed();
       } catch (e) {
         print('error bills $e');
@@ -53,7 +52,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       yield FetchBillsLoading();
       try {
         myBills =
-            await _databaseRepositoryImpl.fetchBills(SharedPref.getUser().id!);
+        await _databaseRepositoryImpl.fetchBills(SharedPref.getUser().id!);
         yield FetchBillsSucceed(myBills);
       } catch (e) {
         yield FetchBillsFailed('error occurred'.tr());

@@ -25,7 +25,8 @@ class _ProfileImageState extends State<ProfileImage> {
         final imageSource = await pickImageHelper.showPicker(context);
         if (imageSource == null) return;
 
-        File temporaryImage = await pickImageHelper.pickImageFromSource(imageSource);
+        File temporaryImage =
+            await pickImageHelper.pickImageFromSource(imageSource);
 
         setState(() {
           _imagePath = temporaryImage.path;

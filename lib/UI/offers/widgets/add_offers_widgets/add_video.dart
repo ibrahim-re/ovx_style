@@ -35,78 +35,78 @@ class _AddVideoState extends State<AddVideo> {
 
       },
       child: Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          GestureDetector(
-            onTap: () async {
-              //take the images and add its path to user info
-              final imageSource = await pickImageHelper.showPicker(context);
-              if (imageSource == null) return;
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                //take the images and add its path to user info
+                final imageSource = await pickImageHelper.showPicker(context);
+                if (imageSource == null) return;
 
-              final temporaryVideo = await pickImageHelper.pickVideoFromSource(imageSource);
+                final temporaryVideo = await pickImageHelper.pickVideoFromSource(imageSource);
 
-              setState(() {
-                _videoPath = temporaryVideo.path;
-              });
+                setState(() {
+                  _videoPath = temporaryVideo.path;
+                });
 
-            },
-            child: Container(
-              height: 120,
-              decoration: DottedDecoration(
-                shape: Shape.box,
-                strokeWidth: 1.5,
-                dash: const [10, 10],
-                color: MyColors.secondaryColor,
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
-              child: _videoPath.isNotEmpty
-                  ? Center(
-                      child: Text(
-                        'one video added'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: MyColors.lightGrey),
-                      ),
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(
-                          Icons.video_collection_outlined,
-                          color: MyColors.secondaryColor,
-                          size: 30,
-                        ),
-                        Text(
-                          'add video'.tr(),
-                          softWrap: true,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                              color: MyColors.lightGrey),
-                        ),
-                      ],
+              },
+              child: Container(
+                height: 120,
+                decoration: DottedDecoration(
+                  shape: Shape.box,
+                  strokeWidth: 1.5,
+                  dash: const [10, 10],
+                  color: MyColors.secondaryColor,
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                child: _videoPath.isNotEmpty
+                    ? Center(
+                  child: Text(
+                    'one video added'.tr(),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: MyColors.lightGrey),
+                  ),
+                )
+                    : Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Icon(
+                      Icons.video_collection_outlined,
+                      color: MyColors.secondaryColor,
+                      size: 30,
                     ),
+                    Text(
+                      'add video'.tr(),
+                      softWrap: true,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: MyColors.lightGrey),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          VerticalSpaceWidget(
-            heightPercentage: 0.02,
-          ),
-          CustomElevatedButton(
-            color: MyColors.secondaryColor,
-            text: 'add offer'.tr(),
-            function: () {
-              if (_videoPath.isEmpty) {
-                EasyLoading.showError('please add video'.tr());
-              } else
-                bloc.add(AddVideoOfferButtonPressed(
-                    [_videoPath], OfferType.Video.toString()));
-            },
-          ),
-        ],
-      ),
-    ),);
+            VerticalSpaceWidget(
+              heightPercentage: 0.02,
+            ),
+            CustomElevatedButton(
+              color: MyColors.secondaryColor,
+              text: 'add offer'.tr(),
+              function: () {
+                if (_videoPath.isEmpty) {
+                  EasyLoading.showError('please add video'.tr());
+                } else
+                  bloc.add(AddVideoOfferButtonPressed(
+                      [_videoPath], OfferType.Video.toString()));
+              },
+            ),
+          ],
+        ),
+      ),);
   }
 }

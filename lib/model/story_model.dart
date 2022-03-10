@@ -14,7 +14,7 @@ class oneStoryModel {
   String? ownerId;
   String? ownerImage;
   String? ownerName;
-  String? storyUrl;
+  List<String>? storyUrls;
   String? storyDesc;
 
   List<dynamic> liked = [];
@@ -24,7 +24,7 @@ class oneStoryModel {
     ownerId = json['ownerId'];
     ownerImage = json['ownerImage'];
     ownerName = json['ownerName'];
-    storyUrl = json['storyUrl'];
+    storyUrls = (json['storyUrls'] as List<dynamic>).map((e) => e.toString()).toList();
     liked = json['likedBy'];
     storyDesc = json['storyDesc'] ?? '';
   }

@@ -286,7 +286,7 @@ class NamedNavigatorImpl implements NamedNavigator {
             type: PageTransitionType.bottomToTop,
             duration: const Duration(milliseconds: 500));
 
-      case NamedRoutes.StroyDetailsScreen:
+      case NamedRoutes.StoryDetailsScreen:
         {
           final data = settings.arguments as Map<String, dynamic>;
           final oneStoryModel story = data['oneStory'];

@@ -8,6 +8,7 @@ import 'package:ovx_style/api/offers/offers_repository.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
+import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/comment_model.dart';
 import 'package:ovx_style/model/offer.dart';
@@ -45,12 +46,24 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
 
   @override
   Stream<AddOfferState> mapEventToState(AddOfferEvent event) async* {
-    if (event is AddProductOfferButtonPressed) {
+    if(event is DeleteOfferButtonPressed){
+      yield DeleteOfferLoading();
+      try{
+        await offersRepositoryImpl.deleteOffer(event.offerId, event.offerOwnerType, event.userId);
+        yield DeleteOfferSucceed();
+      }catch (e){
+        yield DeleteOfferFailed('error occurred'.tr());
+      }
+    }
+    else if (event is AddProductOfferButtonPressed) {
       yield AddOfferLoading();
       if ( _offerImages.isEmpty || _offerName == '' || _status == '' || _categories.isEmpty || _properties.isEmpty){
         yield AddOfferFailed('Please to fill all required * fields');}
       else {
         try {
+
+          //generate offer id
+          String offerId = Helper().generateRandomName();
           //get owner id
           String offerOwnerId = SharedPref.getUser().id ?? '';
 
@@ -63,7 +76,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
             EasyLoading.dismiss();
             EasyLoading.show(status: 'uploading images'.tr());
             urls = await databaseRepositoryImpl.uploadFilesToStorage(
-                _offerImages, offerOwnerId, 'offers');
+                _offerImages, offerOwnerId, 'offers', offerId: offerId);
           }
 
           //convert prices to store in database as USD
@@ -71,6 +84,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           _shippingCosts.updateAll((key, value) => value = OfferHelper.convertToUSD(value));
 
           ProductOffer productOffer = ProductOffer(
+            id: offerId,
             offerMedia: urls,
             offerOwnerType: offerOwnerType.toString(),
             offerOwnerId: offerOwnerId,
@@ -92,7 +106,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           );
 
           //add offer then add offerId to user data
-          String offerId = await offersRepositoryImpl.addOffer(productOffer.toMap());
+          await offersRepositoryImpl.addOffer(productOffer.toMap());
           await databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
           clearData();
           NamedNavigatorImpl().pop();
@@ -105,6 +119,8 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
     } else if (event is AddPostOfferButtonPressed) {
       yield AddOfferLoading();
       try {
+        //generate offer id
+        String offerId = Helper().generateRandomName();
         //get owner id
         String offerOwnerId = SharedPref.getUser().id ?? '';
 
@@ -116,10 +132,11 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
         if (event.imagesPath.isNotEmpty) {
           EasyLoading.show(status: 'uploading images'.tr());
           urls = await databaseRepositoryImpl.uploadFilesToStorage(
-              event.imagesPath, offerOwnerId, 'offers');
+              event.imagesPath, offerOwnerId, 'offers', offerId: offerId);
         }
 
         PostOffer postOffer = PostOffer(
+          id: offerId,
           offerMedia: urls,
           offerOwnerType: offerOwnerType,
           offerOwnerId: offerOwnerId,
@@ -130,7 +147,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           offerCreationDate: DateTime.now(),
         );
 
-        String offerId = await offersRepositoryImpl.addOffer(postOffer.toMap());
+        await offersRepositoryImpl.addOffer(postOffer.toMap());
         await databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
         NamedNavigatorImpl().pop();
         yield AddOfferSucceed();
@@ -142,6 +159,8 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
     else if (event is AddImageOfferButtonPressed) {
       yield AddOfferLoading();
       try {
+        //generate offer id
+        String offerId = Helper().generateRandomName();
         //get owner id
         String offerOwnerId = SharedPref.getUser().id ?? '';
 
@@ -151,9 +170,10 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
         //upload offer images to storage if existed
         List<String> urls = [];
         EasyLoading.show(status: 'uploading images'.tr());
-        urls = await databaseRepositoryImpl.uploadFilesToStorage(event.imagesPath, offerOwnerId, 'offers');
+        urls = await databaseRepositoryImpl.uploadFilesToStorage(event.imagesPath, offerOwnerId, 'offers', offerId: offerId);
 
         ImageOffer imageOffer = ImageOffer(
+          id: offerId,
           offerMedia: urls,
           offerOwnerType: offerOwnerType,
           offerOwnerId: offerOwnerId,
@@ -163,7 +183,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           offerCreationDate: DateTime.now(),
         );
 
-        String offerId = await offersRepositoryImpl.addOffer(imageOffer.toMap());
+        await offersRepositoryImpl.addOffer(imageOffer.toMap());
         await databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
         NamedNavigatorImpl().pop();
         yield AddOfferSucceed();
@@ -175,6 +195,8 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
     else if (event is AddVideoOfferButtonPressed) {
       yield AddOfferLoading();
       try {
+        //generate offer id
+        String offerId = Helper().generateRandomName();
         //get owner id
         String offerOwnerId = SharedPref.getUser().id ?? '';
 
@@ -184,9 +206,10 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
         //upload offer images to storage if existed
         List<String> urls = [];
         EasyLoading.show(status: 'uploading video'.tr());
-        urls = await databaseRepositoryImpl.uploadFilesToStorage(event.videoPath, offerOwnerId, 'offers');
+        urls = await databaseRepositoryImpl.uploadFilesToStorage(event.videoPath, offerOwnerId, 'offers', offerId: offerId);
 
         VideoOffer videoOffer = VideoOffer(
+          id: offerId,
           offerMedia: urls,
           offerOwnerType: offerOwnerType,
           offerOwnerId: offerOwnerId,
@@ -196,7 +219,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           offerCreationDate: DateTime.now(),
         );
 
-        String offerId = await offersRepositoryImpl.addOffer(videoOffer.toMap());
+        await offersRepositoryImpl.addOffer(videoOffer.toMap());
         await databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
         NamedNavigatorImpl().pop();
         yield AddOfferSucceed();

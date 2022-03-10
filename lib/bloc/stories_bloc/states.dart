@@ -6,24 +6,39 @@ class StoriesBlocInitState extends StoriesBlocStates {}
 
 class FetchAllStoriesLoadingState extends StoriesBlocStates {}
 
-class FetchAllStoriesDoneState extends StoriesBlocStates {
-  final StoriesModel model;
-  FetchAllStoriesDoneState(this.model);
+class FetchAllStoriesDoneState extends StoriesBlocStates {}
+
+class FetchAllStoriesFailedState extends StoriesBlocStates {
+  String message;
+
+  FetchAllStoriesFailedState(this.message);
 }
 
-class FetchAllStoriesFailedState extends StoriesBlocStates {}
+class AddStoryLoadingState extends StoriesBlocStates {}
 
-class AddStroyLoadingState extends StoriesBlocStates {}
+class AddStoryDoneState extends StoriesBlocStates {}
 
-class AddStroyDoneState extends StoriesBlocStates {}
+class AddStoryFailedState extends StoriesBlocStates {
+  String message;
 
-class AddStroyFailedState extends StoriesBlocStates {}
+  AddStoryFailedState(this.message);
+}
 
-class MakeStroyFavoriteLoadingingState extends StoriesBlocStates {}
+class MakeStoryFavoriteLoadingState extends StoriesBlocStates {}
 
-class MakeStroyFavoriteDoneState extends StoriesBlocStates {
+class MakeStoryFavoriteDoneState extends StoriesBlocStates {
   final String storyId;
-  MakeStroyFavoriteDoneState(this.storyId);
+  MakeStoryFavoriteDoneState(this.storyId);
 }
 
-class MakeStroyFavoriteFailedState extends StoriesBlocStates {}
+class MakeStoryFavoriteFailedState extends StoriesBlocStates {}
+
+class DeleteStoryLoading extends StoriesBlocStates {}
+
+class DeleteStorySucceed extends StoriesBlocStates {}
+
+class DeleteStoryFailed extends StoriesBlocStates {
+  String message;
+
+  DeleteStoryFailed(this.message);
+}

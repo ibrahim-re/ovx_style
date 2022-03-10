@@ -12,8 +12,8 @@ abstract class AuthRepository {
   Future<void> signOutUser();
   Future<User> signInAsGuest();
   Future<void> requestResetPasswordCode(String email);
-  // String getCurrentUserId();
-  // Future<String> getCurrentUserType();
+// String getCurrentUserId();
+// Future<String> getCurrentUserType();
 }
 
 class AuthRepositoryImpl extends AuthRepository {
@@ -154,19 +154,19 @@ class AuthRepositoryImpl extends AuthRepository {
     }
   }
 
-  // @override
-  // String getCurrentUserId() {
-  //   if(_firebaseAuth.currentUser != null)
-  //     return _firebaseAuth.currentUser!.uid;
-  //   else
-  //     return '';
-  // }
-  //
-  // @override
-  // Future<String> getCurrentUserType() async {
-  //   String userType = await _databaseRepositoryImpl.getUserType(_firebaseAuth.currentUser!.uid);
-  //
-  //   return userType;
-  // }
+// @override
+// String getCurrentUserId() {
+//   if(_firebaseAuth.currentUser != null)
+//     return _firebaseAuth.currentUser!.uid;
+//   else
+//     return '';
+// }
+//
+// @override
+// Future<String> getCurrentUserType() async {
+//   String userType = await _databaseRepositoryImpl.getUserType(_firebaseAuth.currentUser!.uid);
+//
+//   return userType;
+// }
 
 }

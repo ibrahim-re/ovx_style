@@ -202,24 +202,63 @@ exports.sendPointsNotification = functions.https.onCall(async(data, context) => 
 
 }
 
-
-
-
-
-
-
-
-
-
 );
 
-exports.deleteOldItems = functions.firestore
-    .document('stories')
-    .onWrite(async (change, context) => {
-        const querySnapshot = await db.collection('stories').where('createdAt', '>', Date.now()).get();
-        const promises = [];
-        querySnapshot.forEach((doc) => {
-            promises.push(doc.ref.delete());
-        });
-        return Promise.all(promises);
+//exports.deleteOldItems = functions.firestore
+//    .document('stories')
+ //   .onWrite(async (change, context) => {
+  //      const querySnapshot = await db.collection('stories').where('createdAt', '>', Date.now()).get();
+   //     const promises = [];
+   //     querySnapshot.forEach((doc) => {
+     //       promises.push(doc.ref.delete());
+   //     });
+    //    return Promise.all(promises);
+  //  });
+
+exports.deleteExpiredStories = functions.pubsub.schedule("every 5 hours").onRun(async(context) => {
+  const now = admin.firestore.Timestamp.now();
+  const ts = admin.firestore.Timestamp.fromMillis(now.toMillis() - 86400000); // 24 hours in milliseconds = 86400000
+
+  const snap = await db.collection("stories").where("createdAt", ">", ts).get().then((querySnapshot)=>{
+    querySnapshot.forEach((doc) => {
+       doc.ref.delete();
+    });
+  });
+});
+
+exports.onDeleteStory = functions.firestore
+    .document("stories/{storyId}")
+    .onDelete(async(snapshot, context) => {
+      const storyId = context.params.storyId;
+      const folderName = `Stories/${storyId}`;
+      console.log(`${folderName}`);
+      return admin.storage().bucket().deleteFiles({prefix: folderName});
+    });
+
+exports.onDeleteUser = functions.firestore
+    .document("users/{userId}")
+    .onDelete(async(snapshot, context) => {
+      const userId = context.params.userId;
+      const folderName = `${userId}`;
+      return admin.storage().bucket().deleteFiles({prefix: folderName});
+    });
+
+exports.onDeletePersonOffer = functions.firestore
+    .document("offers/{offerId}")
+    .onDelete(async(snapshot, context) => {
+      const offerId = context.params.offerId;
+      const userId = snapshot.data().offerOwnerId;
+      const folderName = `${userId}/offers/${offerId}`;
+      console.log(`${folderName}`);
+      return admin.storage().bucket().deleteFiles({prefix: folderName});
+    });
+
+exports.onDeleteCompanyOffer = functions.firestore
+    .document("company offers/{offerId}")
+    .onDelete(async(snapshot, context) => {
+      const offerId = context.params.offerId;
+      const userId = snapshot.data().offerOwnerId;
+      const folderName = `${userId}/offers/${offerId}`;
+      console.log(`${folderName}`);
+      return admin.storage().bucket().deleteFiles({prefix: folderName});
     });

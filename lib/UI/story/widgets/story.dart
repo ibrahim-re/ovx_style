@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/stories_bloc/bloc.dart';
 import 'package:ovx_style/bloc/stories_bloc/events.dart';
@@ -12,24 +14,27 @@ class Story extends StatelessWidget {
 
   final oneStoryModel model;
 
-  bool isFav = false;
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
             FadeInImage(
+              imageErrorBuilder: (_,g,d){
+                return Image(
+                  image: AssetImage('assets/images/no_internet.png'),
+                );
+              },
               placeholder: Image(
                 image: AssetImage('assets/images/loader-animation.gif'),
               ).image,
               image: Image(
-                image: NetworkImage(model.storyUrl!),
+                image: NetworkImage(model.storyUrls!.first),
               ).image,
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
               height: double.infinity,
             ),
             Positioned(
@@ -46,7 +51,7 @@ class Story extends StatelessWidget {
                 },
                 icon: BlocConsumer<StoriesBloc, StoriesBlocStates>(
                   listener: (context, state) {
-                    if (state is MakeStroyFavoriteDoneState) {
+                    if (state is MakeStoryFavoriteDoneState) {
                       if (state.storyId == model.storyId) {
                         if (model.liked.contains(SharedPref.getUser().id)) {
                           model.liked.removeWhere(
@@ -60,36 +65,38 @@ class Story extends StatelessWidget {
                   },
                   builder: (context, state) {
                     return model.liked.contains(SharedPref.getUser().id)
-                        ? Icon(
-                            Icons.favorite,
-                            color: MyColors.primaryColor,
-                            size: 30,
+                        ? SvgPicture.asset(
+                            'assets/images/heart.svg',
+                            color: MyColors.red,
                           )
-                        : Icon(
-                            Icons.favorite_border,
-                            color: MyColors.primaryColor,
-                            size: 30,
-                          );
+                        : SvgPicture.asset('assets/images/heart.svg');
                   },
                 ),
               ),
             ),
             Positioned(
-              bottom: 4,
+              bottom: 6,
               left: 6,
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 15,
-                    backgroundImage: NetworkImage(model.ownerImage!),
-                  ),
+                  if (model.ownerImage != '')
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(model.ownerImage!),
+                    )
+                  else
+                    CircleAvatar(
+                      radius: 20,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.asset('assets/images/default_profile.jpg', fit: BoxFit.cover,),
+                      ),
+                    ),
                   const SizedBox(width: 10),
                   Text(
                     model.ownerName!,
-                    style: TextStyle(
-                      color: MyColors.primaryColor,
-                      fontSize: 14,
-                    ),
+                    style: Constants.TEXT_STYLE6.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),

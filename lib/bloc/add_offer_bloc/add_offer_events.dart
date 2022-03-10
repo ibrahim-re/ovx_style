@@ -27,3 +27,11 @@ class AddPostOfferButtonPressed extends AddOfferEvent {
 
   AddPostOfferButtonPressed(this.imagesPath, this.shortDesc, this.offerType);
 }
+
+class DeleteOfferButtonPressed extends AddOfferEvent {
+  String offerId;
+  String offerOwnerType;
+  String userId;
+
+  DeleteOfferButtonPressed(this.offerId, this.offerOwnerType, this.userId);
+}

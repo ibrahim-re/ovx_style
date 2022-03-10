@@ -15,8 +15,10 @@ import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
+import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
 import 'package:ovx_style/bloc/bills_bloc/bills_bloc.dart';
 import 'package:ovx_style/bloc/bills_bloc/bills_events.dart';
+import 'package:ovx_style/bloc/bills_bloc/bills_states.dart';
 import 'package:ovx_style/bloc/payment_bloc/payment_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ovx_style/bloc/payment_bloc/payment_events.dart';
@@ -222,24 +224,30 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
                     ),
                   );
                 else
-                  return CustomElevatedButton(
-                    color: MyColors.secondaryColor,
-                    text: 'pay'.tr(),
-                    function: () {
-                      if (isGuest) {
-                        bool valid = _formKey.currentState!.validate() &&
-                            latitude != 0 &&
-                            longitude != 0 &&
-                            city.isNotEmpty &&
-                            country.isNotEmpty;
-
-                        if (!valid) {
-                          EasyLoading.showToast('fill all info'.tr());
-                          return;
-                        }
-                      }
-                      context.read<PaymentBloc>().add(Pay());
+                  return BlocListener<BillsBloc, BillsState>(
+                    listener: (context, state) {
+                      if(state is AddBillsSucceed)
+                        context.read<BasketBloc>().add(ClearBasket());
                     },
+                    child: CustomElevatedButton(
+                      color: MyColors.secondaryColor,
+                      text: 'pay'.tr(),
+                      function: () {
+                        if (isGuest) {
+                          bool valid = _formKey.currentState!.validate() &&
+                              latitude != 0 &&
+                              longitude != 0 &&
+                              city.isNotEmpty &&
+                              country.isNotEmpty;
+
+                          if (!valid) {
+                            EasyLoading.showToast('fill all info'.tr());
+                            return;
+                          }
+                        }
+                        context.read<PaymentBloc>().add(Pay());
+                      },
+                    ),
                   );
               },
             ),

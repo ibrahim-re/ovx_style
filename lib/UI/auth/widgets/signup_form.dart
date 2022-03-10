@@ -277,7 +277,7 @@ class _SignupFormState extends State<SignupForm> {
                 text: 'signup'.tr(),
                 function: () {
                   bool isSubmitted =
-                      AuthHelper.submitSignUpForm(_signUpFormKey);
+                  AuthHelper.submitSignUpForm(_signUpFormKey);
                   if (isSubmitted)
                     bloc.add(SignUpButtonPressed(AuthHelper.userInfo));
                 }),

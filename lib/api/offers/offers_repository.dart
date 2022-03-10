@@ -7,10 +7,10 @@ import 'package:ovx_style/model/comment_model.dart';
 import 'package:ovx_style/model/offer.dart';
 
 abstract class OffersRepository {
-  Future<String> addOffer(Map<String, dynamic> productOffer);
+  Future<void> addOffer(Map<String, dynamic> productOffer);
   Future<List<Category>> getCategories();
   Future<List<Offer>> getOffers(UserType offerOwnerType);
-  Future<void> deleteOffer(String offerId);
+  Future<void> deleteOffer(String offerId, String offerOwnerType, String userId);
   Future<void> updateLikes(String offerId, String offerOwnerId, String userId);
   Future<void> addCommentToOffer(String offerId, String offerOwnerId, Map<String, dynamic> commentData);
   Future<List<CommentModel>> fetchOfferComments(String offerId, String offerOwnerId);
@@ -26,14 +26,12 @@ class OffersRepositoryImpl extends OffersRepository {
   CollectionReference _currencies = FirebaseFirestore.instance.collection('currencies');
 
   @override
-  Future<String> addOffer(Map<String, dynamic> productOffer) async {
+  Future<void> addOffer(Map<String, dynamic> productOffer) async {
     try {
       if (productOffer['offerOwnerType'] == UserType.Person.toString()) {
-        final documentRef = await _offers.add(productOffer);
-        return documentRef.id;
+       await _offers.doc(productOffer['id']).set(productOffer);
       } else {
-        final documentRef = await _companyOffers.add(productOffer);
-        return documentRef.id;
+        await _companyOffers.doc(productOffer['id']).set(productOffer);
       }
     } on FirebaseException catch (e) {
       print('error code is ${e.code}');
@@ -235,8 +233,21 @@ class OffersRepositoryImpl extends OffersRepository {
   }
 
   @override
-  Future<void> deleteOffer(String offerId) async {
-    //TODO
+  Future<void> deleteOffer(String offerId, String offerOwnerType, String userId) async {
+    try {
+      DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
+
+      if(offerOwnerType == UserType.Company.toString())
+        await _companyOffers.doc(offerId).delete();
+      else
+        await _offers.doc(offerId).delete();
+
+      databaseRepositoryImpl.updateOfferAdded(userId, offerId);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+
   }
 
   @override

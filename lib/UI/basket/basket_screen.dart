@@ -41,7 +41,7 @@ class BasketScreen extends StatelessWidget {
             Text(
               'products'.tr(),
               style:
-                  Constants.TEXT_STYLE8.copyWith(fontWeight: FontWeight.w500),
+              Constants.TEXT_STYLE8.copyWith(fontWeight: FontWeight.w500),
             ),
             if (basket.isEmpty)
               Expanded(
@@ -87,9 +87,9 @@ class BasketScreen extends StatelessWidget {
                     shippingCostTotal = BasketHelper.calculateTotalShippingCost(basket);
 
                     return Text(
-                        '$basketTotal ${SharedPref.getCurrency()}',
-                        style: Constants.TEXT_STYLE9,
-                      );
+                      '$basketTotal ${SharedPref.getCurrency()}',
+                      style: Constants.TEXT_STYLE9,
+                    );
                   }),
                 ],
               ),
@@ -104,13 +104,13 @@ class BasketScreen extends StatelessWidget {
                 function: basket.isEmpty
                     ? null
                     : () {
-                        NamedNavigatorImpl()
-                            .push(NamedRoutes.CheckOut, arguments: {
-                          'total': basketTotal,
-                          'vat': vatTotal,
-                          'shipping cost': shippingCostTotal,
-                        });
-                      },
+                  NamedNavigatorImpl()
+                      .push(NamedRoutes.CheckOut, arguments: {
+                    'total': basketTotal,
+                    'vat': vatTotal,
+                    'shipping cost': shippingCostTotal,
+                  });
+                },
               ),
             ),
           ],

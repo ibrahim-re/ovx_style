@@ -20,9 +20,12 @@ import 'package:ovx_style/bloc/payment_bloc/payment_states.dart';
 import 'package:ovx_style/bloc/points_bloc/points_bloc.dart';
 import 'package:ovx_style/bloc/points_bloc/points_events.dart';
 import 'package:ovx_style/bloc/points_bloc/points_states.dart';
+import 'package:ovx_style/bloc/stories_bloc/bloc.dart';
+import 'package:ovx_style/bloc/stories_bloc/events.dart';
 import 'package:provider/src/provider.dart';
 import 'constants.dart';
 import 'enums.dart';
+import 'dart:io';
 import 'package:ovx_style/model/user.dart';
 
 class ModalSheets {
@@ -329,7 +332,8 @@ class ModalSheets {
                 ),
                 Text(
                   '${SharedPref.getUser().points}' + ' available points'.tr(),
-                  style: Constants.TEXT_STYLE6.copyWith(color: MyColors.secondaryColor),
+                  style: Constants.TEXT_STYLE6
+                      .copyWith(color: MyColors.secondaryColor),
                 ),
                 const SizedBox(
                   height: 8,
@@ -357,13 +361,13 @@ class ModalSheets {
                   listener: (ctx, state) {
                     if (state is SendPointsFailed)
                       EasyLoading.showError(state.message);
-                    else if (state is SendPointsSucceed){
+                    else if (state is SendPointsSucceed) {
                       EasyLoading.showSuccess('points send'.tr());
                       NamedNavigatorImpl().pop();
                     }
                   },
                   builder: (ctx, state) {
-                    if(state is SendPointsLoading)
+                    if (state is SendPointsLoading)
                       return Center(
                         child: CircularProgressIndicator(
                           color: MyColors.secondaryColor,
@@ -374,16 +378,17 @@ class ModalSheets {
                         color: MyColors.secondaryColor,
                         text: 'send'.tr(),
                         function: () {
-                          if (amountController.text.isNotEmpty && codeController.text.isNotEmpty) {
+                          if (amountController.text.isNotEmpty &&
+                              codeController.text.isNotEmpty) {
                             ctx.read<PointsBloc>().add(
-                              SendPoint(
-                                SharedPref.getUser().id!,
-                                codeController.text,
-                                int.parse(
-                                  amountController.text,
-                                ),
-                              ),
-                            );
+                                  SendPoint(
+                                    SharedPref.getUser().id!,
+                                    codeController.text,
+                                    int.parse(
+                                      amountController.text,
+                                    ),
+                                  ),
+                                );
                           } else
                             EasyLoading.showToast('fill all info'.tr());
                         },
@@ -399,5 +404,60 @@ class ModalSheets {
         );
       },
     );
+  }
+
+  void showStoryDescSheet(BuildContext context, TextEditingController con, List<File> pickedFiles) {
+    showModalBottomSheet<void>(
+        isScrollControlled: true,
+        shape: OutlineInputBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+          borderSide: BorderSide(color: MyColors.primaryColor),
+        ),
+        context: context,
+        builder: (ctx) {
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'story desc'.tr(),
+                  style: Constants.TEXT_STYLE4,
+                ),
+                SizedBox(height: 12),
+                CustomTextFormField(
+                  controller: con,
+                  hint: 'story desc'.tr(),
+                  validateInput: (p) {},
+                  saveInput: (p) {},
+                ),
+                SizedBox(height: 12),
+                CustomElevatedButton(
+                  color: MyColors.secondaryColor,
+                  text: 'add story'.tr(),
+                  function: () {
+                    if(con.text.isNotEmpty){
+                      Navigator.of(context).pop();
+                      BlocProvider.of<StoriesBloc>(context)
+                          .add(
+                        AddStory(
+                          pickedFiles,
+                          con.text,
+                        ),
+                      );
+                    }
+                  },
+                ),
+                Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(ctx).viewInsets.bottom)),
+              ],
+            ),
+          );
+        });
   }
 }

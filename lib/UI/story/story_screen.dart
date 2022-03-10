@@ -1,16 +1,20 @@
 import 'dart:io';
-
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/story/widgets/slider.dart';
 import 'package:ovx_style/UI/story/widgets/story.dart';
+import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
+import 'package:ovx_style/UI/widgets/custom_text_form_field.dart';
 import 'package:ovx_style/UI/widgets/no_permession_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
@@ -27,12 +31,17 @@ class StoryScreen extends StatefulWidget {
 
 class _StoryScreenState extends State<StoryScreen> {
   final TextEditingController descCon = TextEditingController();
-  bool isLoading = true;
-  List<oneStoryModel> stories = [];
+
   @override
   void initState() {
     BlocProvider.of<StoriesBloc>(context).add(FetchALLStories());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    descCon.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,113 +56,100 @@ class _StoryScreenState extends State<StoryScreen> {
       );
     else
       return BlocConsumer<StoriesBloc, StoriesBlocStates>(
-        listener: (context, state) {
-          if (state is FetchAllStoriesLoadingState) {
-            isLoading = true;
-          }
+        listener: (ctx, state) {
+          if (state is AddStoryLoadingState || state is DeleteStoryLoading)
+            EasyLoading.show(status: 'please wait'.tr());
+          else if (state is AddStoryFailedState)
+            EasyLoading.showError(state.message);
+          else if (state is AddStoryDoneState)
+            EasyLoading.showSuccess('story added'.tr());
 
-          if (state is FetchAllStoriesDoneState) {
-            isLoading = false;
-            stories = state.model.allStories;
-          }
-
-          if (state is AddStroyLoadingState) {
-            EasyLoading.show(status: 'Uploading Story ...');
-          }
-
-          if (state is AddStroyDoneState) {
-            BlocProvider.of<StoriesBloc>(context).add(FetchALLStories());
-            EasyLoading.showSuccess('Story Added Successfully');
-          }
+          else if(state is DeleteStorySucceed)
+            EasyLoading.showSuccess('story deleted'.tr());
+          else if (state is DeleteStoryFailed)
+            EasyLoading.showError(state.message);
         },
-        builder: (context, state) {
-          return Scaffold(
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              title: Text(
-                'Stories'.tr(),
-                style: TextStyle(
-                  color: MyColors.secondaryColor,
-                  fontSize: 20,
+        builder: (ctx, state) {
+          if (state is FetchAllStoriesLoadingState ||
+              state is StoriesBlocInitState)
+            return Center(
+              child: CircularProgressIndicator(
+                color: MyColors.secondaryColor,
+              ),
+            );
+          else if (state is FetchAllStoriesFailedState)
+            return Center(
+              child: Text(
+                state.message,
+                style: Constants.TEXT_STYLE9,
+              ),
+            );
+          else {
+            StoriesModel stories = context.read<StoriesBloc>().storyModel;
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  'Stories'.tr(),
                 ),
               ),
-              titleSpacing: 14,
-              actions: [
-                IconButton(
-                    onPressed: () {},
-                    icon: Badge(
-                      badgeColor: Colors.blue.withOpacity(0.4),
-                      badgeContent: Text(
-                        '1',
-                        style: TextStyle(
-                            fontSize: 10, color: MyColors.primaryColor),
-                      ),
-                      padding: const EdgeInsets.all(6),
-                      showBadge: true,
-                      position: BadgePosition(
-                        isCenter: false,
-                        top: -10,
-                        start: -4,
-                      ),
-                      child: Icon(
-                        Icons.notifications,
-                      ),
-                    )),
-                IconButton(
-                    onPressed: () => showFilterSheet(context: context),
-                    icon: Icon(Icons.filter_alt)),
-              ],
-            ),
-            body: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : stories.isEmpty
-                    ? Center(
-                        child: Text(
-                          'There is no Added Stories Yet\n Add your First One',
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    : GridView.count(
-                        crossAxisCount: 2,
-                        childAspectRatio: 3 / 4,
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        padding: const EdgeInsets.only(
-                          bottom: 24,
-                          left: 14,
-                          right: 14,
-                          top: 14,
-                        ),
-                        children: stories.map((item) {
-                          return GestureDetector(
-                            onTap: () {
-                              NamedNavigatorImpl().push(
-                                  NamedRoutes.StroyDetailsScreen,
-                                  arguments: {"oneStory": item});
-                            },
-                            child: Story(model: item),
-                          );
-                        }).toList(),
-                      ),
-            floatingActionButton: FloatingActionButton(
-              backgroundColor: MyColors.secondaryColor,
-              mini: true,
-              child: Icon(
-                Icons.add,
-                color: MyColors.primaryColor,
+              body: RefreshIndicator(
+                color: MyColors.secondaryColor,
+                onRefresh: () async {
+                  BlocProvider.of<StoriesBloc>(context).add(FetchALLStories());
+                },
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 3 / 4,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  padding: const EdgeInsets.only(
+                    bottom: 24,
+                    left: 14,
+                    right: 14,
+                    top: 14,
+                  ),
+                  children: stories.allStories.map((item) {
+                    return GestureDetector(
+                      onTap: () {
+                        NamedNavigatorImpl().push(
+                            NamedRoutes.StoryDetailsScreen,
+                            arguments: {"oneStory": item});
+                      },
+                      child: Story(model: item),
+                    );
+                  }).toList(),
+                ),
               ),
-              onPressed: () async {
-                File pickedFile = await PickImageHelper()
-                    .pickImageFromSource(ImageSource.gallery);
+              floatingActionButton: FloatingActionButton(
+                backgroundColor: MyColors.secondaryColor,
+                child: SvgPicture.asset('assets/images/add_story.svg'),
+                onPressed: () async {
+                  final imageSource = await PickImageHelper().showPicker(context);
+                  if (imageSource == null) return;
+                  List<File> pickedFiles = [];
 
-                showModalBottomSheet<void>(
-                    isDismissible: false,
-                    shape: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Form(
+                  if(imageSource == ImageSource.camera){
+                    File file = await PickImageHelper().pickImageFromSource(imageSource);
+                    pickedFiles.add(file);
+                  }
+
+                  else{
+                    pickedFiles = await PickImageHelper().pickMultiImages();
+                  }
+
+                  if(await pickedFiles.isNotEmpty)
+                    ModalSheets().showStoryDescSheet(context, descCon, pickedFiles);
+
+                },
+              ),
+            );
+          }
+        },
+      );
+  }
+}
+
+/*Form(
                         child: SingleChildScrollView(
                           child: AnimatedPadding(
                             padding: MediaQuery.of(context).viewPadding,
@@ -162,7 +158,7 @@ class _StoryScreenState extends State<StoryScreen> {
                             child: Column(
                               children: <Widget>[
                                 SizedBox(height: 20),
-                                Text('Story Descreption '),
+                                Text('story desc'),
                                 SizedBox(height: 20),
                                 Container(
                                   padding: const EdgeInsets.all(10),
@@ -173,7 +169,7 @@ class _StoryScreenState extends State<StoryScreen> {
                                     decoration: InputDecoration(
                                       hintText: 'Story Descreption',
                                       hintStyle:
-                                          TextStyle(color: MyColors.grey),
+                                      TextStyle(color: MyColors.grey),
                                       enabled: true,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -201,16 +197,7 @@ class _StoryScreenState extends State<StoryScreen> {
                             ),
                           ),
                         ),
-                      );
-                    });
-              },
-            ),
-          );
-        },
-      );
-  }
-}
-
+                      )*/
 void showFilterSheet({required BuildContext context}) {
   showModalBottomSheet(
       context: context,
@@ -323,7 +310,7 @@ void showFilterSheet({required BuildContext context}) {
                   ),
                 ),
               ),
-              applyButton(ontap: () {}),
+              applyButton(onTap: () {}),
             ],
           ),
         );
@@ -370,10 +357,10 @@ void showGenderList() {
   });
 }
 
-Widget applyButton({required Function ontap}) {
+Widget applyButton({required Function onTap}) {
   return GestureDetector(
     onTap: () {
-      ontap();
+      onTap();
     },
     child: Container(
         margin: const EdgeInsets.only(top: 18),

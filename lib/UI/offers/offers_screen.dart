@@ -9,8 +9,6 @@ import 'package:ovx_style/UI/widgets/notification_icon.dart';
 import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/enums.dart';
-import 'package:ovx_style/Utiles/shared_pref.dart';
-import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/notifications_bloc/notifications_bloc.dart';
 import 'package:ovx_style/bloc/notifications_bloc/notifications_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
@@ -67,13 +65,13 @@ class _OffersScreenState extends State<OffersScreen> {
             else if (state is FetchOffersFailed)
               return Center(
                   child: Text(
-                state.message,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: MyColors.secondaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              ));
+                    state.message,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: MyColors.secondaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ));
             else
               return Container();
           },

@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offer_details/widget/add_comment_section.dart';
+import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/UI/offer_details/widget/users_comments_section.dart';
 import 'package:ovx_style/UI/offers/widgets/offer_owner_row.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
-import 'package:ovx_style/Utiles/navigation/named_routes.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
+import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
+import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
 import 'package:ovx_style/model/offer.dart';
+import 'package:provider/src/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:video_player/video_player.dart';
 
@@ -118,7 +126,31 @@ class _videoDetailsState extends State<videoDetails> {
               }
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
+          BlocListener<AddOfferBloc, AddOfferState>(
+            listener: (ctx, state) {
+              if (state is DeleteOfferLoading)
+                EasyLoading.show(status: 'please wait'.tr());
+              else if(state is DeleteOfferSucceed){
+                NamedNavigatorImpl().pop();
+                EasyLoading.showSuccess('offer deleted'.tr());
+              }
+              else if (state is DeleteOfferFailed)
+                EasyLoading.showError(state.message);
+            },
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: CustomPopUpMenu(
+                ownerId: widget.video.offerOwnerId,
+                deleteFunction: () {
+                  context.read<AddOfferBloc>().add(
+                        DeleteOfferButtonPressed(
+                            widget.video.id!, SharedPref.getUser().userType!, SharedPref.getUser().id!),
+                      );
+                },
+              ),
+            ),
+          ),
           AddCommentSection(
             offerId: widget.video.id!,
             offerOwnerId: widget.video.offerOwnerId!,

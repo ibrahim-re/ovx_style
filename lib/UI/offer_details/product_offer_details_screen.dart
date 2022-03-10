@@ -37,6 +37,7 @@ class ProductDetails extends StatelessWidget {
             offerId: offer.id,
           ),
           ProductImageSection(
+            offerId: offer.id!,
             offerName: offer.offerName!,
             offerOwnerId: offer.offerOwnerId!,
             productImages: offer.offerMedia!,

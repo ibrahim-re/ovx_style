@@ -13,7 +13,7 @@ abstract class DatabaseRepository {
   Future<void> addUserData(String path, Map<String, dynamic> data);
   Future<User> getUserData(String userId);
   Future<void> updateUserData(Map<String, dynamic> userData, String userId);
-  Future<void> updateOfferAdded(String path, String offerId);
+  Future<void> updateOfferAdded(String userId, String offerId);
   Future<void> updateCoverImage(String coverImageURL, String userId);
   Future<List<String>> uploadFilesToStorage(
       List<String> filePaths, String uId, String path);
@@ -78,29 +78,54 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<void> updateOfferAdded(String path, String offerId) async {
+  Future<void> updateOfferAdded(String userId, String offerId) async {
+    print(' user id $userId');
+    print('offer id $offerId');
     try {
-      await _users.doc(path).update({
-        'offersAdded': FieldValue.arrayUnion([offerId]),
-      }).then((_) {
-        SharedPref.addOfferAdded(offerId);
-      });
+      if (SharedPref.getUser().offersAdded!.contains(offerId))
+        await _users.doc(userId).update({
+          'offersAdded': FieldValue.arrayRemove([offerId]),
+        }).then((_) {
+          SharedPref.deleteOfferAdded(offerId);
+        });
+      else
+        await _users.doc(userId).update({
+          'offersAdded': FieldValue.arrayUnion([offerId]),
+        }).then((_) {
+          SharedPref.addOfferAdded(offerId);
+        });
     } catch (e) {
-      print('error is $e');
+      print('error isss $e');
     }
+    // try {
+    //   await _users.doc(userId).update({
+    //     'offersAdded': FieldValue.arrayUnion([offerId]),
+    //   }).then((_) {
+    //     SharedPref.addOfferAdded(offerId);
+    //   });
+    // } catch (e) {
+    //   print('error is $e');
+    // }
   }
 
   @override
-  Future<List<String>> uploadFilesToStorage(
-      List<String> filePaths, String folderName, String path) async {
+  Future<List<String>> uploadFilesToStorage(List<String> filePaths, String folderName, String path, {offerId}) async {
     try {
       List<String> urls = [];
       for (String s in filePaths) {
         String fileName = Helper().generateRandomName();
+        UploadTask uploadTask;
 
-        UploadTask uploadTask = _firebaseStorage
-            .ref('$folderName/$path/$fileName}')
-            .putFile(File(s));
+        //if it's offer, add an extra folderName (offer id), this step makes deletion easier
+        if(offerId == null)
+          uploadTask = _firebaseStorage
+              .ref('$folderName/$path/$fileName}')
+              .putFile(File(s));
+        else
+          uploadTask = _firebaseStorage
+              .ref('$folderName/$path/$offerId/$fileName}')
+              .putFile(File(s));
+
 
         TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
         String url = await taskSnapshot.ref.getDownloadURL();
@@ -133,8 +158,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<void> updateOfferLiked(
-      String offerId, String userId, bool likeOrDislike) async {
+  Future<void> updateOfferLiked(String offerId, String userId, bool likeOrDislike) async {
     try {
       if (likeOrDislike) {
         await _users.doc(userId).update({
