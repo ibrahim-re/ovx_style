@@ -84,7 +84,7 @@ class _StoryDetailsState extends State<StoryDetails> {
                     },
                     child: Image(
                       image: NetworkImage(widget.model.storyUrls![index]),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ),
@@ -169,7 +169,10 @@ class TopProgress extends StatelessWidget {
   final PageController pageController;
   final int currentIndex;
 
-  TopProgress({required this.story, required this.pageController, required this.currentIndex});
+  TopProgress(
+      {required this.story,
+      required this.pageController,
+      required this.currentIndex});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -188,49 +191,52 @@ class TopProgress extends StatelessWidget {
             ),
             SizedBox(width: 10),
             Row(
-              children: story.storyUrls!
-                  .map(
-                    (url) {
-                      if(currentIndex == story.storyUrls!.indexOf(url))
-                        return Container(
-                          width: MediaQuery.of(context).size.width / story.storyUrls!.length,
-                          margin: const EdgeInsets.only(right: 6),
-                          child: TweenAnimationBuilder(
-                            duration: Duration(seconds: 5),
-                            onEnd: () {
-                              if(currentIndex == story.storyUrls!.length -1)
-                                NamedNavigatorImpl().pop();
-                              else
-                                pageController.nextPage(
-                                    duration: Duration(milliseconds: 200),
-                                    curve: Curves.bounceIn);
-                            },
-                            tween: Tween(begin: 0.0, end: 1.0),
-                            curve: Curves.ease,
-                            builder: (ctx, value, wid) => LinearProgressIndicator(
-                              backgroundColor: Colors.grey,
-                              value: double.parse(value.toString()),
-                              minHeight: 2,
-                              valueColor: AlwaysStoppedAnimation(Colors.white),
-                            ),
-                          ),
-                        );
-                      else
-                        return Container(
-                          margin: const EdgeInsets.only(right: 6),
-                          width: MediaQuery.of(context).size.width / story.storyUrls!.length,
-                          child: Divider(color: Colors.white, thickness: 2,),
-                        );
-                    }
-                  )
-                  .toList(),
+              children: story.storyUrls!.map((url) {
+                if (currentIndex == story.storyUrls!.indexOf(url))
+                  return Container(
+                    width: MediaQuery.of(context).size.width /
+                        story.storyUrls!.length,
+                    margin: const EdgeInsets.only(right: 6),
+                    child: TweenAnimationBuilder(
+                      duration: Duration(seconds: 5),
+                      onEnd: () {
+                        if (currentIndex == story.storyUrls!.length - 1)
+                          NamedNavigatorImpl().pop();
+                        else
+                          pageController.nextPage(
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.bounceIn);
+                      },
+                      tween: Tween(begin: 0.0, end: 1.0),
+                      curve: Curves.ease,
+                      builder: (ctx, value, wid) => LinearProgressIndicator(
+                        backgroundColor: Colors.grey,
+                        value: double.parse(value.toString()),
+                        minHeight: 2,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    ),
+                  );
+                else
+                  return Container(
+                    margin: const EdgeInsets.only(right: 6),
+                    width: MediaQuery.of(context).size.width /
+                        story.storyUrls!.length,
+                    child: Divider(
+                      color: Colors.white,
+                      thickness: 2,
+                    ),
+                  );
+              }).toList(),
             ),
             SizedBox(width: 10),
             CustomPopUpMenu(
               color: Colors.white,
               ownerId: story.ownerId,
               deleteFunction: () {
-                context.read<StoriesBloc>().add(DeleteStory(story.storyId!, story.storyUrls!));
+                context
+                    .read<StoriesBloc>()
+                    .add(DeleteStory(story.storyId!, story.storyUrls!));
               },
             ),
           ],

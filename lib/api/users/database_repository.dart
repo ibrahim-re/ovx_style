@@ -10,7 +10,16 @@ import 'package:ovx_style/model/notification.dart';
 import 'package:ovx_style/model/user.dart';
 
 abstract class DatabaseRepository {
+  Future<QuerySnapshot<Object?>> getAllUsers();
   Future<void> addUserData(String path, Map<String, dynamic> data);
+  Future<void> createRoom(
+    String loggeduserId,
+    String anotherUserId,
+  );
+  Future<void> sendMessage(String roomId, Map<String, dynamic> data);
+
+  Future<void> fetchRoom(String roomId);
+
   Future<User> getUserData(String userId);
   Future<void> updateUserData(Map<String, dynamic> userData, String userId);
   Future<void> updateOfferAdded(String userId, String offerId);
@@ -44,6 +53,86 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   CollectionReference _billsRequests =
       FirebaseFirestore.instance.collection('bills requests');
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+
+// fetch all users for chatContacts
+  @override
+  Future<QuerySnapshot<Object?>> getAllUsers() async {
+    final data = await _users
+        .where(
+          'userCode',
+          isNotEqualTo: SharedPref.getUser().userCode,
+        )
+        .get();
+    return data;
+  }
+
+  // open chat Room
+  @override
+  Future<String> createRoom(
+    String loggeduserId,
+    String anotherUserId,
+  ) async {
+    // we have to check if room exist we dont crete new one , otherwise we will create new one
+
+    final String selectdRoomId =
+        FirebaseFirestore.instance.collection('chats').doc().id;
+
+    await FirebaseFirestore.instance.collection('chats').doc(selectdRoomId).set(
+      {
+        'roomId': selectdRoomId,
+        'loggedUserId': loggeduserId,
+        'anotherUserId': anotherUserId,
+      },
+    );
+
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(selectdRoomId)
+        .collection('Messages');
+
+    return selectdRoomId;
+  }
+
+  @override
+  Future<void> sendMessage(String roomId, Map<String, dynamic> data) async {
+    final String selectedId = FirebaseFirestore.instance
+        .collection('chats')
+        .doc(roomId)
+        .collection('Messages')
+        .doc()
+        .id;
+
+    data['msgId'] = selectedId;
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(roomId)
+        .collection('Messages')
+        .doc(selectedId)
+        .set(data);
+  }
+
+  @override
+  Future<Map<String, dynamic>> fetchRoom(String roomId) async {
+    final room =
+        await FirebaseFirestore.instance.collection('chats').doc(roomId).get();
+
+    final messages = await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(roomId)
+        .collection('Messages')
+        .get();
+
+    List<Map<String, dynamic>> roomMessages = [];
+    messages.docs.forEach((element) {
+      roomMessages.add(element.data());
+    });
+
+    final Map<String, dynamic> data = {
+      'info': room.data(),
+      'messages': roomMessages,
+    };
+    return data;
+  }
 
   @override
   Future<void> addUserData(String path, Map<String, dynamic> data) {
@@ -109,7 +198,9 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<List<String>> uploadFilesToStorage(List<String> filePaths, String folderName, String path, {offerId}) async {
+  Future<List<String>> uploadFilesToStorage(
+      List<String> filePaths, String folderName, String path,
+      {offerId}) async {
     try {
       List<String> urls = [];
       for (String s in filePaths) {
@@ -117,7 +208,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         UploadTask uploadTask;
 
         //if it's offer, add an extra folderName (offer id), this step makes deletion easier
-        if(offerId == null)
+        if (offerId == null)
           uploadTask = _firebaseStorage
               .ref('$folderName/$path/$fileName}')
               .putFile(File(s));
@@ -125,7 +216,6 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
           uploadTask = _firebaseStorage
               .ref('$folderName/$path/$offerId/$fileName}')
               .putFile(File(s));
-
 
         TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
         String url = await taskSnapshot.ref.getDownloadURL();
@@ -158,7 +248,8 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<void> updateOfferLiked(String offerId, String userId, bool likeOrDislike) async {
+  Future<void> updateOfferLiked(
+      String offerId, String userId, bool likeOrDislike) async {
     try {
       if (likeOrDislike) {
         await _users.doc(userId).update({

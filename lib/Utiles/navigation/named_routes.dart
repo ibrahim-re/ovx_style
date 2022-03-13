@@ -35,4 +35,5 @@ class NamedRoutes {
   static const HELP_SCREEN = "HELP_SCREEN";
 
   static const StoryDetailsScreen = "StoryDetailsScreen";
+  static const ChatRoomScreen = "ChatRoomScreen";
 }

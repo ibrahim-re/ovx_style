@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -8,8 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/story/widgets/slider.dart';
 import 'package:ovx_style/UI/story/widgets/story.dart';
-import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
-import 'package:ovx_style/UI/widgets/custom_text_form_field.dart';
 import 'package:ovx_style/UI/widgets/no_permession_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
@@ -63,8 +60,7 @@ class _StoryScreenState extends State<StoryScreen> {
             EasyLoading.showError(state.message);
           else if (state is AddStoryDoneState)
             EasyLoading.showSuccess('story added'.tr());
-
-          else if(state is DeleteStorySucceed)
+          else if (state is DeleteStorySucceed)
             EasyLoading.showSuccess('story deleted'.tr());
           else if (state is DeleteStoryFailed)
             EasyLoading.showError(state.message);
@@ -124,22 +120,22 @@ class _StoryScreenState extends State<StoryScreen> {
                 backgroundColor: MyColors.secondaryColor,
                 child: SvgPicture.asset('assets/images/add_story.svg'),
                 onPressed: () async {
-                  final imageSource = await PickImageHelper().showPicker(context);
+                  final imageSource =
+                      await PickImageHelper().showPicker(context);
                   if (imageSource == null) return;
                   List<File> pickedFiles = [];
 
-                  if(imageSource == ImageSource.camera){
-                    File file = await PickImageHelper().pickImageFromSource(imageSource);
+                  if (imageSource == ImageSource.camera) {
+                    File file = await PickImageHelper()
+                        .pickImageFromSource(imageSource);
                     pickedFiles.add(file);
-                  }
-
-                  else{
+                  } else {
                     pickedFiles = await PickImageHelper().pickMultiImages();
                   }
 
-                  if(await pickedFiles.isNotEmpty)
-                    ModalSheets().showStoryDescSheet(context, descCon, pickedFiles);
-
+                  if (await pickedFiles.isNotEmpty)
+                    ModalSheets()
+                        .showStoryDescSheet(context, descCon, pickedFiles);
                 },
               ),
             );

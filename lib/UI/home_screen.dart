@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ovx_style/UI/chat_screen.dart';
+import 'package:ovx_style/UI/chat/chat_screen.dart';
 import 'package:ovx_style/UI/profile/user_profile_screen.dart';
 import 'package:ovx_style/UI/story/story_screen.dart';
 import 'package:ovx_style/UI/widgets/custom_navigation_bar.dart';

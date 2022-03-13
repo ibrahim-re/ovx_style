@@ -16,6 +16,7 @@ import 'package:ovx_style/bloc/login_bloc/login_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/bloc/stories_bloc/bloc.dart';
 import 'Utiles/navigation/named_navigator_impl.dart';
+import 'bloc/chat_bloc/chat_bloc.dart';
 import 'bloc/comment_bloc/comment_bloc.dart';
 import 'bloc/gifts_bloc/gifts_bloc.dart';
 import 'bloc/login_bloc/login_bloc.dart';
@@ -111,6 +112,9 @@ void main() async {
           ),
           BlocProvider<StoriesBloc>(
             create: (context) => StoriesBloc(),
+          ),
+          BlocProvider<ChatBloc>(
+            create: (context) => ChatBloc(),
           ),
         ],
         child: const MarketingApp(),

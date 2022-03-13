@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offers/widgets/offers_list_view.dart';
 import 'package:ovx_style/UI/offers/widgets/waiting_offers_list_view.dart';
 import 'package:ovx_style/UI/widgets/basket_icon.dart';
+import 'package:ovx_style/UI/widgets/filter_icon.dart';
 import 'package:ovx_style/UI/widgets/notification_icon.dart';
 import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/colors.dart';
@@ -22,7 +22,6 @@ class OffersScreen extends StatefulWidget {
 }
 
 class _OffersScreenState extends State<OffersScreen> {
-
   @override
   void initState() {
     context.read<OfferBloc>().add(FetchOffers(UserType.Person));
@@ -43,12 +42,15 @@ class _OffersScreenState extends State<OffersScreen> {
           BasketIcon(),
 
           //filter icon
-          IconButton(
-            onPressed: () {
-              ModalSheets().showFilters(context);
-            },
-            icon: SvgPicture.asset('assets/images/filter.svg'),
-          ),
+          FilterIcon(ontap: () {
+            ModalSheets().showFilters(context);
+          }),
+          // IconButton(
+          //   onPressed: () {
+          //     ModalSheets().showFilters(context);
+          //   },
+          //   icon: SvgPicture.asset('assets/images/filter.svg'),
+          // ),
         ],
       ),
       body: RefreshIndicator(
@@ -65,13 +67,13 @@ class _OffersScreenState extends State<OffersScreen> {
             else if (state is FetchOffersFailed)
               return Center(
                   child: Text(
-                    state.message,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: MyColors.secondaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ));
+                state.message,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: MyColors.secondaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ));
             else
               return Container();
           },

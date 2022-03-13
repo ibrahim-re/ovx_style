@@ -3,6 +3,7 @@ import 'package:ovx_style/UI/auth/login_screen.dart';
 import 'package:ovx_style/UI/auth/reset_password_screen.dart';
 import 'package:ovx_style/UI/auth/signup_screen.dart';
 import 'package:ovx_style/UI/basket/basket_screen.dart';
+import 'package:ovx_style/UI/chat/widgets/chatRoom.dart';
 import 'package:ovx_style/UI/checkout/checkout_screen.dart';
 import 'package:ovx_style/UI/edit_profile/edit_profile_screen.dart';
 import 'package:ovx_style/UI/google_maps_screen.dart';
@@ -294,6 +295,23 @@ class NamedNavigatorImpl implements NamedNavigator {
               child: StoryDetails(
                 navigator: navigatorState,
                 model: story,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
+      case NamedRoutes.ChatRoomScreen:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final String anoherUserName = data['name'];
+          final String anoherUserImage = data['image'];
+          final String roomId = data['roomId'];
+
+          return PageTransition(
+              child: ChatRoom(
+                anoherUserImage: anoherUserImage,
+                anoherUserName: anoherUserName,
+                navigator: navigatorState,
+                roomId: roomId,
               ),
               type: PageTransitionType.rightToLeft,
               duration: const Duration(milliseconds: 500));
