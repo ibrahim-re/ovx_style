@@ -29,11 +29,13 @@ class Messages {
   int? msgtype;
   String? msgvalue;
   String? sender;
+  String? createdAt;
 
   Messages.fromJson(Map<String, dynamic> data) {
     msgId = data['msgId'];
     msgtype = data['type'];
     msgvalue = data['value'];
     sender = data['sender'];
+    createdAt = data['createdAt'];
   }
 }

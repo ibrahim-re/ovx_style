@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
@@ -36,12 +36,24 @@ class _ChatRoomState extends State<ChatRoom> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool sendTextStatus = true;
+  bool sendTextStatus = false;
   RoomModel? room;
+
+  late StreamController<String> st;
 
   @override
   void initState() {
+    st = StreamController();
     BlocProvider.of<ChatBloc>(context).add(FetchRoomMessages(widget.roomId));
+    st.stream.listen((event) {
+      if (event.isNotEmpty && sendTextStatus == false) {
+        setState(() => sendTextStatus = true);
+      }
+
+      if (event.isEmpty) {
+        setState(() => sendTextStatus = false);
+      }
+    });
     super.initState();
   }
 
@@ -73,16 +85,18 @@ class _ChatRoomState extends State<ChatRoom> {
           children: [
             BlocConsumer<ChatBloc, ChatStates>(
               listener: (context, state) {
-                if (state is GETChatMessageLoadingState) {
-                  EasyLoading.show(status: 'please wait'.tr());
-                }
+                if (state is GETChatMessageLoadingState) {}
                 if (state is GETChatMessageDoneState) {
-                  EasyLoading.dismiss();
                   room = state.model;
                 }
 
                 if (state is GETChatMessageFailedState) {
-                  EasyLoading.dismiss();
+                  EasyLoading.showError(
+                    'Opps, Something went wrong ',
+                    duration: Duration(
+                      seconds: 2,
+                    ),
+                  );
                 }
               },
               builder: (context, state) {
@@ -141,7 +155,7 @@ class _ChatRoomState extends State<ChatRoom> {
                           contentPadding: EdgeInsets.only(left: 10),
                           hintText: 'Type Here',
                           hintStyle: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: MyColors.lightGrey,
                           ),
                         ),
@@ -154,17 +168,20 @@ class _ChatRoomState extends State<ChatRoom> {
                           }
                           return null;
                         },
+                        onChanged: (String val) {
+                          st.add(val);
+                        },
                       ),
                     ),
                   ),
-                  sendTextStatus && con.text.isNotEmpty
+                  sendTextStatus
                       ? sendingIcon()
                       : Container(
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              imageIcon(),
                               voiceIcon(),
+                              imageIcon(),
                             ],
                           ),
                         ),
@@ -187,8 +204,9 @@ class _ChatRoomState extends State<ChatRoom> {
             'type': 0,
             'value': con.text.trim(),
             'sender': SharedPref.getUser().id!,
+            'createdAt': DateTime.now().toIso8601String(),
           };
-          room!.messages!.add(Messages.fromJson(sendingData));
+          room!.messages!.insert(0, Messages.fromJson(sendingData));
           con.clear();
           setState(() {});
           BlocProvider.of<ChatBloc>(context).add(

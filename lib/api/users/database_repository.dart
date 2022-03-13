@@ -72,25 +72,31 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     String loggeduserId,
     String anotherUserId,
   ) async {
-    // we have to check if room exist we dont crete new one , otherwise we will create new one
+    bool isRoomExist = false;
+    final roomId = loggeduserId + anotherUserId;
+    final allChats = await FirebaseFirestore.instance.collection('chats').get();
 
-    final String selectdRoomId =
-        FirebaseFirestore.instance.collection('chats').doc().id;
+    for (var item in allChats.docs) {
+      if (item.id.contains(roomId)) {
+        isRoomExist = true;
+        break;
+      }
+    }
 
-    await FirebaseFirestore.instance.collection('chats').doc(selectdRoomId).set(
-      {
-        'roomId': selectdRoomId,
-        'loggedUserId': loggeduserId,
-        'anotherUserId': anotherUserId,
-      },
-    );
-
-    await FirebaseFirestore.instance
-        .collection('chats')
-        .doc(selectdRoomId)
-        .collection('Messages');
-
-    return selectdRoomId;
+    if (!isRoomExist) {
+      await FirebaseFirestore.instance.collection('chats').doc(roomId).set(
+        {
+          'roomId': roomId,
+          'loggedUserId': loggeduserId,
+          'anotherUserId': anotherUserId,
+        },
+      );
+      await FirebaseFirestore.instance
+          .collection('chats')
+          .doc(roomId)
+          .collection('Messages');
+    }
+    return roomId;
   }
 
   @override
@@ -103,6 +109,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         .id;
 
     data['msgId'] = selectedId;
+    data['createdAt'] = DateTime.now().toIso8601String();
     await FirebaseFirestore.instance
         .collection('chats')
         .doc(roomId)
@@ -113,13 +120,16 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
 
   @override
   Future<Map<String, dynamic>> fetchRoom(String roomId) async {
+    // room info
     final room =
         await FirebaseFirestore.instance.collection('chats').doc(roomId).get();
 
+    // room messages
     final messages = await FirebaseFirestore.instance
         .collection('chats')
         .doc(roomId)
         .collection('Messages')
+        .orderBy('createdAt', descending: true)
         .get();
 
     List<Map<String, dynamic>> roomMessages = [];
