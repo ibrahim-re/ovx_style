@@ -57,8 +57,9 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   @override
   Future<QuerySnapshot<Object?>> getAllUsers() async {
     final data = await _users
+        .limit(20)
         .where(
-          'userCode',
+          'userId',
           isNotEqualTo: SharedPref.getUser().userCode,
         )
         .get();

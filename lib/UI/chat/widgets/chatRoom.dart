@@ -53,7 +53,7 @@ class _ChatRoomState extends State<ChatRoom> {
         setState(() => sendTextStatus = true);
       }
 
-      if (event.isEmpty) {
+      if (event.isEmpty || con.text.isEmpty) {
         setState(() => sendTextStatus = false);
       }
     });
@@ -123,6 +123,10 @@ class _ChatRoomState extends State<ChatRoom> {
                             vertical: 10,
                           ),
                           child: ListView.separated(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 20,
+                            ),
                             reverse: true,
                             itemBuilder: (ctx, index) {
                               final message = room!.messages![index];
@@ -216,6 +220,7 @@ class _ChatRoomState extends State<ChatRoom> {
           };
           room!.messages!.insert(0, Messages.fromJson(sendingData));
           con.clear();
+          sendTextStatus = false;
           setState(() {});
           BlocProvider.of<ChatBloc>(context).add(
             sendMessage(
@@ -276,7 +281,9 @@ class _ChatRoomState extends State<ChatRoom> {
           'createdAt': DateTime.now().toIso8601String(),
         };
         room!.messages!.insert(0, Messages.fromJson(sendingData));
+        uploadedImageUrl = '';
         setState(() {});
+
         BlocProvider.of<ChatBloc>(context).add(
           UploadeImageToRoom(
             widget.roomId,
@@ -293,8 +300,7 @@ class _ChatRoomState extends State<ChatRoom> {
     return Align(
       alignment: isMe ? Alignment.topRight : Alignment.topLeft,
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.40,
-        padding: EdgeInsets.all(10),
+        width: MediaQuery.of(context).size.width * 0.55,
         decoration: BoxDecoration(
           color:
               isMe ? Color.fromRGBO(241, 243, 245, 1) : MyColors.secondaryColor,
@@ -307,31 +313,49 @@ class _ChatRoomState extends State<ChatRoom> {
 
   Widget MessageShape(int type, String msg, bool isMe) {
     if (type == 0) {
-      return Text(
-        msg,
-        style: TextStyle(
-          color: isMe ? Color.fromRGBO(68, 68, 68, 1) : Colors.white,
+      return Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Text(
+          msg,
+          style: TextStyle(
+            color: isMe ? Color.fromRGBO(68, 68, 68, 1) : Colors.white,
+          ),
         ),
       );
     }
     if (type == 1) {
-      return Container(
-        width: 200,
-        height: 200,
-        color: isMe ? Color.fromRGBO(68, 68, 68, 1) : MyColors.secondaryColor,
-        child: msg != ''
-            ? Image(
-                width: 200,
-                height: 200,
-                image: NetworkImage(msg),
-                fit: BoxFit.fill,
-              )
-            : Center(
-                child: CircularProgressIndicator(
-                  color: MyColors.secondaryColor,
+      msg = msg == '' ? uploadedImageUrl : msg;
+      return msg != ''
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: GestureDetector(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                            insetPadding: EdgeInsets.zero,
+                            actionsPadding: EdgeInsets.zero,
+                            contentPadding: EdgeInsets.zero,
+                            titlePadding: EdgeInsets.zero,
+                            buttonPadding: EdgeInsets.zero,
+                            content: Container(
+                              padding: EdgeInsets.zero,
+                              child: FittedBox(
+                                  child: Image(image: NetworkImage(msg))),
+                            ),
+                          ));
+                },
+                child: Image(
+                  image: NetworkImage(msg != '' ? msg : uploadedImageUrl),
+                  fit: BoxFit.fill,
                 ),
               ),
-      );
+            )
+          : Center(
+              child: CircularProgressIndicator(
+                color: MyColors.secondaryColor,
+              ),
+            );
     }
 
     return Container();
