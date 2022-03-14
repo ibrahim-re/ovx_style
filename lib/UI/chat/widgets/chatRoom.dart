@@ -345,7 +345,8 @@ class _ChatRoomState extends State<ChatRoom> {
                             ),
                           ));
                 },
-                child: Image(
+                child: FadeInImage(
+                  placeholder: AssetImage('assets/images/loader-animation.gif'),
                   image: NetworkImage(msg != '' ? msg : uploadedImageUrl),
                   fit: BoxFit.fill,
                 ),

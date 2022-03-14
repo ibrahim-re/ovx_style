@@ -60,7 +60,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         .limit(20)
         .where(
           'userId',
-          isNotEqualTo: SharedPref.getUser().userCode,
+          isNotEqualTo: SharedPref.getUser().id,
         )
         .get();
     return data;

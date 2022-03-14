@@ -43,11 +43,17 @@ class oneChatItem extends StatelessWidget {
           child: Row(
             children: [
               CircleAvatar(
-                radius: 30,
-                backgroundColor: MyColors.secondaryColor,
-                backgroundImage: model.userImage == 'no image'
-                    ? Image.asset('assets/images/default_profile.png').image
-                    : NetworkImage(model.userImage!),
+                radius: model.userOffers.isNotEmpty ? 33 : 30,
+                backgroundColor: model.userOffers.isNotEmpty
+                    ? MyColors.secondaryColor
+                    : Colors.transparent,
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: MyColors.secondaryColor,
+                  backgroundImage: model.userImage == 'no image'
+                      ? Image.asset('assets/images/default_profile.png').image
+                      : NetworkImage(model.userImage!),
+                ),
               ),
               SizedBox(width: 20),
               Flexible(

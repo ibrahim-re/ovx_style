@@ -16,10 +16,16 @@ class ChatUserModel {
   String? userName;
   String? userImage;
   String? userLastMessage = 'no message';
+  List<String> userOffers = [];
 
   ChatUserModel.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
     userImage = json['profileImage'] ?? 'no image';
     userName = json['userName'];
+    if (json['offersAdded'] != null) {
+      json['offersAdded'].forEach((element) {
+        userOffers.add(element);
+      });
+    }
   }
 }

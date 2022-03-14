@@ -84,7 +84,7 @@ class _StoryDetailsState extends State<StoryDetails> {
                     },
                     child: Image(
                       image: NetworkImage(widget.model.storyUrls![index]),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -96,6 +96,18 @@ class _StoryDetailsState extends State<StoryDetails> {
                     story: widget.model,
                     currentIndex: index,
                     pageController: _pageController,
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(right: 16, left: 16, bottom: 10),
+                  child: Column(
+                    children: [
+                      Spacer(),
+                      OwnerRow(model: widget.model),
+                      Description(desc: widget.model.storyDesc!),
+                      Reply(),
+                    ],
                   ),
                 ),
               ],
