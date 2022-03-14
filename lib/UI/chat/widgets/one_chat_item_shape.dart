@@ -6,6 +6,8 @@ import 'package:ovx_style/model/chatUserModel.dart';
 import '../../../Utiles/colors.dart';
 import '../../../Utiles/navigation/named_navigator_impl.dart';
 import '../../../Utiles/navigation/named_routes.dart';
+import '../../../bloc/chat_bloc/chat_event.dart';
+import '../../../bloc/chat_bloc/chat_state.dart';
 
 class oneChatItem extends StatelessWidget {
   oneChatItem({Key? key, required this.model}) : super(key: key);

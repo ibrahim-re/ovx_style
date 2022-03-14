@@ -17,12 +17,11 @@ abstract class DatabaseRepository {
     String anotherUserId,
   );
   Future<void> sendMessage(String roomId, Map<String, dynamic> data);
-
   Future<void> fetchRoom(String roomId);
-
   Future<User> getUserData(String userId);
   Future<void> updateUserData(Map<String, dynamic> userData, String userId);
   Future<void> updateOfferAdded(String userId, String offerId);
+  Future<String> uploadeImagetoRoom(String roomId, File Image);
   Future<void> updateCoverImage(String coverImageURL, String userId);
   Future<List<String>> uploadFilesToStorage(
       List<String> filePaths, String uId, String path);
@@ -74,15 +73,16 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   ) async {
     bool isRoomExist = false;
     final roomId = loggeduserId + anotherUserId;
+    String returnedId = '';
     final allChats = await FirebaseFirestore.instance.collection('chats').get();
 
     for (var item in allChats.docs) {
-      if (item.id.contains(roomId)) {
+      if (item.id.contains(loggeduserId) && item.id.contains(anotherUserId)) {
         isRoomExist = true;
+        returnedId = item.id;
         break;
       }
     }
-
     if (!isRoomExist) {
       await FirebaseFirestore.instance.collection('chats').doc(roomId).set(
         {
@@ -96,7 +96,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
           .doc(roomId)
           .collection('Messages');
     }
-    return roomId;
+    return isRoomExist ? returnedId : roomId;
   }
 
   @override
@@ -145,8 +145,34 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
+  Future<String> uploadeImagetoRoom(String roomId, File Image) async {
+    UploadTask uploadTask = FirebaseStorage.instance
+        .ref('chatsImages/$roomId/${Image.path.split('/').last}')
+        .putFile(Image);
+
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+    String url = await taskSnapshot.ref.getDownloadURL();
+
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(roomId)
+        .collection('Messages')
+        .doc()
+        .set({
+      'createdAt': DateTime.now().toIso8601String(),
+      'sender': SharedPref.getUser().id,
+      'msgId': 'ssss',
+      'type': 1,
+      'value': url
+    });
+
+    return url;
+  }
+
+  @override
   Future<void> addUserData(String path, Map<String, dynamic> data) {
     try {
+      data['userId'] = path;
       return _users.doc(path).set(data);
     } catch (e) {
       print('error is $e');

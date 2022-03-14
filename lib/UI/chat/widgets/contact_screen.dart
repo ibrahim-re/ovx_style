@@ -5,6 +5,8 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/chat/widgets/one_chat_item_shape.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 
+import '../../../bloc/chat_bloc/chat_event.dart';
+import '../../../bloc/chat_bloc/chat_state.dart';
 import '../../../model/chatUserModel.dart';
 
 class Contacts_Chat extends StatefulWidget {

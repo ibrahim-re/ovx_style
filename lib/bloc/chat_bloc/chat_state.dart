@@ -1,6 +1,6 @@
-part of 'chat_bloc.dart';
+import '../../model/chatUserModel.dart';
+import '../../model/roomModel.dart';
 
-@immutable
 abstract class ChatStates {}
 
 class GETAllChatInitial extends ChatStates {}
@@ -45,4 +45,18 @@ class GETChatMessageDoneState extends ChatStates {
 class GETChatMessageFailedState extends ChatStates {
   final String err;
   GETChatMessageFailedState(this.err);
+}
+
+// uploade image to room
+
+class UploadeImageToRoomLoadingState extends ChatStates {}
+
+class UploadeImageToRoomDoneState extends ChatStates {
+  final String imageUrl;
+  UploadeImageToRoomDoneState(this.imageUrl);
+}
+
+class UploadeImageToRoomFailedState extends ChatStates {
+  final String err;
+  UploadeImageToRoomFailedState(this.err);
 }

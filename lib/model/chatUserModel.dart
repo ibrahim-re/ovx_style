@@ -18,7 +18,7 @@ class ChatUserModel {
   String? userLastMessage = 'no message';
 
   ChatUserModel.fromJson(Map<String, dynamic> json) {
-    userId = json['userCode'];
+    userId = json['userId'];
     userImage = json['profileImage'] ?? 'no image';
     userName = json['userName'];
   }

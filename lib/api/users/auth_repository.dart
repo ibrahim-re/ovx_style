@@ -12,8 +12,6 @@ abstract class AuthRepository {
   Future<void> signOutUser();
   Future<User> signInAsGuest();
   Future<void> requestResetPasswordCode(String email);
-// String getCurrentUserId();
-// Future<String> getCurrentUserType();
 }
 
 class AuthRepositoryImpl extends AuthRepository {
@@ -23,7 +21,8 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<User> signInUser(String email, String password) async {
     try {
-      firebase.UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      firebase.UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
 
       if (userCredential.user != null) {
         String uId = userCredential.user!.uid;
@@ -56,7 +55,8 @@ class AuthRepositoryImpl extends AuthRepository {
     try {
       String email = userInfo['email'];
       String password = userInfo['password'];
-      firebase.UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      firebase.UserCredential userCredential = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
       //add user data to database
       if (userCredential.user != null) {
         //get user id
@@ -66,14 +66,16 @@ class AuthRepositoryImpl extends AuthRepository {
         if (userInfo['profileImage'] != null) {
           EasyLoading.show(status: 'Uploading profile image..');
           List<String> paths = [userInfo['profileImage']];
-          List<String> downloadUrls = await _databaseRepositoryImpl.uploadFilesToStorage(paths, uId, 'profileImage');
+          List<String> downloadUrls = await _databaseRepositoryImpl
+              .uploadFilesToStorage(paths, uId, 'profileImage');
           userInfo['profileImage'] = downloadUrls.first;
         }
 
         //upload company reg images to database
         if (userInfo['regImages'] != null) {
           EasyLoading.show(status: 'Uploading reg images..');
-          List<String> downloadUrls = await _databaseRepositoryImpl.uploadFilesToStorage(userInfo['regImages'], uId, 'regImages');
+          List<String> downloadUrls = await _databaseRepositoryImpl
+              .uploadFilesToStorage(userInfo['regImages'], uId, 'regImages');
           userInfo['regImages'] = downloadUrls;
         }
 
@@ -114,7 +116,8 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<User> signInAsGuest() async {
     try {
-      firebase.UserCredential userCredential = await _firebaseAuth.signInAnonymously();
+      firebase.UserCredential userCredential =
+          await _firebaseAuth.signInAnonymously();
 
       if (userCredential.user != null) {
         //get user id
@@ -141,10 +144,8 @@ class AuthRepositoryImpl extends AuthRepository {
         User currentUser = PersonUser.fromMap(visitorUserINfo, uId);
 
         return currentUser;
-
-      }else
+      } else
         throw ' error';
-
     } on firebase.FirebaseAuthException catch (e) {
       print('error $e');
       throw e.code;
@@ -153,20 +154,4 @@ class AuthRepositoryImpl extends AuthRepository {
       throw e;
     }
   }
-
-// @override
-// String getCurrentUserId() {
-//   if(_firebaseAuth.currentUser != null)
-//     return _firebaseAuth.currentUser!.uid;
-//   else
-//     return '';
-// }
-//
-// @override
-// Future<String> getCurrentUserType() async {
-//   String userType = await _databaseRepositoryImpl.getUserType(_firebaseAuth.currentUser!.uid);
-//
-//   return userType;
-// }
-
 }

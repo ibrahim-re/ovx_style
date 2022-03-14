@@ -10,6 +10,8 @@ import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 
+import '../../../bloc/chat_bloc/chat_event.dart';
+import '../../../bloc/chat_bloc/chat_state.dart';
 import '../../../helper/pick_image_helper.dart';
 import '../../../model/roomModel.dart';
 
@@ -40,6 +42,7 @@ class _ChatRoomState extends State<ChatRoom> {
   RoomModel? room;
 
   late StreamController<String> st;
+  String uploadedImageUrl = '';
 
   @override
   void initState() {
@@ -85,6 +88,7 @@ class _ChatRoomState extends State<ChatRoom> {
           children: [
             BlocConsumer<ChatBloc, ChatStates>(
               listener: (context, state) {
+                print(state.toString());
                 if (state is GETChatMessageLoadingState) {}
                 if (state is GETChatMessageDoneState) {
                   room = state.model;
@@ -97,6 +101,10 @@ class _ChatRoomState extends State<ChatRoom> {
                       seconds: 2,
                     ),
                   );
+                }
+
+                if (state is UploadeImageToRoomDoneState) {
+                  uploadedImageUrl = state.imageUrl;
                 }
               },
               builder: (context, state) {
@@ -261,19 +269,18 @@ class _ChatRoomState extends State<ChatRoom> {
         } else {
           pickedFiles = await PickImageHelper().pickMultiImages();
         }
-
         final sendingData = {
           'type': 1,
-          'value': con.text.trim(),
+          'value': '',
           'sender': SharedPref.getUser().id!,
+          'createdAt': DateTime.now().toIso8601String(),
         };
-
-        room!.messages!.add(Messages.fromJson(sendingData));
+        room!.messages!.insert(0, Messages.fromJson(sendingData));
         setState(() {});
         BlocProvider.of<ChatBloc>(context).add(
-          sendMessage(
+          UploadeImageToRoom(
             widget.roomId,
-            sendingData,
+            pickedFiles[0],
           ),
         );
       },
@@ -289,65 +296,44 @@ class _ChatRoomState extends State<ChatRoom> {
         width: MediaQuery.of(context).size.width * 0.40,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Color.fromRGBO(241, 243, 245, 1),
+          color:
+              isMe ? Color.fromRGBO(241, 243, 245, 1) : MyColors.secondaryColor,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: MessageShape(type, msg),
+        child: MessageShape(type, msg, isMe),
       ),
     );
   }
 
-  Widget MessageShape(int type, String msg) {
+  Widget MessageShape(int type, String msg, bool isMe) {
     if (type == 0) {
       return Text(
         msg,
-        style: TextStyle(color: Color.fromRGBO(68, 68, 68, 1)),
+        style: TextStyle(
+          color: isMe ? Color.fromRGBO(68, 68, 68, 1) : Colors.white,
+        ),
       );
     }
     if (type == 1) {
-      return Text(
-        msg,
-        style: TextStyle(color: Color.fromRGBO(68, 68, 68, 1)),
+      return Container(
+        width: 200,
+        height: 200,
+        color: isMe ? Color.fromRGBO(68, 68, 68, 1) : MyColors.secondaryColor,
+        child: msg != ''
+            ? Image(
+                width: 200,
+                height: 200,
+                image: NetworkImage(msg),
+                fit: BoxFit.fill,
+              )
+            : Center(
+                child: CircularProgressIndicator(
+                  color: MyColors.secondaryColor,
+                ),
+              ),
       );
     }
 
     return Container();
   }
-
-//   void startRecord() async {
-//     bool hasPermission = await checkPermission();
-//     if (hasPermission) {
-//       recordFilePath = await getFilePath();
-
-//       RecordMp3.instance.start(recordFilePath, (type) {
-//         setState(() {});
-//       });
-//     } else {}
-//     setState(() {});
-//   }
-
-//  void stopRecord() async {
-//     bool s = RecordMp3.instance.stop();
-//     if (s) {
-//       setState(() {
-//         isSending = true;
-//       });
-//       await uploadAudio();
-
-//       setState(() {
-//         isPlayingMsg = false;
-//       });
-//     }
-//   }
-
-// Future<void> play() async {
-//     if (recordFilePath != null && File(recordFilePath).existsSync()) {
-//       AudioPlayer audioPlayer = AudioPlayer();
-//       await audioPlayer.play(
-//         recordFilePath,
-//         isLocal: true,
-//       );
-//     }
-//   }
-
 }

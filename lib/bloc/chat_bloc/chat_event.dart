@@ -1,6 +1,5 @@
-part of 'chat_bloc.dart';
+import 'dart:io';
 
-@immutable
 abstract class ChatEvents {}
 
 class FetchAllChats extends ChatEvents {}
@@ -24,4 +23,11 @@ class sendMessage extends ChatEvents {
 class FetchRoomMessages extends ChatEvents {
   final String roomId;
   FetchRoomMessages(this.roomId);
+}
+
+class UploadeImageToRoom extends ChatEvents {
+  final String roomId;
+  final File Image;
+
+  UploadeImageToRoom(this.roomId, this.Image);
 }

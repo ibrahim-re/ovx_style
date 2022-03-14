@@ -1,12 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
+import 'package:ovx_style/bloc/chat_bloc/chat_state.dart';
 
 import '../../model/chatUserModel.dart';
 import '../../model/roomModel.dart';
-
-part 'chat_event.dart';
-part 'chat_state.dart';
+import 'chat_event.dart';
 
 class ChatBloc extends Bloc<ChatEvents, ChatStates> {
   DatabaseRepositoryImpl _hand = DatabaseRepositoryImpl();
@@ -60,6 +58,17 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
         } catch (e) {
           print(e.toString());
           emit(GETChatMessageFailedState('Error in Fetch Messages'));
+        }
+      }
+
+      if (event is UploadeImageToRoom) {
+        emit(UploadeImageToRoomLoadingState());
+        try {
+          final String url =
+              await _hand.uploadeImagetoRoom(event.roomId, event.Image);
+          emit(UploadeImageToRoomDoneState(url));
+        } catch (e) {
+          emit(UploadeImageToRoomFailedState('Failed sending Image !!'));
         }
       }
     });
