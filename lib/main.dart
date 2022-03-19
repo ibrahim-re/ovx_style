@@ -29,6 +29,7 @@ late AndroidNotificationChannel channel;
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
+// last point>>> sending voice
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //initialize firebase

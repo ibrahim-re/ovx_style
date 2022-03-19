@@ -88,7 +88,6 @@ class _ChatRoomState extends State<ChatRoom> {
           children: [
             BlocConsumer<ChatBloc, ChatStates>(
               listener: (context, state) {
-                print(state.toString());
                 if (state is GETChatMessageLoadingState) {}
                 if (state is GETChatMessageDoneState) {
                   room = state.model;
@@ -236,28 +235,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
   Widget voiceIcon() {
     return IconButton(
-      onPressed: () async {
-        // print('aa');
-
-        // final record = Record();
-
-        // // Check and request permission
-        // bool result = await record.hasPermission();
-
-        // // Start recording
-        // await record.start(
-        //   path: 'aFullPath/myFile.m4a', // required
-        //   encoder: AudioEncoder.AAC, // by default
-        //   bitRate: 128000, // by default
-        //   // sampleRate: 44100, // by default
-        // );
-
-        // // Get the state of the recorder
-        // // bool isRecording = await record.isRecording();
-
-        // // // Stop recording
-        // // await record.stop();
-      },
+      onPressed: () async {},
       icon: SvgPicture.asset('assets/images/sendingvoice.svg'),
     );
   }

@@ -23,7 +23,7 @@ class Story extends StatelessWidget {
         child: Stack(
           children: [
             FadeInImage(
-              imageErrorBuilder: (_,g,d){
+              imageErrorBuilder: (_, g, d) {
                 return Image(
                   image: AssetImage('assets/images/no_internet.png'),
                 );
@@ -89,7 +89,10 @@ class Story extends StatelessWidget {
                       radius: 20,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(50),
-                        child: Image.asset('assets/images/default_profile.jpg', fit: BoxFit.cover,),
+                        child: Image.asset(
+                          'assets/images/default_profile.jpg',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   const SizedBox(width: 10),
