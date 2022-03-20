@@ -271,6 +271,10 @@ exports.onMessageRecieved = functions.firestore
       const messageId = context.params.messageId;
       const senderId = snapshot.data().sender;
 
+      const isRead = snapshot.data().isRead;
+
+      console.log(`is read ${isRead}`);
+
       //get chat users ids
       const chatSnapshot = await db.doc(`chats/${chatId}`).get();
       const firstUserId = chatSnapshot.data().firstUserId;

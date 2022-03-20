@@ -31,6 +31,7 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
           chatsModel = await _hand.getChats(event.userId);
           emit(GetUserChatsDone());
         }catch(e){
+          print('error is $e');
           emit(GetUserChatsFailed('error occurred'.tr()));
         }
       }

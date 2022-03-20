@@ -616,9 +616,10 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     final querySnapshot = await _chats.get();
 
     for (var doc in querySnapshot.docs) {
-      if (doc.id.contains(firstUserId) && doc.id.contains(secondUserId))
+      if (doc.id.contains(firstUserId) && doc.id.contains(secondUserId)){
         roomId = doc.id;
-      break;
+        break;
+      }
     }
 
     return roomId;
