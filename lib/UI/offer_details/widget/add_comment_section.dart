@@ -105,7 +105,7 @@ class _AddCommentSectionState extends State<AddCommentSection> {
 
                           commentController.clear();
                         },
-                        icon: SvgPicture.asset('assets/images/comment.svg', fit: BoxFit.scaleDown,),
+                        icon: SvgPicture.asset('assets/images/comment.svg', fit: BoxFit.scaleDown, matchTextDirection: true,),
                       );
                   },
                 ),
