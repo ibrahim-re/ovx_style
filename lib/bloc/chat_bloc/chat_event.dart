@@ -2,22 +2,28 @@ import 'dart:io';
 
 abstract class ChatEvents {}
 
-class FetchAllChats extends ChatEvents {}
+class GetContacts extends ChatEvents {}
 
-class createRoom extends ChatEvents {
-  final String anotherUserId;
-  final String myId;
-  createRoom(
-    this.myId,
-    this.anotherUserId,
+class GetUserChats extends ChatEvents {
+  String userId;
+
+  GetUserChats(this.userId);
+}
+
+class CreateRoom extends ChatEvents {
+  final String secondUserId;
+  final String firstUserId;
+  CreateRoom(
+    this.firstUserId,
+    this.secondUserId,
   );
 }
 
-class sendMessage extends ChatEvents {
+class SendMessage extends ChatEvents {
   final String roomId;
-  final Map<String, dynamic> data;
+  final String message;
 
-  sendMessage(this.roomId, this.data);
+  SendMessage(this.roomId, this.message);
 }
 
 class FetchRoomMessages extends ChatEvents {

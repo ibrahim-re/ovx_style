@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/UI/chat/widgets/one_chat_item_shape.dart';
+import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
+import 'package:ovx_style/UI/offers/widgets/waiting_offer_owner_row.dart';
+import '../../../bloc/chat_bloc/chat_event.dart';
+import '../../../bloc/chat_bloc/chat_state.dart';
+import '../../../model/chatUserModel.dart';
+
+class ContactsScreen extends StatefulWidget {
+  const ContactsScreen({Key? key}) : super(key: key);
+  @override
+  State<ContactsScreen> createState() => _ContactsScreenState();
+}
+
+class _ContactsScreenState extends State<ContactsScreen> {
+  @override
+  void initState() {
+    BlocProvider.of<ChatBloc>(context).add(GetContacts());
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'public chat'.tr(),
+            style: Constants.TEXT_STYLE1,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          BlocBuilder<ChatBloc, ChatStates>(
+            builder: (context, state) {
+              if (state is GetContactsFailed)
+                return Center(
+                  child: Text(
+                    state.err,
+                    style: Constants.TEXT_STYLE9,
+                  ),
+                );
+              else if (state is ChatInitial || state is GetContactsLoading)
+                return Expanded(
+                  child: ListView(
+                    children: [
+                      WaitingOfferOwnerRow(
+                        withIcon: false,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      WaitingOfferOwnerRow(
+                        withIcon: false,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      WaitingOfferOwnerRow(
+                        withIcon: false,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      WaitingOfferOwnerRow(
+                        withIcon: false,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      WaitingOfferOwnerRow(
+                        withIcon: false,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      WaitingOfferOwnerRow(
+                        withIcon: false,
+                      ),
+                    ],
+                  ),
+                );
+              else {
+                List<ChatUserModel> chats = context.read<ChatBloc>().contactsModel.allChats;
+                return chats.isNotEmpty
+                    ? Expanded(
+                        child: Container(
+                          child: ListView.separated(
+                            physics: BouncingScrollPhysics(),
+                            itemBuilder: (ctx, index) => OneChatItem(
+                              model: chats[index],
+                            ),
+                            separatorBuilder: (ctx, index) => Divider(
+                              endIndent: 20,
+                              indent: 20,
+                              thickness: 2,
+                              color: Colors.grey.shade200,
+                            ),
+                            itemCount: chats.length,
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          'no contacts'.tr(),
+                          style: Constants.TEXT_STYLE9,
+                        ),
+                      );
+              }
+              // return Expanded(
+              //   child: Container(
+              //     margin: EdgeInsets.only(top: 20),
+              //     child: ListView.separated(
+              //       physics: BouncingScrollPhysics(),
+              //       itemBuilder: (ctx, index) => OneChatItem(
+              //         model: chats[index],
+              //       ),
+              //       separatorBuilder: (ctx, index) => Divider(
+              //         endIndent: 20,
+              //         indent: 20,
+              //         thickness: 1,
+              //         color: Colors.grey.shade200,
+              //       ),
+              //       itemCount: chats.length,
+              //     ),
+              //   ),
+              // );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}

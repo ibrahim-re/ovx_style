@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ovx_style/UI/widgets/add_chat_icon.dart';
 import 'package:ovx_style/UI/widgets/filter_icon.dart';
 import 'package:ovx_style/Utiles/colors.dart';
-
+import 'package:ovx_style/Utiles/constants.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import '../../widgets/notification_icon.dart';
 
 class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -17,8 +18,7 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => Size(double.maxFinite, 80);
 }
 
-class _ChatAppBarState extends State<ChatAppBar>
-    with SingleTickerProviderStateMixin {
+class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateMixin {
   int selectedIndex = 0;
 
   late TabController con;
@@ -33,7 +33,7 @@ class _ChatAppBarState extends State<ChatAppBar>
     return AppBar(
       backgroundColor: Colors.white,
       title: Text(
-        'Chat',
+        'chat'.tr(),
         style: TextStyle(
           fontSize: 18,
           color: MyColors.secondaryColor,
@@ -53,16 +53,15 @@ class _ChatAppBarState extends State<ChatAppBar>
           setState(() => selectedIndex = index);
           widget.getSelectedIndex(index);
         },
-        indicatorSize: TabBarIndicatorSize.label,
+        indicatorSize: TabBarIndicatorSize.tab,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         labelColor: MyColors.secondaryColor,
-        labelStyle: TextStyle(
-          fontSize: 16,
-          color: MyColors.secondaryColor,
-        ),
-        unselectedLabelColor: Colors.black,
+        unselectedLabelStyle: Constants.TEXT_STYLE4,
+        labelStyle: Constants.TEXT_STYLE4.copyWith(color: MyColors.secondaryColor),
+        unselectedLabelColor: MyColors.black,
         tabs: [
-          Text('Contacts'),
-          Text('Chat'),
+          Text('contacts'.tr()),
+          Text('chats'.tr()),
         ],
       ),
     );

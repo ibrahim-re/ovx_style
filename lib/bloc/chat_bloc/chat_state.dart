@@ -3,22 +3,29 @@ import '../../model/roomModel.dart';
 
 abstract class ChatStates {}
 
-class GETAllChatInitial extends ChatStates {}
+class ChatInitial extends ChatStates {}
 
-class GETAllChatLoadingState extends ChatStates {}
+//get contacts
+class GetContactsLoading extends ChatStates {}
 
-class GETAllChatDoneState extends ChatStates {
-  final ChatUsersModel model;
-  GETAllChatDoneState(this.model);
-}
+class GetContactsDone extends ChatStates {}
 
-class GETAllChatFailedState extends ChatStates {
+class GetContactsFailed extends ChatStates {
   final String err;
-  GETAllChatFailedState(this.err);
+  GetContactsFailed(this.err);
 }
 
-// created room
+//get chats
+class GetUserChatsLoading extends ChatStates {}
 
+class GetUserChatsDone extends ChatStates {}
+
+class GetUserChatsFailed extends ChatStates {
+  final String err;
+  GetUserChatsFailed(this.err);
+}
+
+//create room
 class CreatedRoomLoadingState extends ChatStates {}
 
 class CreatedRoomDoneState extends ChatStates {
@@ -33,8 +40,13 @@ class CreatedRoomFailedState extends ChatStates {
   CreatedRoomFailedState(this.err);
 }
 
-// fetch room messages states
+//send message
+class SendMessageFailed extends ChatStates {
+  String message;
+  SendMessageFailed(this.message);
+}
 
+// fetch room messages
 class GETChatMessageLoadingState extends ChatStates {}
 
 class GETChatMessageDoneState extends ChatStates {

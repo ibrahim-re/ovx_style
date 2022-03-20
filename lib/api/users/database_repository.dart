@@ -1,35 +1,40 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/model/bill.dart';
+import 'package:ovx_style/model/chatUserModel.dart';
 import 'package:ovx_style/model/gift.dart';
 import 'package:ovx_style/model/notification.dart';
+import 'package:ovx_style/model/roomModel.dart';
 import 'package:ovx_style/model/user.dart';
 
 abstract class DatabaseRepository {
-  Future<QuerySnapshot<Object?>> getAllUsers();
+  Future<QuerySnapshot<Object?>> GetContacts();
+  Future<ChatUsersModel> getChats(String userId);
   Future<void> addUserData(String path, Map<String, dynamic> data);
-  Future<void> createRoom(
-    String loggeduserId,
-    String anotherUserId,
-  );
-  Future<void> sendMessage(String roomId, Map<String, dynamic> data);
+  Future<void> createRoom(String loggeduserId, String anotherUserId,);
+  Future<String> checkIfRoomExists(String firstUserId, String secondUserId);
+  Future<void> markMessageAsRead(String msgId, String roomId);
+  Stream<Map<String, Message>> getChatMessages(String roomId);
+  Stream<Message> getLastMessage(String roomId);
+  Stream<int> checkForUnreadMessages(String userId);
+  Future<void> sendMessage(String roomId, String message);
   Future<void> fetchRoom(String roomId);
   Future<User> getUserData(String userId);
   Future<void> updateUserData(Map<String, dynamic> userData, String userId);
   Future<void> updateOfferAdded(String userId, String offerId);
   Future<String> uploadeImagetoRoom(String roomId, File Image);
   Future<void> updateCoverImage(String coverImageURL, String userId);
-  Future<List<String>> uploadFilesToStorage(
-      List<String> filePaths, String uId, String path);
+  Future<List<String>> uploadFilesToStorage(List<String> filePaths, String uId, String path);
   Future<void> deleteFilesFromStorage(List<String> urls);
   Future<User> getUserById(String uId);
   Future<User> getUserByUserCode(String userCode);
-  Future<void> updateOfferLiked(
-      String offerId, String userId, bool likeOrDislike);
+  Future<void> updateOfferLiked(String offerId, String userId, bool likeOrDislike);
   Future<void> updateComments(String offerId, String userId);
   Future<String> getUserType(String uId);
   Future<List<MyNotification>> fetchNotifications(String userId);
@@ -49,13 +54,13 @@ abstract class DatabaseRepository {
 
 class DatabaseRepositoryImpl extends DatabaseRepository {
   CollectionReference _users = FirebaseFirestore.instance.collection('users');
-  CollectionReference _billsRequests =
-      FirebaseFirestore.instance.collection('bills requests');
+  CollectionReference _billsRequests = FirebaseFirestore.instance.collection('bills requests');
+  CollectionReference _chats = FirebaseFirestore.instance.collection('chats');
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
 // fetch all users for chatContacts
   @override
-  Future<QuerySnapshot<Object?>> getAllUsers() async {
+  Future<QuerySnapshot<Object?>> GetContacts() async {
     final data = await _users
         .limit(20)
         .where(
@@ -68,40 +73,26 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
 
   // open chat Room
   @override
-  Future<String> createRoom(
-    String loggeduserId,
-    String anotherUserId,
-  ) async {
-    bool isRoomExist = false;
-    final roomId = loggeduserId + anotherUserId;
-    String returnedId = '';
-    final allChats = await FirebaseFirestore.instance.collection('chats').get();
+  Future<String> createRoom(String firstUserId, String secondUserId) async {
+    try {
+      final roomId = firstUserId + secondUserId;
 
-    for (var item in allChats.docs) {
-      if (item.id.contains(loggeduserId) && item.id.contains(anotherUserId)) {
-        isRoomExist = true;
-        returnedId = item.id;
-        break;
-      }
-    }
-    if (!isRoomExist) {
       await FirebaseFirestore.instance.collection('chats').doc(roomId).set(
         {
           'roomId': roomId,
-          'loggedUserId': loggeduserId,
-          'anotherUserId': anotherUserId,
+          'firstUserId': firstUserId,
+          'secondUserId': secondUserId,
         },
       );
-      await FirebaseFirestore.instance
-          .collection('chats')
-          .doc(roomId)
-          .collection('Messages');
+
+      return roomId;
+    } catch (e) {
+      throw e;
     }
-    return isRoomExist ? returnedId : roomId;
   }
 
   @override
-  Future<void> sendMessage(String roomId, Map<String, dynamic> data) async {
+  Future<void> sendMessage(String roomId, String message) async {
     final String selectedId = FirebaseFirestore.instance
         .collection('chats')
         .doc(roomId)
@@ -109,14 +100,19 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         .doc()
         .id;
 
-    data['msgId'] = selectedId;
-    data['createdAt'] = DateTime.now().toIso8601String();
     await FirebaseFirestore.instance
         .collection('chats')
         .doc(roomId)
         .collection('Messages')
         .doc(selectedId)
-        .set(data);
+        .set({
+      'type': 0,
+      'msgId': selectedId,
+      'value': message,
+      'isRead': false,
+      'sender': SharedPref.getUser().id!,
+      'createdAt': DateTime.now(),
+    });
   }
 
   @override
@@ -580,6 +576,114 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     } catch (e) {
       print('error is is $e');
       throw e;
+    }
+  }
+
+  @override
+  Future<ChatUsersModel> getChats(String userId) async {
+    ChatUsersModel model = ChatUsersModel(allChats: []);
+    //get all chats
+    final querySnapshot = await _chats.get();
+    //check chats that this user is part of
+    print(querySnapshot.docs.length);
+    for (var doc in querySnapshot.docs) {
+      if (doc.id.contains(userId)) {
+        //get another user
+        final roomId = doc.id;
+        final chatData = doc.data() as Map<String, dynamic>;
+        String myId = SharedPref.getUser().id!;
+        String anotherUserId = chatData['firstUserId'] == myId
+            ? chatData['secondUserId']
+            : chatData['firstUserId'];
+        User anotherUser = await getUserById(anotherUserId);
+
+        model.allChats.add(ChatUserModel.fromJson({
+          'userId': anotherUserId,
+          'roomId': roomId,
+          'userName': anotherUser.userName,
+          'userImage': anotherUser.profileImage,
+          'offersAdded': anotherUser.offersAdded,
+        }));
+      }
+    }
+
+    return model;
+  }
+
+  @override
+  Future<String> checkIfRoomExists(String firstUserId, String secondUserId) async {
+    String roomId = '';
+    final querySnapshot = await _chats.get();
+
+    for (var doc in querySnapshot.docs) {
+      if (doc.id.contains(firstUserId) && doc.id.contains(secondUserId))
+        roomId = doc.id;
+      break;
+    }
+
+    return roomId;
+  }
+
+
+  //a stream to get messages when updated
+  @override
+  Stream<Map<String, Message>> getChatMessages(String roomId) async* {
+    Map<String, Message> fetchedMessages = {};
+    final snapshots = _chats
+        .doc(roomId)
+        .collection('Messages')
+        .orderBy('createdAt')
+        .snapshots();
+    await for (var snapshot in snapshots) {
+      for (var doc in snapshot.docs) {
+        Message message = Message.fromJson(doc.data());
+        //if sender is not me, mark message as read
+        if(message.sender != SharedPref.getUser().id && message.isRead == false)
+          await markMessageAsRead(message.msgId!, roomId);
+        if (!fetchedMessages.containsKey(message.msgId))
+          fetchedMessages.putIfAbsent(message.msgId!, () => message);
+      }
+
+      print('getted');
+
+      yield fetchedMessages;
+    }
+  }
+
+  //stream to get last message when updated
+  @override
+  Stream<Message> getLastMessage(String roomId) async* {
+    late Message lastMessage;
+    final snapshots = _chats
+        .doc(roomId)
+        .collection('Messages')
+        .orderBy('createdAt')
+        .snapshots();
+    await for (var snapshot in snapshots) {
+      if(snapshot.docs.isNotEmpty)
+        lastMessage = Message.fromJson(snapshot.docs.last.data());
+
+      yield lastMessage;
+    }
+
+  }
+
+  @override
+  Future<void> markMessageAsRead(String msgId, String roomId) async {
+    await _chats.doc(roomId).collection('Messages').doc(msgId).update({
+      'isRead': true,
+    });
+
+    print('ww is $msgId');
+    await _users.doc(SharedPref.getUser().id).collection('unreadMessages').doc(msgId).delete();
+    print('$msgId marked as read');
+  }
+
+  @override
+  Stream<int> checkForUnreadMessages(String userId) async* {
+    final snapshots = _users.doc(userId).collection('unreadMessages').snapshots();
+    await for (var snapshot in snapshots) {
+      yield snapshot.docs.length;
     }
   }
 }

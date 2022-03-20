@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ovx_style/UI/chat/chat_screen.dart';
 import 'package:ovx_style/UI/profile/user_profile_screen.dart';
 import 'package:ovx_style/UI/story/story_screen.dart';
 import 'package:ovx_style/UI/widgets/custom_navigation_bar.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/logout_bloc/logout_bloc.dart';
 import 'offers/company_offers_screen.dart';
 import 'offers/offers_screen.dart';

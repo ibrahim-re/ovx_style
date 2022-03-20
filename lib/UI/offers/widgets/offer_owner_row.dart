@@ -24,7 +24,7 @@ class OfferOwnerRow extends StatelessWidget {
       future: AuthHelper.getUser(offerOwnerId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting)
-          return WaitingOfferOWnerRow();
+          return WaitingOfferOwnerRow();
         else if (snapshot.hasData) {
           User user = snapshot.data as User;
           return Row(

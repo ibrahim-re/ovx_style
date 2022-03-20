@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:shimmer/shimmer.dart';
 
-class WaitingOfferOWnerRow extends StatelessWidget {
+class WaitingOfferOwnerRow extends StatelessWidget {
+  final bool withIcon;
+
+  WaitingOfferOwnerRow({this.withIcon = true});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -21,7 +24,7 @@ class WaitingOfferOWnerRow extends StatelessWidget {
         Shimmer.fromColors(
           child: Container(
             height: 15,
-            width: 70,
+            width: 150,
             decoration: BoxDecoration(
               color: MyColors.lightGrey,
               borderRadius: BorderRadius.circular(8),
@@ -30,15 +33,16 @@ class WaitingOfferOWnerRow extends StatelessWidget {
           baseColor: MyColors.shimmerBaseColor,
           highlightColor: MyColors.shimmerHighlightedColor,
         ),
-        Spacer(),
-        Shimmer.fromColors(
-          child: CircleAvatar(
-            backgroundColor: MyColors.lightGrey,
-            radius: 15,
+        if (withIcon) Spacer(),
+        if (withIcon)
+          Shimmer.fromColors(
+            child: CircleAvatar(
+              backgroundColor: MyColors.lightGrey,
+              radius: 15,
+            ),
+            baseColor: MyColors.shimmerBaseColor,
+            highlightColor: MyColors.shimmerHighlightedColor,
           ),
-          baseColor: MyColors.shimmerBaseColor,
-          highlightColor: MyColors.shimmerHighlightedColor,
-        ),
       ],
     );
   }

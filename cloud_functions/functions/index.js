@@ -262,3 +262,23 @@ exports.onDeleteCompanyOffer = functions.firestore
       console.log(`${folderName}`);
       return admin.storage().bucket().deleteFiles({prefix: folderName});
     });
+
+exports.onMessageRecieved = functions.firestore
+    .document("chats/{chatId}/Messages/{messageId}")
+    .onCreate(async(snapshot, context) => {
+      //get message info
+      const chatId = context.params.chatId;
+      const messageId = context.params.messageId;
+      const senderId = snapshot.data().sender;
+
+      //get chat users ids
+      const chatSnapshot = await db.doc(`chats/${chatId}`).get();
+      const firstUserId = chatSnapshot.data().firstUserId;
+      const secondUserId = chatSnapshot.data().secondUserId;
+
+      const receiverId = senderId == firstUserId ? secondUserId : firstUserId;
+
+      db.doc(`users/${receiverId}/unreadMessages/${messageId}`).set({
+        'msgId': messageId,
+      });
+    });

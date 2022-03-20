@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_state.dart';
 
@@ -7,36 +9,60 @@ import '../../model/roomModel.dart';
 import 'chat_event.dart';
 
 class ChatBloc extends Bloc<ChatEvents, ChatStates> {
+  late ChatUsersModel contactsModel = ChatUsersModel(allChats: []);
+  late ChatUsersModel chatsModel = ChatUsersModel(allChats: []);
   DatabaseRepositoryImpl _hand = DatabaseRepositoryImpl();
-  ChatBloc() : super(GETAllChatInitial()) {
+  ChatBloc() : super(ChatInitial()) {
     on<ChatEvents>((event, emit) async {
-      if (event is FetchAllChats) {
-        emit(GETAllChatLoadingState());
+      if (event is GetContacts) {
+        emit(GetContactsLoading());
         try {
-          final data = await _hand.getAllUsers();
-          ChatUsersModel model = ChatUsersModel.fromJson(data.docs);
-          emit(GETAllChatDoneState(model));
+          final data = await _hand.GetContacts();
+          contactsModel = ChatUsersModel.fromJson(data.docs);
+          emit(GetContactsDone());
         } catch (e) {
           print(e.toString());
-          emit(GETAllChatFailedState('Opps, something went wrong'));
+          emit(GetContactsFailed('Opps, something went wrong'));
         }
       }
-
-      if (event is createRoom) {
+      else if(event is GetUserChats){
+        emit(GetUserChatsLoading());
+        try{
+          chatsModel = await _hand.getChats(event.userId);
+          emit(GetUserChatsDone());
+        }catch(e){
+          emit(GetUserChatsFailed('error occurred'.tr()));
+        }
+      }
+      else if (event is CreateRoom) {
         emit(CreatedRoomLoadingState());
         try {
-          final createdRoomId = await _hand.createRoom(
-            event.myId,
-            event.anotherUserId,
-          );
-          emit(CreatedRoomDoneState(createdRoomId, event.anotherUserId));
+          String myId = SharedPref.getUser().id!;
+          String anotherUserID = event.firstUserId == myId ? event.secondUserId : event.firstUserId;
+          String roomId = await _hand.checkIfRoomExists(event.firstUserId, event.secondUserId);
+
+          if(roomId.isNotEmpty){
+            emit(CreatedRoomDoneState(roomId, anotherUserID));
+          }
+
+          else {
+            final createdRoomId = await _hand.createRoom(
+              event.firstUserId,
+              event.secondUserId,
+            );
+            emit(CreatedRoomDoneState(createdRoomId, anotherUserID));
+          }
         } catch (e) {
           emit(CreatedRoomFailedState('error'));
         }
       }
 
-      if (event is sendMessage) {
-        await _hand.sendMessage(event.roomId, event.data);
+      if (event is SendMessage) {
+        try {
+          await _hand.sendMessage(event.roomId, event.message);
+        } catch (e) {
+          emit(SendMessageFailed('failed to send message'.tr()));
+        }
       }
 
       if (event is FetchRoomMessages) {
@@ -48,8 +74,8 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
 
           final Map<String, dynamic> parsedData = {
             'RoomId': info['roomId'],
-            'myId': info['loggedUserId'],
-            'anotherUserId': info['anotherUserId'],
+            'firstUserId': info['firstUserId'],
+            'secondUserId': info['secondUserId'],
             'messages': messages,
           };
 

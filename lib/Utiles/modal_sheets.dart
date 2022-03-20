@@ -331,7 +331,7 @@ class ModalSheets {
                   ),
                 ),
                 Text(
-                  '${SharedPref.getUser().points}' + ' available points'.tr(),
+                  '${SharedPref.getUser().points}' + ' ' + 'available points'.tr(),
                   style: Constants.TEXT_STYLE6
                       .copyWith(color: MyColors.secondaryColor),
                 ),

@@ -41,7 +41,7 @@ class _UsersCommentsState extends State<UsersComments> {
       },
       builder: (context, state) {
         if(state is FetchCommentsLoadingState)
-          return WaitingOfferOWnerRow();
+          return WaitingOfferOwnerRow();
 
         else if(state is FetchCommentsFailedState)
           return Text(state.message);

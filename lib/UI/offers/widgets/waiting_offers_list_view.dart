@@ -14,7 +14,7 @@ class WaitingOffersListView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              WaitingOfferOWnerRow(),
+              WaitingOfferOwnerRow(),
               Expanded(
                 child: Shimmer.fromColors(
                   child: Container(
@@ -39,7 +39,7 @@ class WaitingOffersListView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              WaitingOfferOWnerRow(),
+              WaitingOfferOwnerRow(),
               Expanded(
                 child: Shimmer.fromColors(
                   child: Container(

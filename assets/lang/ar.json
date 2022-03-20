@@ -194,5 +194,13 @@
   "upload offer photo": "أضف صور العرض / 5 صرر كحد أقصى",
   "send points": "إهداء النقاط",
   "to send points": "لإهداء النقاط لصديقك، أدخل رمز المستخدم وعدد النقاط",
-  "points amount": "عدد النقاط"
+  "points amount": "عدد النقاط",
+  "type here": "اكتب هنا",
+  "chats": "المحادثات",
+  "contacts": "الأشخاص",
+  "public chat": "المحادثات العامة",
+  "start chat": "ابدأ المحادثة",
+  "no contacts": "لا يوجد أشخاص",
+  "no chats": "لا يوجد محادثات",
+  "failed to send message": "فشل إرسال الرسالة"
 }

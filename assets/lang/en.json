@@ -198,5 +198,13 @@
   "to send points": "To send points to a friend, enter his code and the amount",
   "points amount": "Points amount",
   "from": "From",
-  "to": "To"
+  "type here": "Type here",
+  "to": "To",
+  "chats": "Chats",
+  "contacts": "Contacts",
+  "public chat": "Public chat",
+  "start chat": "Start chat",
+  "no contacts": "No Contacts",
+  "no chats": "No Chats",
+  "failed to send message": "Failed to send message"
 }

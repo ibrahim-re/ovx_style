@@ -3,7 +3,7 @@ import 'package:ovx_style/UI/auth/login_screen.dart';
 import 'package:ovx_style/UI/auth/reset_password_screen.dart';
 import 'package:ovx_style/UI/auth/signup_screen.dart';
 import 'package:ovx_style/UI/basket/basket_screen.dart';
-import 'package:ovx_style/UI/chat/widgets/chatRoom.dart';
+import '../../UI/chat/chat_room_screen.dart';
 import 'package:ovx_style/UI/checkout/checkout_screen.dart';
 import 'package:ovx_style/UI/edit_profile/edit_profile_screen.dart';
 import 'package:ovx_style/UI/google_maps_screen.dart';
@@ -307,9 +307,9 @@ class NamedNavigatorImpl implements NamedNavigator {
           final String roomId = data['roomId'];
 
           return PageTransition(
-              child: ChatRoom(
-                anoherUserImage: anoherUserImage,
-                anoherUserName: anoherUserName,
+              child: ChatRoomScreen(
+                anotherUserImage: anoherUserImage,
+                anotherUserName: anoherUserName,
                 navigator: navigatorState,
                 roomId: roomId,
               ),

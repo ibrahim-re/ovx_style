@@ -139,7 +139,7 @@ class MarketingApp extends StatelessWidget {
         fontFamily: translator.activeLanguageCode == 'ar'
             ? 'NotoKufiArabic'
             : 'Poppins',
-        appBarTheme: const AppBarTheme(
+        appBarTheme: AppBarTheme(
           elevation: 0,
           backgroundColor: MyColors.primaryColor,
           actionsIconTheme: IconThemeData(
@@ -147,6 +147,9 @@ class MarketingApp extends StatelessWidget {
           ),
           titleTextStyle: TextStyle(
               fontSize: 18,
+              fontFamily: translator.activeLanguageCode == 'ar'
+                  ? 'NotoKufiArabic'
+                  : 'Poppins',
               fontWeight: FontWeight.w400,
               color: MyColors.secondaryColor,
               letterSpacing: 0.5),
