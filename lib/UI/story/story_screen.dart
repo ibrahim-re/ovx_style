@@ -84,9 +84,7 @@ class _StoryScreenState extends State<StoryScreen> {
             StoriesModel stories = context.read<StoriesBloc>().storyModel;
             return Scaffold(
               appBar: AppBar(
-                title: Text(
-                  'Stories'.tr(),
-                ),
+                title: Text('Stories'.tr()),
               ),
               body: RefreshIndicator(
                 color: MyColors.secondaryColor,
