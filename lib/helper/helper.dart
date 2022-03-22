@@ -31,6 +31,22 @@ class Helper{
       );
   }
 
+  //this function generated search possible strings (more than 5 chars) for a string
+  List<String> generateSearchStrings(String text) {
+    List<String> output = [];
+    for (int i = 0; i < text.length; i++) {
+      List<String> temp = [text[i]];
+      for (int j = i + 1; j < text.length; j++) {
+        temp.add(text[j]);
+        if(temp.length >= 5)
+          output.add(temp.join().toLowerCase());
+      }
+
+    }
+    print(output);
+    return output;
+  }
+
   Future<String> openDatePicker(BuildContext context) async {
     if (Platform.isIOS) {
       String newDate = '';

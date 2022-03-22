@@ -206,5 +206,16 @@
   "start chat": "Start chat",
   "no contacts": "No Contacts",
   "no chats": "No Chats",
-  "failed to send message": "Failed to send message"
+  "failed to send message": "Failed to send message",
+  "groups": "Groups",
+  "create group": "Create Group",
+  "create": "CREATE",
+  "done": "DONE",
+  "search": "Search",
+  "no groups": "No groups",
+  "please enter group name": "Please enter the group name",
+  "no 150 points": "Sorry, yo don't have 150 points to create a group",
+  "by creating group": "by creating a group, 150 points will be spend from your account",
+  "group name": "Group Name",
+  "user search": "Enter User Name or User Code"
 }

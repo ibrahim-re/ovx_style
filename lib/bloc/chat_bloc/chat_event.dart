@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/model/group_model.dart';
 
 abstract class ChatEvents {}
 
@@ -19,23 +21,31 @@ class CreateRoom extends ChatEvents {
   );
 }
 
+class CreateGroup extends ChatEvents {
+  GroupModel groupModel;
+
+  CreateGroup(this.groupModel);
+}
+
+class GetGroups extends ChatEvents {
+  String userId;
+
+  GetGroups(this.userId);
+}
+
 class SendMessage extends ChatEvents {
   final String roomId;
   final String message;
+  ChatType chatType;
 
-  SendMessage(this.roomId, this.message);
+  SendMessage(this.roomId, this.message, this.chatType);
 }
 
-class FetchRoomMessages extends ChatEvents {
-  final String roomId;
-  FetchRoomMessages(this.roomId);
-}
-
-class UploadeImageToRoom extends ChatEvents {
+class UploadImageToRoom extends ChatEvents {
   final String roomId;
   final File Image;
 
-  UploadeImageToRoom(this.roomId, this.Image);
+  UploadImageToRoom(this.roomId, this.Image);
 }
 
 class SendVoice extends ChatEvents {

@@ -1,16 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_state.dart';
-
+import 'package:ovx_style/model/group_model.dart';
 import '../../model/chatUserModel.dart';
-import '../../model/roomModel.dart';
+import '../../model/message_model.dart';
 import 'chat_event.dart';
 
 class ChatBloc extends Bloc<ChatEvents, ChatStates> {
   late ChatUsersModel contactsModel = ChatUsersModel(allChats: []);
   late ChatUsersModel chatsModel = ChatUsersModel(allChats: []);
+  List<GroupModel> groups = [];
   DatabaseRepositoryImpl _hand = DatabaseRepositoryImpl();
   ChatBloc() : super(ChatInitial()) {
     on<ChatEvents>((event, emit) async {
@@ -24,7 +26,10 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
           print(e.toString());
           emit(GetContactsFailed('Opps, something went wrong'));
         }
-      } else if (event is GetUserChats) {
+      }
+      else if (event is GetUserChats) {
+      }
+      else if (event is GetUserChats) {
         emit(GetUserChatsLoading());
         try {
           chatsModel = await _hand.getChats(event.userId);
@@ -33,7 +38,8 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
           print('error is $e');
           emit(GetUserChatsFailed('error occurred'.tr()));
         }
-      } else if (event is CreateRoom) {
+      }
+      else if (event is CreateRoom) {
         emit(CreatedRoomLoadingState());
         try {
           String myId = SharedPref.getUser().id!;
@@ -56,10 +62,22 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
           emit(CreatedRoomFailedState('error'));
         }
       }
-
-      if (event is SendMessage) {
+      else if (event is SendMessage) {
         try {
-          await _hand.sendMessage(event.roomId, event.message);
+          if (event.chatType == ChatType.Chat)
+            await _hand.sendMessage(event.roomId, event.message);
+          else {
+            GroupMessage groupMessage = GroupMessage(
+              msgValue: event.message,
+              readBy: [],
+              sender: SharedPref.getUser().id,
+              msgType: 0,
+              createdAt: DateTime.now(),
+              senderImage: SharedPref.getUser().profileImage,
+              senderName: SharedPref.getUser().userName,
+            );
+            await _hand.sendGroupMessage(event.roomId, groupMessage);
+          }
         } catch (e) {
           emit(SendMessageFailed('failed to send message'.tr()));
         }
@@ -74,29 +92,7 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
         }
       }
 
-      if (event is FetchRoomMessages) {
-        emit(GETChatMessageLoadingState());
-        try {
-          final data = await _hand.fetchRoom(event.roomId);
-          final info = data['info'];
-          final messages = data['messages'];
-
-          final Map<String, dynamic> parsedData = {
-            'RoomId': info['roomId'],
-            'firstUserId': info['firstUserId'],
-            'secondUserId': info['secondUserId'],
-            'messages': messages,
-          };
-
-          final model = RoomModel.fromJson(parsedData);
-          emit(GETChatMessageDoneState(model));
-        } catch (e) {
-          print(e.toString());
-          emit(GETChatMessageFailedState('Error in Fetch Messages'));
-        }
-      }
-
-      if (event is UploadeImageToRoom) {
+      if (event is UploadImageToRoom) {
         emit(UploadeImageToRoomLoadingState());
         try {
           final String url =
@@ -104,6 +100,25 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
           emit(UploadeImageToRoomDoneState(url));
         } catch (e) {
           emit(UploadeImageToRoomFailedState('Failed sending Image !!'));
+        }
+      }
+      else if (event is CreateGroup) {
+        emit(CreateGroupLoading());
+        try {
+          await _hand.createGroup(event.groupModel);
+          emit(CreateGroupDone(event.groupModel));
+        } catch (e) {
+          print(e);
+          emit(CreateGroupFailed('error occurred'.tr()));
+        }
+      }
+      else if (event is GetGroups) {
+        emit(GetGroupsLoading());
+        try {
+          groups = await _hand.getGroups(SharedPref.getUser().id!);
+          emit(GetGroupsDone());
+        } catch (e) {
+          emit(CreateGroupFailed('error occurred'.tr()));
         }
       }
     });

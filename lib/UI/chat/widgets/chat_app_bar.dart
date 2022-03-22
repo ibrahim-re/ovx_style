@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ovx_style/UI/widgets/add_chat_icon.dart';
-import 'package:ovx_style/UI/widgets/filter_icon.dart';
+import 'add_chat_icon.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
@@ -25,7 +24,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    con = TabController(length: 2, vsync: this);
+    con = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -41,8 +40,9 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
       ),
       actions: [
         NotificationIcon(),
-        AddChatIcon(),
-        FilterIcon(ontap: () {}),
+        AddChatIcon(
+          selectedIndex: selectedIndex,
+        ),
       ],
       bottom: TabBar(
         labelPadding: EdgeInsets.only(bottom: 10),
@@ -62,6 +62,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
         tabs: [
           Text('contacts'.tr()),
           Text('chats'.tr()),
+          Text('groups'.tr()),
         ],
       ),
     );

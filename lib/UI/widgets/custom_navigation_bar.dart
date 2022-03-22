@@ -66,8 +66,6 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
           int unreadMessages = 0;
           if (snapshot.hasData) unreadMessages = snapshot.data!;
 
-          print('unread is $unreadMessages');
-
           return ListView.builder(
             itemCount: 5,
             physics: NeverScrollableScrollPhysics(),

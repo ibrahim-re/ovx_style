@@ -93,7 +93,7 @@ class _LoginFormState extends State<LoginForm> {
                 bool isSubmitted = AuthHelper.submitLoginForm(_signInFormKey);
                 if (isSubmitted)
                   bloc.add(LoginButtonPressed(
-                      _emailController.text, _passwordController.text));
+                      _emailController.text.trim(), _passwordController.text));
               },
             ),
           ],

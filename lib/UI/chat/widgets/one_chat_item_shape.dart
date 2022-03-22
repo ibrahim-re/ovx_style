@@ -4,11 +4,12 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 import 'package:ovx_style/model/chatUserModel.dart';
-import 'package:ovx_style/model/roomModel.dart';
+import 'package:ovx_style/model/message_model.dart';
 import 'package:shimmer_image/shimmer_image.dart';
 import '../../../Utiles/colors.dart';
 import '../../../Utiles/navigation/named_navigator_impl.dart';
@@ -61,7 +62,7 @@ class _OneChatItemState extends State<OneChatItem> {
                 backgroundColor: widget.model.userOffers.isNotEmpty
                     ? MyColors.secondaryColor
                     : Colors.transparent,
-                child: widget.model.userImage != 'no image'
+                child: widget.model.userImage != ''
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(30),
                         child: ProgressiveImage(
@@ -77,7 +78,7 @@ class _OneChatItemState extends State<OneChatItem> {
                             AssetImage('assets/images/default_profile.jpg'),
                       ),
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +88,7 @@ class _OneChatItemState extends State<OneChatItem> {
                       style: Constants.TEXT_STYLE4,
                     ),
                     /*
-                    if room id in not null then this chat is exists,
+                    if room id is not null then this chat is exists,
                     show last message as stream to keep update
                     */
                     if (roomId != null && roomId.isNotEmpty)

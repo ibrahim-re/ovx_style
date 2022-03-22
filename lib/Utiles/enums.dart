@@ -17,6 +17,11 @@ enum OfferStatus {
   Used,
 }
 
+enum ChatType {
+  Chat,
+  Group,
+}
+
 // enum ProductSize {
 //   Small,
 //   Medium,

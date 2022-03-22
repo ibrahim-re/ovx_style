@@ -9,6 +9,7 @@ import 'package:ovx_style/UI/widgets/custom_text_form_field.dart';
 import 'package:ovx_style/UI/widgets/filters_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
+import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
@@ -293,10 +294,7 @@ class ModalSheets {
     );
   }
 
-  void showSendPoints(
-      BuildContext context,
-      TextEditingController amountController,
-      TextEditingController codeController) {
+  void showSendPoints(BuildContext context, TextEditingController amountController, TextEditingController codeController) {
     showModalBottomSheet(
       isScrollControlled: true,
       shape: OutlineInputBorder(
@@ -309,7 +307,7 @@ class ModalSheets {
       context: context,
       builder: (ctx) {
         return BlocProvider<PointsBloc>(
-          create: (ctx) => PointsBloc(),
+          create: (ctx) => PointsBloc()..add(GetPoints()),
           child: Container(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -330,11 +328,13 @@ class ModalSheets {
                     style: Constants.TEXT_STYLE4,
                   ),
                 ),
-                Text(
-                  '${SharedPref.getUser().points}' + ' ' + 'available points'.tr(),
+                BlocBuilder<PointsBloc, PointsState>(builder: (ctx, state) => Text(
+                  '${ctx.read<PointsBloc>().points}' +
+                      ' ' +
+                      'available points'.tr(),
                   style: Constants.TEXT_STYLE6
                       .copyWith(color: MyColors.secondaryColor),
-                ),
+                ),),
                 const SizedBox(
                   height: 8,
                 ),
@@ -406,7 +406,8 @@ class ModalSheets {
     );
   }
 
-  void showStoryDescSheet(BuildContext context, TextEditingController con, List<File> pickedFiles) {
+  void showStoryDescSheet(
+      BuildContext context, TextEditingController con, List<File> pickedFiles) {
     showModalBottomSheet<void>(
         isScrollControlled: true,
         shape: OutlineInputBorder(
@@ -440,10 +441,9 @@ class ModalSheets {
                   color: MyColors.secondaryColor,
                   text: 'add story'.tr(),
                   function: () {
-                    if(con.text.isNotEmpty){
+                    if (con.text.isNotEmpty) {
                       Navigator.of(context).pop();
-                      BlocProvider.of<StoriesBloc>(context)
-                          .add(
+                      BlocProvider.of<StoriesBloc>(context).add(
                         AddStory(
                           pickedFiles,
                           con.text,
@@ -459,5 +459,142 @@ class ModalSheets {
             ),
           );
         });
+  }
+
+  void showCreateGroupSheet(context) {
+    TextEditingController groupNameController = TextEditingController();
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        borderSide: BorderSide(color: MyColors.primaryColor),
+      ),
+      context: context,
+      builder: (ctx) {
+        return BlocProvider(
+          create: (ctx) => PointsBloc(),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'create group'.tr(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: MyColors.secondaryColor,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    'by creating group'.tr(),
+                    style: Constants.TEXT_STYLE4,
+                  ),
+                ),
+                CustomTextFormField(
+                  controller: groupNameController,
+                  hint: 'group name'.tr(),
+                  validateInput: (p) {},
+                  saveInput: (p) {},
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                BlocConsumer<PointsBloc, PointsState>(
+                  listener: (ctx, state) {
+                    if(state is GetPointsSucceed){
+                      // int points = ctx.read<PointsBloc>().points;
+                      // if(points < 150)
+                      //   EasyLoading.showError('no 150 points'.tr());
+                      // else {
+                        //pop to close bottom sheet first
+                        NamedNavigatorImpl().pop();
+                        NamedNavigatorImpl().push(
+                            NamedRoutes.CREATE_GROUP_SCREEN, arguments: {
+                          'groupName': groupNameController.text,
+                        });
+                      //}
+                    }
+                  },
+                  builder: (ctx, state) {
+                  if(state is GetPointsLoading)
+                    return Center(child: CircularProgressIndicator(color: MyColors.secondaryColor,),);
+                  else
+                    return CustomElevatedButton(
+                      color: MyColors.secondaryColor,
+                      text: 'create'.tr(),
+                      function: () {
+                        if(groupNameController.text.isEmpty)
+                          EasyLoading.showError('please enter group name'.tr());
+                        else
+                          ctx.read<PointsBloc>().add(GetPoints());
+                      },
+                    );
+                }),
+                // BlocConsumer<PaymentBloc, PaymentState>(
+                //   listener: (ctx, state) {
+                //     if (state is PaymentForGiftSuccess) {
+                //       EasyLoading.showInfo('Success');
+                //       final basketItems = ctx.read<BasketBloc>().basketItems;
+                //       ctx.read<GiftsBloc>().add(SendGift(
+                //         basketItems,
+                //         user,
+                //       ));
+                //     } else if (state is PaymentForGiftFailed)
+                //       EasyLoading.showError(state.message);
+                //   },
+                //   builder: (ctx, state) {
+                //     if (state is PaymentForGiftLoading)
+                //       return Center(
+                //         child: CircularProgressIndicator(
+                //           color: MyColors.secondaryColor,
+                //         ),
+                //       );
+                //     else
+                //       return CustomElevatedButton(
+                //         color: MyColors.secondaryColor,
+                //         text: 'send'.tr(),
+                //         function: () async {
+                //           try {
+                //             DatabaseRepositoryImpl _databaseRepositoryImpl =
+                //             DatabaseRepositoryImpl();
+                //
+                //             user = await _databaseRepositoryImpl
+                //                 .getUserByUserCode(userCodeController.text);
+                //             print('user is ${user.toMap()}');
+                //             if (user.id != null) {
+                //               print(user.id! + 'hhh');
+                //               ctx.read<PaymentBloc>().add(PayForGift());
+                //             } else {
+                //               EasyLoading.showError('no user found'.tr());
+                //             }
+                //           } catch (e) {
+                //             if (e == 'Bad state: No element')
+                //               EasyLoading.showError('no user found'.tr());
+                //             else {
+                //               print('error us  ');
+                //               EasyLoading.showError('error occurred'.tr());
+                //             }
+                //           }
+                //         },
+                //       );
+                //   },
+                // ),
+                //to left the screen up as much as the bottom keyboard takes, so we can scroll down
+                Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(ctx).viewInsets.bottom)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

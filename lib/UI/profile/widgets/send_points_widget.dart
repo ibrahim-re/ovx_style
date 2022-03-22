@@ -5,6 +5,9 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/bloc/points_bloc/points_bloc.dart';
+import 'package:ovx_style/bloc/points_bloc/points_events.dart';
+import 'package:provider/src/provider.dart';
 
 class SendPointsWidget extends StatefulWidget {
   @override

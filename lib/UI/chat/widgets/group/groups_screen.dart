@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
-import 'package:ovx_style/UI/chat/widgets/one_chat_item_shape.dart';
-import 'package:ovx_style/Utiles/constants.dart';
-import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
+import 'one_group_item.dart';
 import 'package:ovx_style/UI/offers/widgets/waiting_offer_owner_row.dart';
-import '../../../bloc/chat_bloc/chat_event.dart';
-import '../../../bloc/chat_bloc/chat_state.dart';
-import '../../../model/chatUserModel.dart';
+import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
+import 'package:ovx_style/bloc/chat_bloc/chat_event.dart';
+import 'package:ovx_style/bloc/chat_bloc/chat_state.dart';
+import 'package:ovx_style/model/group_model.dart';
+import 'package:provider/src/provider.dart';
 
-class ContactsScreen extends StatefulWidget {
-  const ContactsScreen({Key? key}) : super(key: key);
+class GroupsScreen extends StatefulWidget {
   @override
-  State<ContactsScreen> createState() => _ContactsScreenState();
+  _GroupsScreenState createState() => _GroupsScreenState();
 }
 
-class _ContactsScreenState extends State<ContactsScreen> {
+class _GroupsScreenState extends State<GroupsScreen> {
   @override
   void initState() {
-    BlocProvider.of<ChatBloc>(context).add(GetContacts());
+    context.read<ChatBloc>().add(GetGroups(SharedPref.getUser().id!));
     super.initState();
   }
 
@@ -31,7 +32,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'public chat'.tr(),
+            'groups'.tr(),
             style: Constants.TEXT_STYLE1,
           ),
           const SizedBox(
@@ -39,14 +40,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
           ),
           BlocBuilder<ChatBloc, ChatStates>(
             builder: (context, state) {
-              if (state is GetContactsFailed)
+              if (state is GetGroupsFailed)
                 return Center(
                   child: Text(
-                    state.err,
+                    state.message,
                     style: Constants.TEXT_STYLE9,
                   ),
                 );
-              else if (state is ChatInitial || state is GetContactsLoading)
+              else if (state is GetGroupsLoading)
                 return Expanded(
                   child: ListView(
                     children: [
@@ -87,14 +88,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   ),
                 );
               else {
-                List<ChatUserModel> chats = context.read<ChatBloc>().contactsModel.allChats;
-                return chats.isNotEmpty
+                List<GroupModel> groups = context.read<ChatBloc>().groups;
+                return groups.isNotEmpty
                     ? Expanded(
                         child: Container(
                           child: ListView.separated(
                             physics: BouncingScrollPhysics(),
-                            itemBuilder: (ctx, index) => OneChatItem(
-                              model: chats[index],
+                            itemBuilder: (ctx, index) => OneGroupItem(
+                              groupModel: groups[index],
                             ),
                             separatorBuilder: (ctx, index) => Divider(
                               endIndent: 20,
@@ -102,13 +103,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
                               thickness: 2,
                               color: Colors.grey.shade200,
                             ),
-                            itemCount: chats.length,
+                            itemCount: groups.length,
                           ),
                         ),
                       )
                     : Center(
                         child: Text(
-                          'no contacts'.tr(),
+                          'no groups'.tr(),
                           style: Constants.TEXT_STYLE9,
                         ),
                       );

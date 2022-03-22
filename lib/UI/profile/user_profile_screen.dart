@@ -15,6 +15,7 @@ import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_bloc.dart';
 import 'package:ovx_style/bloc/logout_bloc/logout_bloc.dart';
+import 'package:ovx_style/bloc/points_bloc/points_bloc.dart';
 
 class UserProfileScreen extends StatelessWidget {
   final navigator;

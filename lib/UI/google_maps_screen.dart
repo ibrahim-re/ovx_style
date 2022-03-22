@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
 import 'package:ovx_style/helper/location_helper.dart';
@@ -39,11 +40,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
             },
             child: Text(
               'confirm'.tr(),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: MyColors.secondaryColor,
-              ),
+              style: Constants.TEXT_STYLE2.copyWith(fontSize: 16),
             ),
           ),
         ],

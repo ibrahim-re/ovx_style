@@ -23,7 +23,7 @@ class ChatUserModel {
 
   ChatUserModel.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
-    userImage = json['profileImage'] ?? 'no image';
+    userImage = json['profileImage'] ?? '';
     userName = json['userName'];
     roomId = json['roomId'] ?? '';
     if (json['offersAdded'] != null) {

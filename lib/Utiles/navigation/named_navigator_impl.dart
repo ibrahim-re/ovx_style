@@ -3,6 +3,10 @@ import 'package:ovx_style/UI/auth/login_screen.dart';
 import 'package:ovx_style/UI/auth/reset_password_screen.dart';
 import 'package:ovx_style/UI/auth/signup_screen.dart';
 import 'package:ovx_style/UI/basket/basket_screen.dart';
+import 'package:ovx_style/UI/chat/create_chat_screen.dart';
+import 'package:ovx_style/UI/chat/create_group_screen.dart';
+import 'package:ovx_style/UI/chat/group_chat_screen.dart';
+import 'package:ovx_style/model/group_model.dart';
 import '../../UI/chat/chat_room_screen.dart';
 import 'package:ovx_style/UI/checkout/checkout_screen.dart';
 import 'package:ovx_style/UI/edit_profile/edit_profile_screen.dart';
@@ -302,20 +306,56 @@ class NamedNavigatorImpl implements NamedNavigator {
       case NamedRoutes.ChatRoomScreen:
         {
           final data = settings.arguments as Map<String, dynamic>;
-          final String anoherUserName = data['name'];
-          final String anoherUserImage = data['image'];
+          final String anotherUserName = data['name'];
+          final String anotherUserImage = data['image'];
           final String roomId = data['roomId'];
 
           return PageTransition(
               child: ChatRoomScreen(
-                anotherUserImage: anoherUserImage,
-                anotherUserName: anoherUserName,
+                anotherUserImage: anotherUserImage,
+                anotherUserName: anotherUserName,
                 navigator: navigatorState,
                 roomId: roomId,
               ),
               type: PageTransitionType.rightToLeft,
               duration: const Duration(milliseconds: 500));
         }
+
+      case NamedRoutes.GROUP_CHAT_SCREEN:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final GroupModel groupModel = data['groupModel'];
+
+          return PageTransition(
+              child: GroupChatScreen(
+                groupModel: groupModel,
+                navigator: navigatorState,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
+
+      case NamedRoutes.CREATE_GROUP_SCREEN:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final String groupName = data['groupName'];
+
+          return PageTransition(
+              child: CreateGroupScreen(
+                navigator: navigatorState,
+                groupName: groupName,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
+
+      case NamedRoutes.CREATE_CHAT_SCREEN:
+          return PageTransition(
+              child: CreateChatScreen(
+                navigator: navigatorState,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
 
       default:
         return MaterialPageRoute(

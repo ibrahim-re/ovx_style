@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
+import 'package:ovx_style/helper/helper.dart';
 import 'database_repository.dart';
 import 'package:ovx_style/model/user.dart';
 
@@ -78,6 +79,8 @@ class AuthRepositoryImpl extends AuthRepository {
               .uploadFilesToStorage(userInfo['regImages'], uId, 'regImages');
           userInfo['regImages'] = downloadUrls;
         }
+
+        userInfo['searchStrings'] = Helper().generateSearchStrings(userInfo['userName']);
 
         //set user id as path to his info
         await _databaseRepositoryImpl.addUserData(uId, userInfo);

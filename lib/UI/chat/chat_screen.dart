@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ovx_style/UI/chat/widgets/chat_app_bar.dart';
 import 'package:ovx_style/UI/chat/widgets/chats_screen.dart';
 import 'package:ovx_style/UI/chat/widgets/contacts_screen.dart';
+import 'widgets/group/groups_screen.dart';
 import 'package:ovx_style/UI/widgets/no_permession_widget.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
@@ -33,6 +34,8 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Widget> _screens = [
     ContactsScreen(),
     ChatsScreen(),
+    // here we have groups that user is part of
+    GroupsScreen(),
   ];
 
   @override

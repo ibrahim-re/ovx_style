@@ -286,3 +286,30 @@ exports.onMessageRecieved = functions.firestore
         'msgId': messageId,
       });
     });
+
+exports.onGroupMessageRecieved = functions.firestore
+    .document("group chats/{groupId}/Messages/{messageId}")
+    .onCreate(async(snapshot, context) => {
+      //get message info
+      const groupId = context.params.groupId;
+      const messageId = context.params.messageId;
+      const senderId = snapshot.data().sender;
+
+      //const isRead = snapshot.data().isRead;
+
+     // console.log(`is read ${isRead}`);
+
+      //get chat users ids
+      const chatSnapshot = await db.doc(`group chats/${groupId}`).get();
+      const usersId = chatSnapshot.data().usersId;
+
+      const index = usersId.indexOf(senderId);
+      usersId.splice(index, 1);
+
+      usersId.forEach((userId) => {
+        db.doc(`users/${userId}/unreadMessages/${messageId}`).set({
+          'msgId': messageId,
+        });
+      });
+      
+    });

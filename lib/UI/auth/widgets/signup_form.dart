@@ -113,7 +113,7 @@ class _SignupFormState extends State<SignupForm> {
                   return 'enter email'.tr();
               },
               saveInput: (userInput) {
-                AuthHelper.userInfo['email'] = userInput;
+                AuthHelper.userInfo['email'] = userInput.toString().trim();
               },
             ),
             SizedBox(

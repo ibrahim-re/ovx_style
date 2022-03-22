@@ -1,4 +1,7 @@
-import '../../model/roomModel.dart';
+import 'package:ovx_style/model/group_model.dart';
+
+import '../../model/chatUserModel.dart';
+import '../../model/message_model.dart';
 
 abstract class ChatStates {}
 
@@ -39,23 +42,33 @@ class CreatedRoomFailedState extends ChatStates {
   CreatedRoomFailedState(this.err);
 }
 
+class CreateGroupLoading extends ChatStates {}
+
+class CreateGroupDone extends ChatStates {
+  GroupModel groupModel;
+
+  CreateGroupDone(this.groupModel);
+}
+
+class CreateGroupFailed extends ChatStates {
+  String message;
+
+  CreateGroupFailed(this.message);
+}
+
+class GetGroupsLoading extends ChatStates {}
+
+class GetGroupsDone extends ChatStates {}
+
+class GetGroupsFailed extends ChatStates {
+  String message;
+  GetGroupsFailed(this.message);
+}
+
 //send message
 class SendMessageFailed extends ChatStates {
   String message;
   SendMessageFailed(this.message);
-}
-
-// fetch room messages
-class GETChatMessageLoadingState extends ChatStates {}
-
-class GETChatMessageDoneState extends ChatStates {
-  final RoomModel model;
-  GETChatMessageDoneState(this.model);
-}
-
-class GETChatMessageFailedState extends ChatStates {
-  final String err;
-  GETChatMessageFailedState(this.err);
 }
 
 // uploade image to room

@@ -9,6 +9,7 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/chat/widgets/voice_recorder.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_state.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_event.dart';
@@ -17,8 +18,9 @@ import '../../../helper/pick_image_helper.dart';
 
 class SendingWidget extends StatefulWidget {
   final roomId;
+  final ChatType chatType;
 
-  SendingWidget({required this.roomId});
+  SendingWidget({required this.roomId, required this.chatType});
   @override
   State<SendingWidget> createState() => _SendingWidgetState();
 }
@@ -107,7 +109,7 @@ class _SendingWidgetState extends State<SendingWidget> {
                         onPressed: () {
                           if (_controller.text.isNotEmpty) {
                             context.read<ChatBloc>().add(
-                                SendMessage(widget.roomId, _controller.text));
+                                SendMessage(widget.roomId, _controller.text, widget.chatType));
                             _controller.clear();
                             setState(() {
                               isTyping = false;
@@ -156,7 +158,7 @@ class MyImageIcon extends StatelessWidget {
         }
 
         BlocProvider.of<ChatBloc>(context).add(
-          UploadeImageToRoom(
+          UploadImageToRoom(
             roomId,
             pickedFiles[0],
           ),

@@ -26,7 +26,7 @@ class PointsBloc extends Bloc<PointsEvent, PointsState> {
           print(receiver.id! + 'hhh');
 
           //check if user has enough points to send
-          bool isPointsEnough = SharedPref.getUser().points! > event.pointsAmount;
+          bool isPointsEnough = points > event.pointsAmount;
           if(!isPointsEnough){
             yield SendPointsFailed('no enough points'.tr());
           }else{
@@ -55,6 +55,7 @@ class PointsBloc extends Bloc<PointsEvent, PointsState> {
       yield GetPointsLoading();
       try{
         points = await _databaseRepositoryImpl.getPoints(SharedPref.getUser().id!);
+        print('pointd on $points');
         yield GetPointsSucceed();
       }catch (e){
         yield GetPointsFailed();
