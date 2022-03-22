@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ovx_style/UI/chat/widgets/messages_stream_builder.dart';
 import 'package:ovx_style/UI/chat/widgets/sending_widget.dart';
@@ -24,7 +23,6 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-
   //String uploadedImageUrl = '';
 
   @override
@@ -41,16 +39,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         title: Row(
           children: [
             CircleAvatar(
-              radius: 30,
-              child: widget.anotherUserImage == 'no image'
-                  ? Image.asset(
-                      'assets/images/default_profile.png',
-                      fit: BoxFit.cover,
-                    )
-                  : Image.network(
-                      widget.anotherUserImage,
-                      fit: BoxFit.cover,
-                    ),
+              radius: 25,
+              backgroundImage: widget.anotherUserImage == 'no image'
+                  ? Image(
+                      image: AssetImage('assets/images/default_profile.png'),
+                    ).image
+                  : Image(image: NetworkImage(widget.anotherUserImage)).image,
             ),
             SizedBox(width: 10),
             Text(
@@ -63,22 +57,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       body: Column(
         children: [
           Expanded(
-            child: MessagesStreamBuilder(
-              roomId: widget.roomId,
-            ),
+            child: MessagesStreamBuilder(roomId: widget.roomId),
           ),
           Container(
-            height: screenHeight * 0.1,
             decoration: BoxDecoration(color: MyColors.primaryColor, boxShadow: [
               BoxShadow(
-                color: MyColors.grey,
+                color: MyColors.grey.withOpacity(.4),
                 offset: Offset(0, 0),
-                blurRadius: 6,
+                blurRadius: 8,
               ),
             ]),
-            child: SendingWidget(
-              roomId: widget.roomId,
-            ),
+            child: SendingWidget(roomId: widget.roomId),
           ),
         ],
       ),

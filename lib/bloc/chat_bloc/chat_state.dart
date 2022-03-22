@@ -1,4 +1,3 @@
-import '../../model/chatUserModel.dart';
 import '../../model/roomModel.dart';
 
 abstract class ChatStates {}
@@ -71,4 +70,15 @@ class UploadeImageToRoomDoneState extends ChatStates {
 class UploadeImageToRoomFailedState extends ChatStates {
   final String err;
   UploadeImageToRoomFailedState(this.err);
+}
+
+// send voice
+
+class SendVoiceLoading extends ChatStates {
+  SendVoiceLoading();
+}
+
+class SendVoiceFailed extends ChatStates {
+  String message;
+  SendVoiceFailed(this.message);
 }

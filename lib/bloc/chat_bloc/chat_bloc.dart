@@ -24,29 +24,28 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
           print(e.toString());
           emit(GetContactsFailed('Opps, something went wrong'));
         }
-      }
-      else if(event is GetUserChats){
+      } else if (event is GetUserChats) {
         emit(GetUserChatsLoading());
-        try{
+        try {
           chatsModel = await _hand.getChats(event.userId);
           emit(GetUserChatsDone());
-        }catch(e){
+        } catch (e) {
           print('error is $e');
           emit(GetUserChatsFailed('error occurred'.tr()));
         }
-      }
-      else if (event is CreateRoom) {
+      } else if (event is CreateRoom) {
         emit(CreatedRoomLoadingState());
         try {
           String myId = SharedPref.getUser().id!;
-          String anotherUserID = event.firstUserId == myId ? event.secondUserId : event.firstUserId;
-          String roomId = await _hand.checkIfRoomExists(event.firstUserId, event.secondUserId);
+          String anotherUserID = event.firstUserId == myId
+              ? event.secondUserId
+              : event.firstUserId;
+          String roomId = await _hand.checkIfRoomExists(
+              event.firstUserId, event.secondUserId);
 
-          if(roomId.isNotEmpty){
+          if (roomId.isNotEmpty) {
             emit(CreatedRoomDoneState(roomId, anotherUserID));
-          }
-
-          else {
+          } else {
             final createdRoomId = await _hand.createRoom(
               event.firstUserId,
               event.secondUserId,
@@ -63,6 +62,15 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
           await _hand.sendMessage(event.roomId, event.message);
         } catch (e) {
           emit(SendMessageFailed('failed to send message'.tr()));
+        }
+      }
+
+      if (event is SendVoice) {
+        emit(SendVoiceLoading());
+        try {
+          await _hand.sendVoice(event.roomId, event.message);
+        } catch (e) {
+          emit(SendVoiceFailed('failed to send message'.tr()));
         }
       }
 

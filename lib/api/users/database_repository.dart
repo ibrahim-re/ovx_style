@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/helper/helper.dart';
@@ -17,24 +16,31 @@ abstract class DatabaseRepository {
   Future<QuerySnapshot<Object?>> GetContacts();
   Future<ChatUsersModel> getChats(String userId);
   Future<void> addUserData(String path, Map<String, dynamic> data);
-  Future<void> createRoom(String loggeduserId, String anotherUserId,);
+  Future<void> createRoom(
+    String loggeduserId,
+    String anotherUserId,
+  );
   Future<String> checkIfRoomExists(String firstUserId, String secondUserId);
   Future<void> markMessageAsRead(String msgId, String roomId);
   Stream<Map<String, Message>> getChatMessages(String roomId);
   Stream<Message> getLastMessage(String roomId);
   Stream<int> checkForUnreadMessages(String userId);
   Future<void> sendMessage(String roomId, String message);
+  Future<void> sendVoice(String roomId, String message);
+
   Future<void> fetchRoom(String roomId);
   Future<User> getUserData(String userId);
   Future<void> updateUserData(Map<String, dynamic> userData, String userId);
   Future<void> updateOfferAdded(String userId, String offerId);
   Future<String> uploadeImagetoRoom(String roomId, File Image);
   Future<void> updateCoverImage(String coverImageURL, String userId);
-  Future<List<String>> uploadFilesToStorage(List<String> filePaths, String uId, String path);
+  Future<List<String>> uploadFilesToStorage(
+      List<String> filePaths, String uId, String path);
   Future<void> deleteFilesFromStorage(List<String> urls);
   Future<User> getUserById(String uId);
   Future<User> getUserByUserCode(String userCode);
-  Future<void> updateOfferLiked(String offerId, String userId, bool likeOrDislike);
+  Future<void> updateOfferLiked(
+      String offerId, String userId, bool likeOrDislike);
   Future<void> updateComments(String offerId, String userId);
   Future<String> getUserType(String uId);
   Future<List<MyNotification>> fetchNotifications(String userId);
@@ -54,7 +60,8 @@ abstract class DatabaseRepository {
 
 class DatabaseRepositoryImpl extends DatabaseRepository {
   CollectionReference _users = FirebaseFirestore.instance.collection('users');
-  CollectionReference _billsRequests = FirebaseFirestore.instance.collection('bills requests');
+  CollectionReference _billsRequests =
+      FirebaseFirestore.instance.collection('bills requests');
   CollectionReference _chats = FirebaseFirestore.instance.collection('chats');
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
@@ -116,6 +123,41 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
+  Future<void> sendVoice(String roomId, String message) async {
+    final String selectedId = FirebaseFirestore.instance
+        .collection('chats')
+        .doc(roomId)
+        .collection('Messages')
+        .doc()
+        .id;
+
+    File AudioFile = new File(message);
+    final String _storedPath =
+        '${DateTime.now().toString()}' + AudioFile.path.split('/').last;
+
+    UploadTask uploadTask = FirebaseStorage.instance
+        .ref('chatsVoices/$roomId/${_storedPath}')
+        .putFile(AudioFile);
+
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+    String url = await taskSnapshot.ref.getDownloadURL();
+
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(roomId)
+        .collection('Messages')
+        .doc(selectedId)
+        .set({
+      'type': 2,
+      'msgId': selectedId,
+      'value': url,
+      'isRead': false,
+      'sender': SharedPref.getUser().id!,
+      'createdAt': DateTime.now(),
+    });
+  }
+
+  @override
   Future<Map<String, dynamic>> fetchRoom(String roomId) async {
     // room info
     final room =
@@ -150,16 +192,24 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
     String url = await taskSnapshot.ref.getDownloadURL();
 
-    await FirebaseFirestore.instance
+    final String selectedId = FirebaseFirestore.instance
         .collection('chats')
         .doc(roomId)
         .collection('Messages')
         .doc()
+        .id;
+
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(roomId)
+        .collection('Messages')
+        .doc(selectedId)
         .set({
-      'createdAt': DateTime.now().toIso8601String(),
+      'createdAt': DateTime.now(),
       'sender': SharedPref.getUser().id,
-      'msgId': 'ssss',
+      'msgId': selectedId,
       'type': 1,
+      'isRead': false,
       'value': url
     });
 
@@ -611,12 +661,13 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<String> checkIfRoomExists(String firstUserId, String secondUserId) async {
+  Future<String> checkIfRoomExists(
+      String firstUserId, String secondUserId) async {
     String roomId = '';
     final querySnapshot = await _chats.get();
 
     for (var doc in querySnapshot.docs) {
-      if (doc.id.contains(firstUserId) && doc.id.contains(secondUserId)){
+      if (doc.id.contains(firstUserId) && doc.id.contains(secondUserId)) {
         roomId = doc.id;
         break;
       }
@@ -624,7 +675,6 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
 
     return roomId;
   }
-
 
   //a stream to get messages when updated
   @override
@@ -639,7 +689,8 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
       for (var doc in snapshot.docs) {
         Message message = Message.fromJson(doc.data());
         //if sender is not me, mark message as read
-        if(message.sender != SharedPref.getUser().id && message.isRead == false)
+        if (message.sender != SharedPref.getUser().id &&
+            message.isRead == false)
           await markMessageAsRead(message.msgId!, roomId);
         if (!fetchedMessages.containsKey(message.msgId))
           fetchedMessages.putIfAbsent(message.msgId!, () => message);
@@ -661,12 +712,11 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         .orderBy('createdAt')
         .snapshots();
     await for (var snapshot in snapshots) {
-      if(snapshot.docs.isNotEmpty)
+      if (snapshot.docs.isNotEmpty)
         lastMessage = Message.fromJson(snapshot.docs.last.data());
 
       yield lastMessage;
     }
-
   }
 
   @override
@@ -676,13 +726,18 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     });
 
     print('ww is $msgId');
-    await _users.doc(SharedPref.getUser().id).collection('unreadMessages').doc(msgId).delete();
+    await _users
+        .doc(SharedPref.getUser().id)
+        .collection('unreadMessages')
+        .doc(msgId)
+        .delete();
     print('$msgId marked as read');
   }
 
   @override
   Stream<int> checkForUnreadMessages(String userId) async* {
-    final snapshots = _users.doc(userId).collection('unreadMessages').snapshots();
+    final snapshots =
+        _users.doc(userId).collection('unreadMessages').snapshots();
     await for (var snapshot in snapshots) {
       yield snapshot.docs.length;
     }

@@ -37,3 +37,10 @@ class UploadeImageToRoom extends ChatEvents {
 
   UploadeImageToRoom(this.roomId, this.Image);
 }
+
+class SendVoice extends ChatEvents {
+  final String roomId;
+  final String message;
+
+  SendVoice(this.roomId, this.message);
+}

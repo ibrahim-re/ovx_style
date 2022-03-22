@@ -7,7 +7,6 @@ import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 
 class ChatScreen extends StatefulWidget {
-
   const ChatScreen({Key? key}) : super(key: key);
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -32,9 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   int selectedIndex = 0;
   List<Widget> _screens = [
-    // here we have all users in the app
     ContactsScreen(),
-    // here we have users in app who have conversation between logged user and them
     ChatsScreen(),
   ];
 
