@@ -32,7 +32,7 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
         }
         if (snapshot.hasData) {
           Map<String, Message> messages = snapshot.data!;
-          List<Message> fetchedMessages = messages.values.toList();
+          List<Message> fetchedMessages = messages.values.toList().reversed.toList();
 
           return ListView.separated(
             reverse: true,

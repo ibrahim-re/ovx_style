@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -13,7 +12,6 @@ import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_state.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_event.dart';
-
 import '../../../helper/pick_image_helper.dart';
 
 class SendingWidget extends StatefulWidget {
@@ -62,16 +60,24 @@ class _SendingWidgetState extends State<SendingWidget> {
                 IconButton(
                   onPressed: () async {
                     final String voice = await _recorder.stopRecord();
+                    print('voice is $voice');
                     setState(() => isRecoding = false);
 
                     if (voice.isNotEmpty && voice != 'no voice') {
-                      context
-                          .read<ChatBloc>()
-                          .add(SendVoice(widget.roomId, voice));
+                      context.read<ChatBloc>().add(SendVoice(widget.roomId, voice));
                     }
                   },
                   icon: SvgPicture.asset('assets/images/recordVoiceImage.svg'),
-                )
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () async {
+                    final String voice = await _recorder.stopRecord();
+                    print('voice is $voice');
+                    setState(() => isRecoding = false);
+                  },
+                  icon: SvgPicture.asset('assets/images/trash.svg'),
+                ),
               ],
             )
           : Row(

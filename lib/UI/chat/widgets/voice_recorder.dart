@@ -10,13 +10,14 @@ class VoiceRecorder {
 
   init() async {
     try {
-      await _recorder.openRecorder();
       await _player.openPlayer();
 
       PermissionStatus status = await Permission.microphone.request();
       if (status != PermissionStatus.granted) {
         throw RecordingPermissionException('Permissions don\'t Granted');
       }
+
+      await _recorder.openRecorder();
       _isRecorderInitialized = true;
     } catch (e) {
       print('Exception : ${e.toString()}');
