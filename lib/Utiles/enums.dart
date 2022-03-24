@@ -22,6 +22,13 @@ enum ChatType {
   Group,
 }
 
+enum TimerAction {
+  Stop,
+  Start,
+  Pause,
+  Resume,
+}
+
 // enum ProductSize {
 //   Small,
 //   Medium,

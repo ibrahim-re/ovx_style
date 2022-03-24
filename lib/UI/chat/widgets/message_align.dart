@@ -13,6 +13,7 @@ class MessageAlign extends StatelessWidget {
     required this.sender,
     required this.type,
   });
+
   @override
   Widget build(BuildContext context) {
     bool isMe = SharedPref.getUser().id == sender;

@@ -206,6 +206,8 @@
   "start chat": "Start chat",
   "no contacts": "No Contacts",
   "no chats": "No Chats",
+  "voice message": "Voice message",
+  "image received": "Image received",
   "failed to send message": "Failed to send message",
   "groups": "Groups",
   "create group": "Create Group",

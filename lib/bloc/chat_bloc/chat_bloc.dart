@@ -28,8 +28,6 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
         }
       }
       else if (event is GetUserChats) {
-      }
-      else if (event is GetUserChats) {
         emit(GetUserChatsLoading());
         try {
           chatsModel = await _hand.getChats(event.userId);
@@ -87,19 +85,19 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
         emit(SendVoiceLoading());
         try {
           await _hand.sendVoice(event.roomId, event.message);
+          emit(SendVoiceDone());
         } catch (e) {
           emit(SendVoiceFailed('failed to send message'.tr()));
         }
       }
 
       if (event is UploadImageToRoom) {
-        emit(UploadeImageToRoomLoadingState());
+        emit(UploadImageToRoomLoadingState());
         try {
-          final String url =
-              await _hand.uploadeImagetoRoom(event.roomId, event.Image);
-          emit(UploadeImageToRoomDoneState(url));
+          final String url = await _hand.uploadImageToRoom(event.roomId, event.Image);
+          emit(UploadImageToRoomDoneState(url));
         } catch (e) {
-          emit(UploadeImageToRoomFailedState('Failed sending Image !!'));
+          emit(UploadImageToRoomFailedState('Failed sending Image !!'));
         }
       }
       else if (event is CreateGroup) {

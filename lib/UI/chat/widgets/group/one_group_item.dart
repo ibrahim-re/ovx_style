@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
@@ -50,6 +51,7 @@ class _OneGroupItemState extends State<OneGroupItem> {
                       builder: (ctx, snapshot) {
                         if (snapshot.hasData) {
                           GroupMessage message = snapshot.data!;
+                          String msg = message.msgType == 2 ? 'voice message'.tr() : message.msgType == 1 ? 'image received'.tr() : message.msgValue!;
                           bool isRead = true;
                           //if not me who send the message, see if it's read or unread
                           String myId = SharedPref.getUser().id!;
@@ -59,7 +61,7 @@ class _OneGroupItemState extends State<OneGroupItem> {
                           return Row(
                             children: [
                               Text(
-                                message.msgValue!,
+                                msg,
                                 style: isRead
                                     ? Constants.TEXT_STYLE6
                                     : Constants.TEXT_STYLE6.copyWith(

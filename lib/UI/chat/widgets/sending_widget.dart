@@ -5,7 +5,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
-import 'package:ovx_style/UI/chat/widgets/voice_recorder.dart';
+import 'package:ovx_style/UI/chat/widgets/record_wave_widget.dart';
+import '../../../helper/voice_recorder_helper.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
@@ -25,20 +26,20 @@ class SendingWidget extends StatefulWidget {
 
 class _SendingWidgetState extends State<SendingWidget> {
   final TextEditingController _controller = TextEditingController();
-  late VoiceRecorder _recorder;
+  late VoiceRecorderHelper _recorder;
   bool isTyping = false;
   bool isRecoding = false;
 
   @override
   void initState() {
-    _recorder = VoiceRecorder();
-    _recorder.init();
+    _recorder = VoiceRecorderHelper();
+    _recorder.initRecorder();
     super.initState();
   }
 
   @override
   void dispose() {
-    _recorder.dispose();
+    _recorder.disposeRecorder();
     super.dispose();
   }
 
@@ -46,40 +47,60 @@ class _SendingWidgetState extends State<SendingWidget> {
   Widget build(BuildContext context) {
     return BlocListener<ChatBloc, ChatStates>(
       listener: (context, state) {
-        if (state is SendMessageFailed) {
+        if(state is UploadImageToRoomLoadingState)
+          EasyLoading.show(status: 'please wait'.tr());
+        else if (state is UploadImageToRoomDoneState)
+          EasyLoading.dismiss();
+        else if(state is UploadImageToRoomFailedState)
           EasyLoading.showToast(state.message);
-        }
 
-        if (state is SendVoiceFailed) {
+        if (state is SendMessageFailed)
           EasyLoading.showToast(state.message);
-        }
+
+        else if (state is SendVoiceFailed) {
+          EasyLoading.showToast(state.message);
+          setState(() => isRecoding = false);
+        } else if (state is SendVoiceDone) setState(() => isRecoding = false);
       },
       child: isRecoding
-          ? Row(
-              children: [
-                IconButton(
-                  onPressed: () async {
-                    final String voice = await _recorder.stopRecord();
-                    print('voice is $voice');
-                    setState(() => isRecoding = false);
-
-                    if (voice.isNotEmpty && voice != 'no voice') {
-                      context.read<ChatBloc>().add(SendVoice(widget.roomId, voice));
-                    }
-                  },
-                  icon: SvgPicture.asset('assets/images/recordVoiceImage.svg'),
-                ),
-                Spacer(),
-                IconButton(
-                  onPressed: () async {
-                    final String voice = await _recorder.stopRecord();
-                    print('voice is $voice');
-                    setState(() => isRecoding = false);
-                  },
-                  icon: SvgPicture.asset('assets/images/trash.svg'),
-                ),
-              ],
-            )
+          ? BlocBuilder<ChatBloc, ChatStates>(builder: (ctx, state) {
+              if (state is SendVoiceLoading)
+                return Center(
+                  child:
+                      RefreshProgressIndicator(color: MyColors.secondaryColor),
+                );
+              else
+                return Row(
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        final String voice = await _recorder.stopRecord();
+                        if (voice.isNotEmpty && voice != 'no voice') {
+                          context
+                              .read<ChatBloc>()
+                              .add(SendVoice(widget.roomId, voice));
+                        }
+                      },
+                      icon: SvgPicture.asset(
+                          'assets/images/recordVoiceImage.svg'),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: RecordWavesWidget(),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        final String voicePath = await _recorder.stopRecord();
+                        _recorder.deleteRecord(voicePath);
+                        setState(() => isRecoding = false);
+                      },
+                      icon: SvgPicture.asset('assets/images/trash.svg'),
+                    ),
+                  ],
+                );
+            })
           : Row(
               children: [
                 Expanded(
@@ -114,8 +135,10 @@ class _SendingWidgetState extends State<SendingWidget> {
                     ? IconButton(
                         onPressed: () {
                           if (_controller.text.isNotEmpty) {
-                            context.read<ChatBloc>().add(
-                                SendMessage(widget.roomId, _controller.text, widget.chatType));
+                            context.read<ChatBloc>().add(SendMessage(
+                                widget.roomId,
+                                _controller.text,
+                                widget.chatType));
                             _controller.clear();
                             setState(() {
                               isTyping = false;

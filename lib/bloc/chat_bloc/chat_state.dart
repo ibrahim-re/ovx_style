@@ -73,23 +73,23 @@ class SendMessageFailed extends ChatStates {
 
 // uploade image to room
 
-class UploadeImageToRoomLoadingState extends ChatStates {}
+class UploadImageToRoomLoadingState extends ChatStates {}
 
-class UploadeImageToRoomDoneState extends ChatStates {
+class UploadImageToRoomDoneState extends ChatStates {
   final String imageUrl;
-  UploadeImageToRoomDoneState(this.imageUrl);
+  UploadImageToRoomDoneState(this.imageUrl);
 }
 
-class UploadeImageToRoomFailedState extends ChatStates {
-  final String err;
-  UploadeImageToRoomFailedState(this.err);
+class UploadImageToRoomFailedState extends ChatStates {
+  final String message;
+  UploadImageToRoomFailedState(this.message);
 }
 
 // send voice
 
-class SendVoiceLoading extends ChatStates {
-  SendVoiceLoading();
-}
+class SendVoiceLoading extends ChatStates {}
+
+class SendVoiceDone extends ChatStates {}
 
 class SendVoiceFailed extends ChatStates {
   String message;

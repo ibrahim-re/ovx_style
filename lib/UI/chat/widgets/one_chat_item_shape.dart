@@ -97,6 +97,7 @@ class _OneChatItemState extends State<OneChatItem> {
                         builder: (ctx, snapshot) {
                           if (snapshot.hasData) {
                             Message message = snapshot.data!;
+                            String msg = message.msgType == 2 ? 'voice message'.tr() : message.msgType == 1 ? 'image received'.tr() : message.msgValue!;
                             bool isRead = true;
                             //if not me who send the message, see if it's read or unread
                             if (message.sender != SharedPref.getUser().id)
@@ -105,7 +106,7 @@ class _OneChatItemState extends State<OneChatItem> {
                             return Row(
                               children: [
                                 Text(
-                                  message.msgValue!,
+                                  msg,
                                   style: isRead
                                       ? Constants.TEXT_STYLE6
                                       : Constants.TEXT_STYLE6.copyWith(

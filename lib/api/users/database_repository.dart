@@ -35,7 +35,7 @@ abstract class DatabaseRepository {
   Future<User> getUserData(String userId);
   Future<void> updateUserData(Map<String, dynamic> userData, String userId);
   Future<void> updateOfferAdded(String userId, String offerId);
-  Future<String> uploadeImagetoRoom(String roomId, File Image);
+  Future<String> uploadImageToRoom(String roomId, File Image);
   Future<void> updateCoverImage(String coverImageURL, String userId);
   Future<List<String>> uploadFilesToStorage(
       List<String> filePaths, String uId, String path);
@@ -131,7 +131,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<String> uploadeImagetoRoom(String roomId, File Image) async {
+  Future<String> uploadImageToRoom(String roomId, File Image) async {
     UploadTask uploadTask = FirebaseStorage.instance
         .ref('chatsImages/$roomId/${Image.path.split('/').last}')
         .putFile(Image);
@@ -581,7 +581,6 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     //get all chats
     final querySnapshot = await _chats.get();
     //check chats that this user is part of
-    print(querySnapshot.docs.length);
     for (var doc in querySnapshot.docs) {
       if (doc.id.contains(userId)) {
         //get another user
@@ -597,7 +596,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
           'userId': anotherUserId,
           'roomId': roomId,
           'userName': anotherUser.userName,
-          'userImage': anotherUser.profileImage,
+          'profileImage': anotherUser.profileImage,
           'offersAdded': anotherUser.offersAdded,
         }));
       }
@@ -793,8 +792,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         .id;
 
     File AudioFile = new File(message);
-    final String _storedPath =
-        '${DateTime.now().toString()}' + AudioFile.path.split('/').last;
+    final String _storedPath = '${DateTime.now().toString()}' + AudioFile.path.split('/').last;
 
     UploadTask uploadTask = FirebaseStorage.instance
         .ref('chatsVoices/$roomId/${_storedPath}')
@@ -829,7 +827,6 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     await for (var snapshot in snapshots) {
       if(snapshot.docs.isNotEmpty) {
         lastMessage = GroupMessage.fromJson(snapshot.docs.last.data());
-        print('last message getted');
         yield lastMessage;
       }
     }

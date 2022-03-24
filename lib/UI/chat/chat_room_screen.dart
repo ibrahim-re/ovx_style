@@ -39,20 +39,20 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               radius: 25,
               child: widget.anotherUserImage != ''
                   ? ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: ProgressiveImage(
-                  imageError: 'assets/images/no_internet.png',
-                  image: widget.anotherUserImage,
-                  height: 55,
-                  fit: BoxFit.cover,
-                  width: 55,
-                ),
-              )
+                      borderRadius: BorderRadius.circular(30),
+                      child: ProgressiveImage(
+                        imageError: 'assets/images/no_internet.png',
+                        image: widget.anotherUserImage,
+                        height: 55,
+                        fit: BoxFit.cover,
+                        width: 55,
+                      ),
+                    )
                   : CircleAvatar(
-                radius: 25,
-                backgroundImage:
-                AssetImage('assets/images/default_profile.jpg'),
-              ),
+                      radius: 25,
+                      backgroundImage:
+                          AssetImage('assets/images/default_profile.jpg'),
+                    ),
             ),
             SizedBox(width: 10),
             Text(
