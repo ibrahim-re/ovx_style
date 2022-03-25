@@ -51,7 +51,7 @@ class _OneGroupItemState extends State<OneGroupItem> {
                       builder: (ctx, snapshot) {
                         if (snapshot.hasData) {
                           GroupMessage message = snapshot.data!;
-                          String msg = message.msgType == 2 ? 'voice message'.tr() : message.msgType == 1 ? 'image received'.tr() : message.msgValue!;
+                          String msg = message.msgType == 2 ? 'voice message'.tr() : message.msgType == 1 ? 'image message'.tr() : message.msgValue!;
                           bool isRead = true;
                           //if not me who send the message, see if it's read or unread
                           String myId = SharedPref.getUser().id!;

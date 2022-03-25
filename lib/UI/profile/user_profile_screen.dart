@@ -38,7 +38,7 @@ class UserProfileScreen extends StatelessWidget {
               fit: BoxFit.scaleDown,
             ),
           ),
-          const SizedBox(width: 8,),
+         const SizedBox(width: 8,),
           SendPointsWidget(),
           if (SharedPref.getUser().userType != UserType.Guest.toString())
             IconButton(

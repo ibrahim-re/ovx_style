@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/UI/offer_details/img_details_widget/image_section.dart';
 import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
@@ -39,18 +40,7 @@ class ProductImageSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height / 3,
-          child: ScrollSnapList(
-            itemSize: MediaQuery.of(context).size.height / 3,
-            dynamicItemSize: true,
-            itemBuilder: (ctx, index) => Image.network(productImages[index],
-                width: MediaQuery.of(context).size.height / 3),
-            onItemFocus: (int) {},
-            itemCount: productImages.length,
-          ),
-        ),
+        ImageSection(offerImages: productImages),
         Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: Row(

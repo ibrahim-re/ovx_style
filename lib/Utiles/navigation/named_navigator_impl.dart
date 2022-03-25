@@ -6,6 +6,7 @@ import 'package:ovx_style/UI/basket/basket_screen.dart';
 import 'package:ovx_style/UI/chat/create_chat_screen.dart';
 import 'package:ovx_style/UI/chat/create_group_screen.dart';
 import 'package:ovx_style/UI/chat/group_chat_screen.dart';
+import 'package:ovx_style/full_screen_image.dart';
 import 'package:ovx_style/model/group_model.dart';
 import '../../UI/chat/chat_room_screen.dart';
 import 'package:ovx_style/UI/checkout/checkout_screen.dart';
@@ -346,6 +347,22 @@ class NamedNavigatorImpl implements NamedNavigator {
                 groupName: groupName,
               ),
               type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
+
+      case NamedRoutes.IMAGE_SCREEN:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final String heroTag = data['heroTag'];
+          final String imageUrl = data['imageUrl'];
+
+          return PageTransition(
+              child: ImageScreen(
+                navigator: navigatorState,
+                heroTag: heroTag,
+                imageUrl: imageUrl,
+              ),
+              type: PageTransitionType.fade,
               duration: const Duration(milliseconds: 500));
         }
 

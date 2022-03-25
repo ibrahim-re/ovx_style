@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
+import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 class ImageSection extends StatelessWidget {
-  const ImageSection({Key? key, required this.offerImages,}) : super(key: key);
+  const ImageSection({
+    Key? key,
+    required this.offerImages,
+  }) : super(key: key);
 
   final List<String> offerImages;
 
@@ -16,7 +21,42 @@ class ImageSection extends StatelessWidget {
       child: ScrollSnapList(
         itemSize: MediaQuery.of(context).size.height / 3,
         dynamicItemSize: true,
-        itemBuilder: (ctx, index) => Image.network(offerImages[index], width: MediaQuery.of(context).size.height / 3),
+        itemBuilder: (ctx, index) => Stack(
+          children: [
+            GestureDetector(
+              onTap: (){
+                NamedNavigatorImpl().push(NamedRoutes.IMAGE_SCREEN, arguments: {
+                  'heroTag': 'image$index',
+                  'imageUrl': offerImages[index],
+                });
+              },
+              child: Hero(
+                tag: 'image$index',
+                child: Image.network(
+                    offerImages[index],
+                    width: MediaQuery.of(context).size.height / 3,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            if(offerImages.length > 1)
+              Positioned(
+                bottom: 0,
+                right: 8,
+                child: Chip(
+                  backgroundColor: MyColors.lightGrey,
+                  label: Text(
+                    '${index+1} / ${offerImages.length}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w300,
+                      color: MyColors.black,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
         onItemFocus: (int) {},
         itemCount: offerImages.length,
       ),

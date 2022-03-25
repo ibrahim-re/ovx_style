@@ -145,12 +145,6 @@ class _VoiceMessageShapeState extends State<VoiceMessageShape> {
                     thickness: 2,
                   )
                 : RecordWavesWidget(),
-            // child: LinearProgressIndicator(
-            //   color: widget.isMe
-            //       ? MyColors.secondaryColor.withOpacity(0.2)
-            //       : Colors.white,
-            //   minHeight: 2,
-            // ),
           ),
           const SizedBox(width: 4),
           CircleAvatar(
