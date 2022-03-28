@@ -8,11 +8,47 @@ class FetchOffers extends OfferEvent {
   FetchOffers(this.offerOwnerType);
 }
 
+class FetchMoreOffers extends OfferEvent {
+  UserType offerOwnerType;
+  String lastFetchedOfferId;
 
-class FilterOffers extends OfferEvent {
+  FetchMoreOffers(this.offerOwnerType, this.lastFetchedOfferId);
+}
+
+class GetUserOffers extends OfferEvent {
+  String uId;
+  String offerOwnerType;
+
+  GetUserOffers(this.uId, this.offerOwnerType);
+}
+
+class GetMyLikedOffers extends OfferEvent {
+  String uId;
+
+  GetMyLikedOffers(this.uId);
+}
+
+class GetFilteredOffers extends OfferEvent {
   double minPrice;
   double maxPrice;
   List<String> categories;
+  List<String> offerTypes;
+  UserType userType;
 
-  FilterOffers(this.minPrice, this.maxPrice, this.categories);
+  GetFilteredOffers(this.minPrice, this.maxPrice, this.categories, this.offerTypes, this.userType);
 }
+
+// class FetchOffers extends OfferEvent {
+//   UserType offerOwnerType;
+//
+//   FetchOffers(this.offerOwnerType);
+// }
+//
+//
+// class FilterOffers extends OfferEvent {
+//   double minPrice;
+//   double maxPrice;
+//   List<String> categories;
+//
+//   FilterOffers(this.minPrice, this.maxPrice, this.categories);
+// }

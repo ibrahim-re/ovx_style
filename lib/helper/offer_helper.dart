@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
@@ -17,8 +18,7 @@ class OfferHelper {
         : categories.add(categoryName);
   }
 
-  static List<Offer> filterPrices(List<Offer> offers, double minPrice,
-      double maxPrice) {
+  static List<Offer> filterPrices(List<Offer> offers, double minPrice, double maxPrice) {
     List<String> offersToRemove = [];
 
     for (var offer in offers) {
@@ -108,6 +108,32 @@ class OfferHelper {
             convertToUSD(properties[i].sizes![j].price!);
       }
     }
+  }
+
+  static List<Offer> fromDocumentSnapshotToOffer(QuerySnapshot querySnapshot){
+    List<Offer> offers = [];
+
+    for (var e in querySnapshot.docs) {
+      final data = e.data() as Map<String, dynamic>;
+      final offerId = e.id;
+
+      if (data['offerType'] == OfferType.Product.toString()) {
+        ProductOffer offer = ProductOffer.fromMap(data, offerId);
+        offers.add(offer);
+      } else if (data['offerType'] == OfferType.Post.toString()) {
+        PostOffer offer = PostOffer.fromMap(data, offerId);
+        offers.add(offer);
+      } else if (data['offerType'] == OfferType.Image.toString()) {
+        ImageOffer offer = ImageOffer.fromMap(data, offerId);
+        offers.add(offer);
+      } else if (data['offerType'] == OfferType.Video.toString()) {
+        VideoOffer offer = VideoOffer.fromMap(data, offerId);
+        offers.add(offer);
+      }
+    }
+
+
+    return offers;
   }
 
 }

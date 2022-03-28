@@ -6,17 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offers/widgets/offers_list_view.dart';
-import 'package:ovx_style/UI/offers/widgets/waiting_offers_list_view.dart';
 import 'package:ovx_style/UI/profile/widgets/profile_image_section.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
-import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
+import 'package:ovx_style/bloc/offer_bloc/offer_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
 import 'package:ovx_style/model/user.dart';
 import 'package:shimmer_image/shimmer_image.dart';
 
-class OtherUserProfile extends StatelessWidget {
+class OtherUserProfile extends StatefulWidget {
   final navigator;
   final User user;
 
@@ -24,9 +23,21 @@ class OtherUserProfile extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<OtherUserProfile> createState() => _OtherUserProfileState();
+}
+
+class _OtherUserProfileState extends State<OtherUserProfile> {
+  @override
+  void initState() {
+    context
+        .read<OfferBloc>()
+        .add(GetUserOffers(widget.user.id!, widget.user.userType!));
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final userOffers = context.read<OfferBloc>().getUserOffers(user.id!);
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
@@ -49,17 +60,17 @@ class OtherUserProfile extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               children: [
                 CoverImage(
-                  coverImage: user.coverImage!,
+                  coverImage: widget.user.coverImage!,
                 ),
                 //if user if current logged in, he can change his cover photo
                 Positioned(
                   bottom: -70,
-                  child: user.profileImage != ''
+                  child: widget.user.profileImage != ''
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(75),
                           child: ProgressiveImage(
                             imageError: 'assets/images/no_internet.png',
-                            image: user.profileImage!,
+                            image: widget.user.profileImage!,
                             height: screenHeight * 0.19,
                             width: screenHeight * 0.19,
                           ),
@@ -80,7 +91,7 @@ class OtherUserProfile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  user.userName ?? '',
+                  widget.user.userName ?? '',
                   style: Constants.TEXT_STYLE4,
                 ),
                 const SizedBox(height: 6),
@@ -88,14 +99,14 @@ class OtherUserProfile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      user.userCode ?? '',
+                      widget.user.userCode ?? '',
                       style: Constants.TEXT_STYLE4
                           .copyWith(fontSize: 14, fontWeight: FontWeight.w300),
                     ),
                     IconButton(
                       onPressed: () async {
                         await Clipboard.setData(
-                            ClipboardData(text: user.userCode));
+                            ClipboardData(text: widget.user.userCode));
                         EasyLoading.showToast(
                             'User code is copied to clipboard');
                       },
@@ -121,7 +132,7 @@ class OtherUserProfile extends StatelessWidget {
                               style: Constants.TEXT_STYLE4,
                             ),
                             Text(
-                              user.offersAdded!.length.toString(),
+                              widget.user.offersAdded!.length.toString(),
                               style:
                                   Constants.TEXT_STYLE4.copyWith(fontSize: 14),
                             ),
@@ -142,7 +153,7 @@ class OtherUserProfile extends StatelessWidget {
                               style: Constants.TEXT_STYLE4,
                             ),
                             Text(
-                              user.offersLiked!.length.toString(),
+                              widget.user.offersLiked!.length.toString(),
                               style:
                                   Constants.TEXT_STYLE4.copyWith(fontSize: 14),
                             ),
@@ -155,7 +166,7 @@ class OtherUserProfile extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   child: Text(
-                    user.shortDesc ?? '',
+                    widget.user.shortDesc ?? '',
                     textAlign: TextAlign.center,
                     style: Constants.TEXT_STYLE4,
                   ),
@@ -166,22 +177,34 @@ class OtherUserProfile extends StatelessWidget {
           const SizedBox(
             height: 16,
           ),
-          if (userOffers.isNotEmpty)
-            OffersListView(
-              fetchedOffers: userOffers,
-              scrollPhysics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-            )
-          else
-            Center(
-              child: Text(
-                'no offers yet'.tr(),
-                style: Constants.TEXT_STYLE8.copyWith(
-                  color: MyColors.secondaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
+          BlocBuilder<OfferBloc, OfferState>(builder: (ctx, state) {
+            if (state is GetUserOffersFailed)
+              return Center(
+                child: Text(state.message, style: Constants.TEXT_STYLE9),
+              );
+            else if (state is GetUserOffersDone) {
+              if (state.offers.isNotEmpty)
+                return OffersListView(
+                  fetchedOffers: state.offers,
+                  scrollPhysics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                );
+              else
+                return Center(
+                  child: Text(
+                    'no offers yet'.tr(),
+                    style: Constants.TEXT_STYLE8.copyWith(
+                      color: MyColors.secondaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+            } else
+              return Center(
+                  child: CircularProgressIndicator(
+                color: MyColors.secondaryColor,
+              ));
+          }),
         ],
       ),
     );

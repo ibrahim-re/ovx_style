@@ -80,10 +80,20 @@ class Message {
 
   Message.fromJson(Map<String, dynamic> data) {
     msgId = data['msgId'];
-    msgType = data['type'];
-    msgValue = data['value'];
+    msgType = data['msgType'];
+    msgValue = data['msgValue'];
     sender = data['sender'];
     isRead = data['isRead'];
     createdAt = (data['createdAt'] as Timestamp).toDate();
   }
+
+  Map<String, dynamic> toMap() => {
+    'msgId': msgId,
+    'msgType': msgType,
+    'msgValue': msgValue,
+    'sender': sender,
+    'createdAt': createdAt,
+    'isRead': isRead,
+
+  };
 }

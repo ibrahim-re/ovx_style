@@ -6,6 +6,7 @@ import 'package:ovx_style/UI/offers/widgets/waiting_offers_list_view.dart';
 import 'package:ovx_style/UI/widgets/basket_icon.dart';
 import 'package:ovx_style/UI/widgets/filter_icon.dart';
 import 'package:ovx_style/UI/widgets/notification_icon.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/enums.dart';
@@ -15,6 +16,7 @@ import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
 import 'package:badges/badges.dart';
+import 'package:ovx_style/model/offer.dart';
 
 class OffersScreen extends StatefulWidget {
   @override
@@ -22,11 +24,30 @@ class OffersScreen extends StatefulWidget {
 }
 
 class _OffersScreenState extends State<OffersScreen> {
+  final scrollController = ScrollController();
+  //for pagination
+  String _lastFetchedOfferId = '';
+
   @override
   void initState() {
     context.read<OfferBloc>().add(FetchOffers(UserType.Person));
     context.read<NotificationsBloc>().add(FetchNotifications());
+    scrollController.addListener(() {
+      if (scrollController.offset >=
+              scrollController.position.maxScrollExtent &&
+          !scrollController.position.outOfRange) {
+        context
+            .read<OfferBloc>()
+            .add(FetchMoreOffers(UserType.Person, _lastFetchedOfferId));
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -43,14 +64,8 @@ class _OffersScreenState extends State<OffersScreen> {
 
           //filter icon
           FilterIcon(ontap: () {
-            ModalSheets().showFilters(context);
+            ModalSheets().showFilters(context, UserType.Person);
           }),
-          // IconButton(
-          //   onPressed: () {
-          //     ModalSheets().showFilters(context);
-          //   },
-          //   icon: SvgPicture.asset('assets/images/filter.svg'),
-          // ),
         ],
       ),
       body: RefreshIndicator(
@@ -60,22 +75,50 @@ class _OffersScreenState extends State<OffersScreen> {
         },
         child: BlocBuilder<OfferBloc, OfferState>(
           builder: (ctx, state) {
-            if (state is FetchOffersLoading)
+            if (state is FetchOffersLoading ||
+                state is OfferStateInitial ||
+                state is GetFilteredOffersLoading)
               return WaitingOffersListView();
-            else if (state is FetchOffersSucceed)
-              return OffersListView(fetchedOffers: state.fetchedOffers);
             else if (state is FetchOffersFailed)
               return Center(
                   child: Text(
                 state.message,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: MyColors.secondaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Constants.TEXT_STYLE9,
               ));
-            else
-              return Container();
+            else if (state is GetFilteredOffersFailed)
+              return Center(
+                  child: Text(
+                state.message,
+                style: Constants.TEXT_STYLE9,
+              ));
+            else if (state is GetFilteredOffersDone)
+              return OffersListView(fetchedOffers: state.offers);
+            else {
+              List<Offer> offers = context.read<OfferBloc>().fetchedOffers;
+              if (offers.isEmpty)
+                return Center(
+                  child: Text(
+                    'no offer yet'.tr(),
+                    style: Constants.TEXT_STYLE9,
+                  ),
+                );
+              else {
+                _lastFetchedOfferId = offers.last.id ?? '';
+                return OffersListView(
+                  fetchedOffers: offers,
+                  scrollController: scrollController,
+                  child: state is FetchMoreOffersLoading
+                      ? Center(
+                          child: RefreshProgressIndicator(
+                            color: MyColors.secondaryColor,
+                          ),
+                        )
+                      : state is FetchMoreOffersFailed
+                          ? Center(child: Text('error occurred'.tr()))
+                          : Container(),
+                );
+              }
+            }
           },
         ),
       ),

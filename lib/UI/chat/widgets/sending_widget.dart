@@ -28,7 +28,7 @@ class _SendingWidgetState extends State<SendingWidget> {
   final TextEditingController _controller = TextEditingController();
   late VoiceRecorderHelper _recorder;
   bool isTyping = false;
-  bool isRecoding = false;
+  bool isRecording = false;
 
   @override
   void initState() {
@@ -59,10 +59,10 @@ class _SendingWidgetState extends State<SendingWidget> {
 
         else if (state is SendVoiceFailed) {
           EasyLoading.showToast(state.message);
-          setState(() => isRecoding = false);
-        } else if (state is SendVoiceDone) setState(() => isRecoding = false);
+          setState(() => isRecording = false);
+        } else if (state is SendVoiceDone) setState(() => isRecording = false);
       },
-      child: isRecoding
+      child: isRecording
           ? BlocBuilder<ChatBloc, ChatStates>(builder: (ctx, state) {
               if (state is SendVoiceLoading)
                 return Center(
@@ -78,7 +78,7 @@ class _SendingWidgetState extends State<SendingWidget> {
                         if (voice.isNotEmpty && voice != 'no voice') {
                           context
                               .read<ChatBloc>()
-                              .add(SendVoice(widget.roomId, voice));
+                              .add(SendVoice(widget.roomId, voice, widget.chatType));
                         }
                       },
                       icon: SvgPicture.asset(
@@ -87,14 +87,14 @@ class _SendingWidgetState extends State<SendingWidget> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: RecordWavesWidget(),
+                        child: RecordWavesWidget(color: MyColors.secondaryColor,),
                       ),
                     ),
                     IconButton(
                       onPressed: () async {
                         final String voicePath = await _recorder.stopRecord();
                         _recorder.deleteRecord(voicePath);
-                        setState(() => isRecoding = false);
+                        setState(() => isRecording = false);
                       },
                       icon: SvgPicture.asset('assets/images/trash.svg'),
                     ),
@@ -155,11 +155,11 @@ class _SendingWidgetState extends State<SendingWidget> {
                         children: [
                           MyVoiceIcon(
                             (bool isRecord) async {
-                              setState(() => isRecoding = isRecord);
+                              setState(() => isRecording = isRecord);
                               await _recorder.startRecord();
                             },
                           ),
-                          MyImageIcon(widget.roomId),
+                          MyImageIcon(roomId: widget.roomId, chatType: widget.chatType,),
                         ],
                       ),
               ],
@@ -170,8 +170,10 @@ class _SendingWidgetState extends State<SendingWidget> {
 
 class MyImageIcon extends StatelessWidget {
   final String roomId;
+  final ChatType chatType;
 
-  MyImageIcon(this.roomId);
+  MyImageIcon({required this.roomId, required this.chatType});
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -190,6 +192,7 @@ class MyImageIcon extends StatelessWidget {
           UploadImageToRoom(
             roomId,
             pickedFiles[0],
+            chatType,
           ),
         );
       },

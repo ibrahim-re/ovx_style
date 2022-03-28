@@ -86,7 +86,7 @@ class ModalSheets {
     );
   }
 
-  void showFilters(context) {
+  void showFilters(context, UserType userType) {
     showModalBottomSheet(
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
@@ -96,7 +96,7 @@ class ModalSheets {
         ),
       ),
       context: context,
-      builder: (ctx) => FiltersWidget(),
+      builder: (ctx) => FiltersWidget(userType: userType),
     );
   }
 
@@ -195,9 +195,7 @@ class ModalSheets {
       ),
       context: context,
       builder: (ctx) {
-        return BlocProvider<PaymentBloc>(
-          create: (ctx) => PaymentBloc(),
-          child: Container(
+        return Container(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -288,7 +286,6 @@ class ModalSheets {
                         bottom: MediaQuery.of(ctx).viewInsets.bottom)),
               ],
             ),
-          ),
         );
       },
     );
@@ -306,100 +303,97 @@ class ModalSheets {
       ),
       context: context,
       builder: (ctx) {
-        return BlocProvider<PointsBloc>(
-          create: (ctx) => PointsBloc()..add(GetPoints()),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'send points'.tr(),
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: MyColors.secondaryColor,
-                  ),
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'send points'.tr(),
+                style: TextStyle(
+                  fontSize: 20,
+                  color: MyColors.secondaryColor,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'to send points'.tr(),
-                    style: Constants.TEXT_STYLE4,
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'to send points'.tr(),
+                  style: Constants.TEXT_STYLE4,
                 ),
-                BlocBuilder<PointsBloc, PointsState>(builder: (ctx, state) => Text(
-                  '${ctx.read<PointsBloc>().points}' +
-                      ' ' +
-                      'available points'.tr(),
-                  style: Constants.TEXT_STYLE6
-                      .copyWith(color: MyColors.secondaryColor),
-                ),),
-                const SizedBox(
-                  height: 8,
-                ),
-                CustomTextFormField(
-                  controller: amountController,
-                  hint: 'points amount'.tr(),
-                  keyboardType: TextInputType.number,
-                  validateInput: (p) {},
-                  saveInput: (p) {},
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                CustomTextFormField(
-                  controller: codeController,
-                  hint: 'user code'.tr(),
-                  validateInput: (p) {},
-                  saveInput: (p) {},
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                BlocConsumer<PointsBloc, PointsState>(
-                  listener: (ctx, state) {
-                    if (state is SendPointsFailed)
-                      EasyLoading.showError(state.message);
-                    else if (state is SendPointsSucceed) {
-                      EasyLoading.showSuccess('points send'.tr());
-                      NamedNavigatorImpl().pop();
-                    }
-                  },
-                  builder: (ctx, state) {
-                    if (state is SendPointsLoading)
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: MyColors.secondaryColor,
-                        ),
-                      );
-                    else
-                      return CustomElevatedButton(
+              ),
+              BlocBuilder<PointsBloc, PointsState>(builder: (ctx, state) => Text(
+                '${ctx.read<PointsBloc>().points}' +
+                    ' ' +
+                    'available points'.tr(),
+                style: Constants.TEXT_STYLE6
+                    .copyWith(color: MyColors.secondaryColor),
+              ),),
+              const SizedBox(
+                height: 8,
+              ),
+              CustomTextFormField(
+                controller: amountController,
+                hint: 'points amount'.tr(),
+                keyboardType: TextInputType.number,
+                validateInput: (p) {},
+                saveInput: (p) {},
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              CustomTextFormField(
+                controller: codeController,
+                hint: 'user code'.tr(),
+                validateInput: (p) {},
+                saveInput: (p) {},
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              BlocConsumer<PointsBloc, PointsState>(
+                listener: (ctx, state) {
+                  if (state is SendPointsFailed)
+                    EasyLoading.showError(state.message);
+                  else if (state is SendPointsSucceed) {
+                    EasyLoading.showSuccess('points send'.tr());
+                    NamedNavigatorImpl().pop();
+                  }
+                },
+                builder: (ctx, state) {
+                  if (state is SendPointsLoading)
+                    return Center(
+                      child: CircularProgressIndicator(
                         color: MyColors.secondaryColor,
-                        text: 'send'.tr(),
-                        function: () {
-                          if (amountController.text.isNotEmpty &&
-                              codeController.text.isNotEmpty) {
-                            ctx.read<PointsBloc>().add(
-                                  SendPoint(
-                                    SharedPref.getUser().id!,
-                                    codeController.text,
-                                    int.parse(
-                                      amountController.text,
-                                    ),
+                      ),
+                    );
+                  else
+                    return CustomElevatedButton(
+                      color: MyColors.secondaryColor,
+                      text: 'send'.tr(),
+                      function: () {
+                        if (amountController.text.isNotEmpty &&
+                            codeController.text.isNotEmpty) {
+                          ctx.read<PointsBloc>().add(
+                                SendPoint(
+                                  SharedPref.getUser().id!,
+                                  codeController.text,
+                                  int.parse(
+                                    amountController.text,
                                   ),
-                                );
-                          } else
-                            EasyLoading.showToast('fill all info'.tr());
-                        },
-                      );
-                  },
-                ),
-                Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(ctx).viewInsets.bottom)),
-              ],
-            ),
+                                ),
+                              );
+                        } else
+                          EasyLoading.showToast('fill all info'.tr());
+                      },
+                    );
+                },
+              ),
+              Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(ctx).viewInsets.bottom)),
+            ],
           ),
         );
       },
@@ -475,123 +469,120 @@ class ModalSheets {
       ),
       context: context,
       builder: (ctx) {
-        return BlocProvider(
-          create: (ctx) => PointsBloc(),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'create group'.tr(),
-                  style: TextStyle(
-                    fontSize: 20,
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'create group'.tr(),
+                style: TextStyle(
+                  fontSize: 20,
+                  color: MyColors.secondaryColor,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'by creating group'.tr(),
+                  style: Constants.TEXT_STYLE4,
+                ),
+              ),
+              CustomTextFormField(
+                controller: groupNameController,
+                hint: 'group name'.tr(),
+                validateInput: (p) {},
+                saveInput: (p) {},
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              BlocConsumer<PointsBloc, PointsState>(
+                listener: (ctx, state) {
+                  if(state is GetPointsSucceed){
+                    // int points = ctx.read<PointsBloc>().points;
+                    // if(points < 150)
+                    //   EasyLoading.showError('no 150 points'.tr());
+                    // else {
+                      //pop to close bottom sheet first
+                      NamedNavigatorImpl().pop();
+                      NamedNavigatorImpl().push(
+                          NamedRoutes.CREATE_GROUP_SCREEN, arguments: {
+                        'groupName': groupNameController.text,
+                      });
+                    //}
+                  }
+                },
+                builder: (ctx, state) {
+                if(state is GetPointsLoading)
+                  return Center(child: CircularProgressIndicator(color: MyColors.secondaryColor,),);
+                else
+                  return CustomElevatedButton(
                     color: MyColors.secondaryColor,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'by creating group'.tr(),
-                    style: Constants.TEXT_STYLE4,
-                  ),
-                ),
-                CustomTextFormField(
-                  controller: groupNameController,
-                  hint: 'group name'.tr(),
-                  validateInput: (p) {},
-                  saveInput: (p) {},
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                BlocConsumer<PointsBloc, PointsState>(
-                  listener: (ctx, state) {
-                    if(state is GetPointsSucceed){
-                      // int points = ctx.read<PointsBloc>().points;
-                      // if(points < 150)
-                      //   EasyLoading.showError('no 150 points'.tr());
-                      // else {
-                        //pop to close bottom sheet first
-                        NamedNavigatorImpl().pop();
-                        NamedNavigatorImpl().push(
-                            NamedRoutes.CREATE_GROUP_SCREEN, arguments: {
-                          'groupName': groupNameController.text,
-                        });
-                      //}
-                    }
-                  },
-                  builder: (ctx, state) {
-                  if(state is GetPointsLoading)
-                    return Center(child: CircularProgressIndicator(color: MyColors.secondaryColor,),);
-                  else
-                    return CustomElevatedButton(
-                      color: MyColors.secondaryColor,
-                      text: 'create'.tr(),
-                      function: () {
-                        if(groupNameController.text.isEmpty)
-                          EasyLoading.showError('please enter group name'.tr());
-                        else
-                          ctx.read<PointsBloc>().add(GetPoints());
-                      },
-                    );
-                }),
-                // BlocConsumer<PaymentBloc, PaymentState>(
-                //   listener: (ctx, state) {
-                //     if (state is PaymentForGiftSuccess) {
-                //       EasyLoading.showInfo('Success');
-                //       final basketItems = ctx.read<BasketBloc>().basketItems;
-                //       ctx.read<GiftsBloc>().add(SendGift(
-                //         basketItems,
-                //         user,
-                //       ));
-                //     } else if (state is PaymentForGiftFailed)
-                //       EasyLoading.showError(state.message);
-                //   },
-                //   builder: (ctx, state) {
-                //     if (state is PaymentForGiftLoading)
-                //       return Center(
-                //         child: CircularProgressIndicator(
-                //           color: MyColors.secondaryColor,
-                //         ),
-                //       );
-                //     else
-                //       return CustomElevatedButton(
-                //         color: MyColors.secondaryColor,
-                //         text: 'send'.tr(),
-                //         function: () async {
-                //           try {
-                //             DatabaseRepositoryImpl _databaseRepositoryImpl =
-                //             DatabaseRepositoryImpl();
-                //
-                //             user = await _databaseRepositoryImpl
-                //                 .getUserByUserCode(userCodeController.text);
-                //             print('user is ${user.toMap()}');
-                //             if (user.id != null) {
-                //               print(user.id! + 'hhh');
-                //               ctx.read<PaymentBloc>().add(PayForGift());
-                //             } else {
-                //               EasyLoading.showError('no user found'.tr());
-                //             }
-                //           } catch (e) {
-                //             if (e == 'Bad state: No element')
-                //               EasyLoading.showError('no user found'.tr());
-                //             else {
-                //               print('error us  ');
-                //               EasyLoading.showError('error occurred'.tr());
-                //             }
-                //           }
-                //         },
-                //       );
-                //   },
-                // ),
-                //to left the screen up as much as the bottom keyboard takes, so we can scroll down
-                Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(ctx).viewInsets.bottom)),
-              ],
-            ),
+                    text: 'create'.tr(),
+                    function: () {
+                      if(groupNameController.text.isEmpty)
+                        EasyLoading.showError('please enter group name'.tr());
+                      else
+                        ctx.read<PointsBloc>().add(GetPoints());
+                    },
+                  );
+              }),
+              // BlocConsumer<PaymentBloc, PaymentState>(
+              //   listener: (ctx, state) {
+              //     if (state is PaymentForGiftSuccess) {
+              //       EasyLoading.showInfo('Success');
+              //       final basketItems = ctx.read<BasketBloc>().basketItems;
+              //       ctx.read<GiftsBloc>().add(SendGift(
+              //         basketItems,
+              //         user,
+              //       ));
+              //     } else if (state is PaymentForGiftFailed)
+              //       EasyLoading.showError(state.message);
+              //   },
+              //   builder: (ctx, state) {
+              //     if (state is PaymentForGiftLoading)
+              //       return Center(
+              //         child: CircularProgressIndicator(
+              //           color: MyColors.secondaryColor,
+              //         ),
+              //       );
+              //     else
+              //       return CustomElevatedButton(
+              //         color: MyColors.secondaryColor,
+              //         text: 'send'.tr(),
+              //         function: () async {
+              //           try {
+              //             DatabaseRepositoryImpl _databaseRepositoryImpl =
+              //             DatabaseRepositoryImpl();
+              //
+              //             user = await _databaseRepositoryImpl
+              //                 .getUserByUserCode(userCodeController.text);
+              //             print('user is ${user.toMap()}');
+              //             if (user.id != null) {
+              //               print(user.id! + 'hhh');
+              //               ctx.read<PaymentBloc>().add(PayForGift());
+              //             } else {
+              //               EasyLoading.showError('no user found'.tr());
+              //             }
+              //           } catch (e) {
+              //             if (e == 'Bad state: No element')
+              //               EasyLoading.showError('no user found'.tr());
+              //             else {
+              //               print('error us  ');
+              //               EasyLoading.showError('error occurred'.tr());
+              //             }
+              //           }
+              //         },
+              //       );
+              //   },
+              // ),
+              //to left the screen up as much as the bottom keyboard takes, so we can scroll down
+              Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(ctx).viewInsets.bottom)),
+            ],
           ),
         );
       },

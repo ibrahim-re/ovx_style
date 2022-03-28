@@ -84,7 +84,7 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
       if (event is SendVoice) {
         emit(SendVoiceLoading());
         try {
-          await _hand.sendVoice(event.roomId, event.message);
+          await _hand.sendVoice(event.roomId, event.message, event.chatType);
           emit(SendVoiceDone());
         } catch (e) {
           emit(SendVoiceFailed('failed to send message'.tr()));
@@ -94,7 +94,7 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
       if (event is UploadImageToRoom) {
         emit(UploadImageToRoomLoadingState());
         try {
-          final String url = await _hand.uploadImageToRoom(event.roomId, event.Image);
+          final String url = await _hand.uploadImageToRoom(event.roomId, event.Image, event.chatType);
           emit(UploadImageToRoomDoneState(url));
         } catch (e) {
           emit(UploadImageToRoomFailedState('Failed sending Image !!'));
@@ -117,6 +117,26 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
           emit(GetGroupsDone());
         } catch (e) {
           emit(CreateGroupFailed('error occurred'.tr()));
+        }
+      }
+      else if(event is GetMoreMessages){
+        emit(GetMoreMessagesLoading());
+        try{
+          List<Message> messages = await _hand.getMoreMessages(event.roomId, event.lastFetchedMessageId);
+          emit(GetMoreMessagesDone(messages));
+        }catch(e){
+          print('error is $e');
+          emit(GetMoreMessagesFailed('error occurred'.tr()));
+        }
+      }
+      else if(event is GetMoreGroupMessages){
+        emit(GetMoreGroupMessagesLoading());
+        try{
+          List<GroupMessage> messages = await _hand.getMoreGroupMessages(event.groupId, event.lastFetchedMessageId);
+          emit(GetMoreGroupMessagesDone(messages));
+        }catch(e){
+          print('error is $e');
+          emit(GetMoreGroupMessagesFailed('error occurred'.tr()));
         }
       }
     });

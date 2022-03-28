@@ -141,10 +141,10 @@ class _VoiceMessageShapeState extends State<VoiceMessageShape> {
           Expanded(
             child: _player.flag == 0 || _player.flag == 2
                 ? Divider(
-                    color: MyColors.secondaryColor,
+                    color: widget.isMe ? MyColors.secondaryColor : Colors.white,
                     thickness: 2,
                   )
-                : RecordWavesWidget(),
+                : RecordWavesWidget(color: widget.isMe ? MyColors.secondaryColor : Colors.white,),
           ),
           const SizedBox(width: 4),
           CircleAvatar(

@@ -49,7 +49,6 @@ class GiftsBloc extends Bloc<GiftsEvent, GiftsState> {
             productNames.add(element.productName!);
           });
 
-          print(productNames);
           HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendGifts');
           final results = await callable.call(<String, dynamic>{
             'id': giftId,

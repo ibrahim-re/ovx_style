@@ -24,21 +24,22 @@ abstract class DatabaseRepository {
   Future<String> checkIfRoomExists(String firstUserId, String secondUserId);
   Future<void> markMessageAsRead(String msgId, String roomId);
   Future<void> markGroupMessageAsRead(String msgId, String groupId);
-  Stream<Map<String, Message>> getChatMessages(String roomId);
-  Stream<Map<String, GroupMessage>> getGroupChatMessages(String groupId);
+  Stream<List<Message>> getChatMessages(String roomId);
+  Stream<List<GroupMessage>> getGroupChatMessages(String groupId);
   Stream<Message> getLastMessage(String roomId);
+  Future<List<Message>> getMoreMessages(String roomId, String lastFetchedMessageId);
+  Future<List<GroupMessage>> getMoreGroupMessages(String roomId, String lastFetchedMessageId);
   Stream<GroupMessage> getGroupLastMessage(String groupId);
   Stream<int> checkForUnreadMessages(String userId);
   Future<void> sendMessage(String roomId, String message);
   Future<void> sendGroupMessage(String groupId, GroupMessage groupMessage);
-  Future<void> sendVoice(String roomId, String message);
+  Future<void> sendVoice(String roomId, String message, ChatType chatType);
   Future<User> getUserData(String userId);
   Future<void> updateUserData(Map<String, dynamic> userData, String userId);
   Future<void> updateOfferAdded(String userId, String offerId);
-  Future<String> uploadImageToRoom(String roomId, File Image);
+  Future<String> uploadImageToRoom(String roomId, File Image, ChatType chatType);
   Future<void> updateCoverImage(String coverImageURL, String userId);
-  Future<List<String>> uploadFilesToStorage(
-      List<String> filePaths, String uId, String path);
+  Future<List<String>> uploadFilesToStorage(List<String> filePaths, String uId, String path);
   Future<void> deleteFilesFromStorage(List<String> urls);
   Future<User> getUserById(String uId);
   Future<User> getUserByUserCode(String userCode);
@@ -108,22 +109,20 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
 
   @override
   Future<void> sendMessage(String roomId, String message) async {
-    final String selectedId = FirebaseFirestore.instance
-        .collection('chats')
+    final String selectedId = _chats
         .doc(roomId)
         .collection('Messages')
         .doc()
         .id;
 
-    await FirebaseFirestore.instance
-        .collection('chats')
+    await _chats
         .doc(roomId)
         .collection('Messages')
         .doc(selectedId)
         .set({
-      'type': 0,
+      'msgType': 0,
       'msgId': selectedId,
-      'value': message,
+      'msgValue': message,
       'isRead': false,
       'sender': SharedPref.getUser().id!,
       'createdAt': DateTime.now(),
@@ -131,7 +130,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<String> uploadImageToRoom(String roomId, File Image) async {
+  Future<String> uploadImageToRoom(String roomId, File Image, ChatType chatType) async {
     UploadTask uploadTask = FirebaseStorage.instance
         .ref('chatsImages/$roomId/${Image.path.split('/').last}')
         .putFile(Image);
@@ -139,15 +138,17 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
     String url = await taskSnapshot.ref.getDownloadURL();
 
-    final String selectedId = FirebaseFirestore.instance
-        .collection('chats')
+
+    CollectionReference ref = chatType == ChatType.Chat ? _chats : _groupChats;
+
+    final String selectedId = ref
         .doc(roomId)
         .collection('Messages')
         .doc()
         .id;
 
-    await FirebaseFirestore.instance
-        .collection('chats')
+    if(chatType == ChatType.Chat)
+      await ref
         .doc(roomId)
         .collection('Messages')
         .doc(selectedId)
@@ -155,9 +156,25 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
       'createdAt': DateTime.now(),
       'sender': SharedPref.getUser().id,
       'msgId': selectedId,
-      'type': 1,
-      'value': url
+      'msgType': 1,
+      'isRead': false,
+      'msgValue': url
     });
+    else
+      await ref
+          .doc(roomId)
+          .collection('Messages')
+          .doc(selectedId)
+          .set({
+        'createdAt': DateTime.now(),
+        'sender': SharedPref.getUser().id,
+        'msgId': selectedId,
+        'msgType': 1,
+        'readBy': [],
+        'msgValue': url,
+        'senderImage': SharedPref.getUser().profileImage,
+        'senderName': SharedPref.getUser().userName,
+      });
 
     return url;
   }
@@ -227,9 +244,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<List<String>> uploadFilesToStorage(
-      List<String> filePaths, String folderName, String path,
-      {offerId}) async {
+  Future<List<String>> uploadFilesToStorage(List<String> filePaths, String folderName, String path, {offerId}) async {
     try {
       List<String> urls = [];
       for (String s in filePaths) {
@@ -277,8 +292,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<void> updateOfferLiked(
-      String offerId, String userId, bool likeOrDislike) async {
+  Future<void> updateOfferLiked(String offerId, String userId, bool likeOrDislike) async {
     try {
       if (likeOrDislike) {
         await _users.doc(userId).update({
@@ -514,8 +528,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<void> updateUserData(
-      Map<String, dynamic> userData, String userId) async {
+  Future<void> updateUserData(Map<String, dynamic> userData, String userId) async {
     try {
       await _users
           .doc(userId)
@@ -549,8 +562,7 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<void> sendPoints(
-      String senderId, String receiverId, int pointsAmount) async {
+  Future<void> sendPoints(String senderId, String receiverId, int pointsAmount) async {
     try {
       //remove points from sender
       await removePoints(pointsAmount, senderId);
@@ -623,24 +635,28 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
 
   //a stream to get messages when updated
   @override
-  Stream<Map<String, Message>> getChatMessages(String roomId) async* {
-    Map<String, Message> fetchedMessages = {};
+  Stream<List<Message>> getChatMessages(String roomId) async* {
+    List<Message> fetchedMessages = [];
     final snapshots = _chats
         .doc(roomId)
         .collection('Messages')
-        .orderBy('createdAt')
+        .orderBy('createdAt', descending: true)
+        .limit(20)
         .snapshots();
+
     await for (var snapshot in snapshots) {
+      //clear list to avoid repeating
+      fetchedMessages = [];
       for (var doc in snapshot.docs) {
         Message message = Message.fromJson(doc.data());
         //if sender is not me, mark message as read
         if(message.sender != SharedPref.getUser().id && message.isRead == false)
           await markMessageAsRead(message.msgId!, roomId);
-        if (!fetchedMessages.containsKey(message.msgId))
-          fetchedMessages.putIfAbsent(message.msgId!, () => message);
+        fetchedMessages.add(message);
       }
 
       print('getted');
+
 
       yield fetchedMessages;
     }
@@ -670,7 +686,6 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
       'isRead': true,
     });
 
-    print('ww is $msgId');
     await _users.doc(SharedPref.getUser().id).collection('unreadMessages').doc(msgId).delete();
     print('$msgId marked as read');
   }
@@ -696,22 +711,23 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Stream<Map<String, GroupMessage>> getGroupChatMessages(String groupId) async* {
-    Map<String, GroupMessage> fetchedMessages = {};
+  Stream<List<GroupMessage>> getGroupChatMessages(String groupId) async* {
+   List<GroupMessage> fetchedMessages = [];
     final snapshots = _groupChats
         .doc(groupId)
         .collection('Messages')
-        .orderBy('createdAt')
+        .orderBy('createdAt', descending: true)
+        .limit(20)
         .snapshots();
     await for (var snapshot in snapshots) {
+      fetchedMessages = [];
       for (var doc in snapshot.docs) {
         GroupMessage groupMessage = GroupMessage.fromJson(doc.data());
         //if sender is not me, mark message as read
         String myId = SharedPref.getUser().id!;
         if(groupMessage.sender != myId && !groupMessage.readBy!.contains(myId))
           await markGroupMessageAsRead(groupMessage.msgId!, groupId);
-        if (!fetchedMessages.containsKey(groupMessage.msgId))
-          fetchedMessages.putIfAbsent(groupMessage.msgId!, () => groupMessage);
+        fetchedMessages.add(groupMessage);
       }
 
       print('getted ${fetchedMessages.length}');
@@ -783,13 +799,12 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   }
 
   @override
-  Future<void> sendVoice(String roomId, String message) async {
-    final String selectedId = FirebaseFirestore.instance
-        .collection('chats')
-        .doc(roomId)
-        .collection('Messages')
-        .doc()
-        .id;
+  Future<void> sendVoice(String roomId, String message, ChatType chatType) async {
+
+    CollectionReference ref = chatType == ChatType.Chat ? _chats : _groupChats;
+
+    //get id
+    final String selectedId = ref.doc(roomId).collection('Messages').doc().id;
 
     File AudioFile = new File(message);
     final String _storedPath = '${DateTime.now().toString()}' + AudioFile.path.split('/').last;
@@ -801,19 +816,34 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
     TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
     String url = await taskSnapshot.ref.getDownloadURL();
 
-    await FirebaseFirestore.instance
-        .collection('chats')
+    if(chatType == ChatType.Chat)
+      await ref
         .doc(roomId)
         .collection('Messages')
         .doc(selectedId)
         .set({
-      'type': 2,
+      'msgType': 2,
       'msgId': selectedId,
-      'value': url,
+      'msgValue': url,
       'isRead': false,
       'sender': SharedPref.getUser().id!,
       'createdAt': DateTime.now(),
     });
+    else
+      await ref
+          .doc(roomId)
+          .collection('Messages')
+          .doc(selectedId)
+          .set({
+        'msgType': 2,
+        'msgId': selectedId,
+        'msgValue': url,
+        'readBy': [],
+        'sender': SharedPref.getUser().id!,
+        'createdAt': DateTime.now(),
+        'senderImage': SharedPref.getUser().profileImage,
+        'senderName': SharedPref.getUser().userName,
+      });
   }
 
   @override
@@ -829,6 +859,51 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
         lastMessage = GroupMessage.fromJson(snapshot.docs.last.data());
         yield lastMessage;
       }
+    }
+  }
+
+  @override
+  Future<List<Message>> getMoreMessages(String roomId, String lastFetchedMessageId) async {
+    try{
+      //print('last is ${_lastFetchedMessage!.data()}');
+      List<Message> messages = [];
+      final documentSnapshot = await _chats.doc(roomId).collection('Messages').doc(lastFetchedMessageId).get();
+      final querySnapshot = await _chats.doc(roomId).collection('Messages')
+          .orderBy('createdAt', descending: true)
+          .startAfterDocument(documentSnapshot)
+          .limit(20)
+          .get();
+
+      for(var doc in querySnapshot.docs){
+        Message message = Message.fromJson(doc.data());
+        messages.add(message);
+      }
+
+      return messages;
+    }catch(e){
+      throw e;
+    }
+  }
+
+  @override
+  Future<List<GroupMessage>> getMoreGroupMessages(String roomId, String lastFetchedMessageId) async {
+    try{
+      List<GroupMessage> messages = [];
+      final documentSnapshot = await _groupChats.doc(roomId).collection('Messages').doc(lastFetchedMessageId).get();
+      final querySnapshot = await _groupChats.doc(roomId).collection('Messages')
+          .orderBy('createdAt', descending: true)
+          .startAfterDocument(documentSnapshot)
+          .limit(20)
+          .get();
+
+      for(var doc in querySnapshot.docs){
+        GroupMessage groupMessage = GroupMessage.fromJson(doc.data());
+        messages.add(groupMessage);
+      }
+
+      return messages;
+    }catch(e){
+      throw e;
     }
   }
 }

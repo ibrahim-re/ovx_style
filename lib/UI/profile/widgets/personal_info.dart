@@ -89,10 +89,7 @@ class PersonalInfo extends StatelessWidget {
                   color: MyColors.lightGrey,
                 ),
                 if(SharedPref.getUser().userType != UserType.Guest.toString())
-                  BlocProvider(
-                    create: (context) => PointsBloc(),
-                    child: PointsItem(),
-                  ),
+                  PointsItem(),
               ],
             ),
           ),

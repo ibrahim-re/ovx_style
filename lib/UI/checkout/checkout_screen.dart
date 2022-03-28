@@ -28,13 +28,10 @@ class checkOutScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('checkout'.tr()),
       ),
-      body: BlocProvider<PaymentBloc>(
-        create: (context) => PaymentBloc(),
-        child: CheckOutWidget(
-          subtotal: subtotal,
-          vat: vat,
-          shippingCost: shippingCost,
-        ),
+      body: CheckOutWidget(
+        subtotal: subtotal,
+        vat: vat,
+        shippingCost: shippingCost,
       ),
     );
   }

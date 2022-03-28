@@ -15,6 +15,9 @@ import 'package:ovx_style/bloc/offer_bloc/offer_events.dart';
 import 'package:ovx_style/helper/offer_helper.dart';
 
 class FiltersWidget extends StatefulWidget {
+  final UserType userType;
+
+  FiltersWidget({required this.userType});
   @override
   State<FiltersWidget> createState() => _FiltersWidgetState();
 }
@@ -27,7 +30,15 @@ class _FiltersWidgetState extends State<FiltersWidget> {
     'post': OfferType.Post,
   };
 
+  List<String> showOnly = [];
   RangeValues val = RangeValues(0, 10000);
+
+  void _updateShowOnly(String offerType) {
+    if (!showOnly.contains(offerType))
+      showOnly.add(offerType);
+    else
+      showOnly.remove(offerType);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +74,7 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                     .map(
                       (item) => GestureDetector(
                         onTap: () {
-                          context.read<OfferBloc>().updateShowOnly(iconNames[item].toString());
+                          _updateShowOnly(iconNames[item].toString());
 
                           setState(() {});
                         },
@@ -72,7 +83,7 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                             Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: context.read<OfferBloc>().showOnly.contains(iconNames[item]!.toString())
+                                  color: showOnly.contains(iconNames[item].toString())
                                       ? MyColors.lightGrey
                                       : MyColors.primaryColor,
                                   borderRadius: BorderRadius.circular(15),
@@ -98,7 +109,7 @@ class _FiltersWidgetState extends State<FiltersWidget> {
               const SizedBox(
                 height: 100,
               ),
-              if (context.read<OfferBloc>().showOnly.contains(OfferType.Product.toString()))
+              if (showOnly.contains(OfferType.Product.toString()))
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -107,8 +118,7 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                       style: Constants.TEXT_STYLE4,
                     ),
                     RangeSlider(
-                      labels: RangeLabels(val.start.ceil().toString(),
-                          val.end.ceil().toString()),
+                      labels: RangeLabels(val.start.ceil().toString(), val.end.ceil().toString()),
                       divisions: 10000,
                       activeColor: MyColors.secondaryColor,
                       inactiveColor: MyColors.lightGrey,
@@ -137,7 +147,7 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                     color: MyColors.secondaryColor,
                     text: 'apply'.tr(),
                     function: () {
-                      context.read<OfferBloc>().add(FilterOffers(val.start, val.end, OfferHelper.categories));
+                      context.read<OfferBloc>().add(GetFilteredOffers(val.start, val.end, OfferHelper.categories, showOnly, widget.userType));
                       NamedNavigatorImpl().pop();
                     },
                   ),
@@ -148,5 +158,6 @@ class _FiltersWidgetState extends State<FiltersWidget> {
         ],
       ),
     );
+    return Container();
   }
 }

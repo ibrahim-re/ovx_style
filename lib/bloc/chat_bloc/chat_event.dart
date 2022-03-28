@@ -42,15 +42,31 @@ class SendMessage extends ChatEvents {
 }
 
 class UploadImageToRoom extends ChatEvents {
-  final String roomId;
-  final File Image;
+  String roomId;
+  File Image;
+  ChatType chatType;
 
-  UploadImageToRoom(this.roomId, this.Image);
+  UploadImageToRoom(this.roomId, this.Image, this.chatType);
 }
 
 class SendVoice extends ChatEvents {
-  final String roomId;
-  final String message;
+  String roomId;
+  String message;
+  ChatType chatType;
 
-  SendVoice(this.roomId, this.message);
+  SendVoice(this.roomId, this.message, this.chatType);
+}
+
+class GetMoreMessages extends ChatEvents {
+  String roomId;
+  String lastFetchedMessageId;
+
+  GetMoreMessages(this.roomId, this.lastFetchedMessageId);
+}
+
+class GetMoreGroupMessages extends ChatEvents {
+  String groupId;
+  String lastFetchedMessageId;
+
+  GetMoreGroupMessages(this.groupId, this.lastFetchedMessageId);
 }

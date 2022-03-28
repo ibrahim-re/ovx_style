@@ -2,24 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 
 class RecordWavesWidget extends StatelessWidget {
-
+  final Color color;
   final List<int> durations = [900,700,600,800,500];
+
+  RecordWavesWidget({required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: new List<Widget>.generate(12, (index) => RecordWave(duration: durations[index%5],)),
+      children: new List<Widget>.generate(12, (index) => RecordWave(duration: durations[index%5], color: color,)),
     );
   }
 }
 
 
 class RecordWave extends StatefulWidget {
-  //final Color color;
+  final Color color;
   final int duration;
 
-  RecordWave({required this.duration});
+  RecordWave({required this.duration, required this.color});
 
   @override
   _RecordWaveState createState() => _RecordWaveState();
@@ -57,7 +59,7 @@ class _RecordWaveState extends State<RecordWave> with SingleTickerProviderStateM
       width: 3,
       height: animation!.value / 2,
       decoration: BoxDecoration(
-        color: MyColors.secondaryColor,
+        color: widget.color,
         borderRadius: BorderRadius.circular(5),
       ),
     );

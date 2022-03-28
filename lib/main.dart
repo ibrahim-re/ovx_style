@@ -14,6 +14,8 @@ import 'package:ovx_style/bloc/bills_bloc/bills_bloc.dart';
 import 'package:ovx_style/bloc/currencies_bloc/currencies_bloc.dart';
 import 'package:ovx_style/bloc/login_bloc/login_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
+import 'package:ovx_style/bloc/payment_bloc/payment_bloc.dart';
+import 'package:ovx_style/bloc/points_bloc/points_bloc.dart';
 import 'package:ovx_style/bloc/stories_bloc/bloc.dart';
 import 'Utiles/navigation/named_navigator_impl.dart';
 import 'bloc/chat_bloc/chat_bloc.dart';
@@ -116,6 +118,12 @@ void main() async {
           ),
           BlocProvider<ChatBloc>(
             create: (context) => ChatBloc(),
+          ),
+          BlocProvider<PaymentBloc>(
+            create: (context) => PaymentBloc(),
+          ),
+          BlocProvider<PointsBloc>(
+            create: (context) => PointsBloc(),
           ),
         ],
         child: const MarketingApp(),

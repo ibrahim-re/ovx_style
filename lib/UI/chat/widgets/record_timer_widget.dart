@@ -56,7 +56,8 @@ class _RecordTimerWidgetState extends State<RecordTimerWidget> {
 
   @override
   void dispose() {
-    timer!.cancel();
+    if(timer != null)
+      timer!.cancel();
     super.dispose();
   }
 

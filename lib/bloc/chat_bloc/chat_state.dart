@@ -95,3 +95,31 @@ class SendVoiceFailed extends ChatStates {
   String message;
   SendVoiceFailed(this.message);
 }
+
+class GetMoreMessagesLoading extends ChatStates {}
+
+class GetMoreMessagesDone extends ChatStates {
+  List<Message> messages;
+
+  GetMoreMessagesDone(this.messages);
+}
+
+class GetMoreMessagesFailed extends ChatStates {
+  String message;
+
+  GetMoreMessagesFailed(this.message);
+}
+
+class GetMoreGroupMessagesLoading extends ChatStates {}
+
+class GetMoreGroupMessagesDone extends ChatStates {
+  List<GroupMessage> messages;
+
+  GetMoreGroupMessagesDone(this.messages);
+}
+
+class GetMoreGroupMessagesFailed extends ChatStates {
+  String message;
+
+  GetMoreGroupMessagesFailed(this.message);
+}
