@@ -23,7 +23,7 @@ import 'package:ovx_style/bloc/signup_bloc/signup_bloc.dart';
 import 'package:ovx_style/bloc/signup_bloc/signup_events.dart';
 import 'package:ovx_style/bloc/signup_bloc/signup_states.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
-import 'country_picker.dart';
+import '../../widgets/country_picker.dart';
 
 class SignupForm extends StatefulWidget {
   @override
@@ -276,8 +276,7 @@ class _SignupFormState extends State<SignupForm> {
                 color: MyColors.secondaryColor,
                 text: 'signup'.tr(),
                 function: () {
-                  bool isSubmitted =
-                  AuthHelper.submitSignUpForm(_signUpFormKey);
+                  bool isSubmitted = AuthHelper.submitSignUpForm(_signUpFormKey);
                   if (isSubmitted)
                     bloc.add(SignUpButtonPressed(AuthHelper.userInfo));
                 }),

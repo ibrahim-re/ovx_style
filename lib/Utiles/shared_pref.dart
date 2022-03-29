@@ -67,11 +67,36 @@ class SharedPref {
     if(userInfo.isNotEmpty)
       decodedMap = json.decode(userInfo);
 
-
     if(decodedMap['userType'] == UserType.Company.toString())
       return CompanyUser.fromMap(decodedMap, decodedMap['id'] ?? '');
     else
       return PersonUser.fromMap(decodedMap, decodedMap['id'] ?? '');
+  }
+
+  static List<String> getChatCountries(){
+
+    String userInfo = _sharedPreferences.getString('User Info') ?? '';
+    Map<String, dynamic> decodedMap = {};
+    if(userInfo.isNotEmpty)
+      decodedMap = json.decode(userInfo);
+    else return [];
+
+    List<String> countries = (decodedMap['chatCountries'] as List<dynamic>).map((e) => e.toString()).toList();
+
+    return countries;
+  }
+
+  static List<String> getStoryCountries(){
+
+    String userInfo = _sharedPreferences.getString('User Info') ?? '';
+    Map<String, dynamic> decodedMap = {};
+    if(userInfo.isNotEmpty)
+      decodedMap = json.decode(userInfo);
+    else return [];
+
+    return decodedMap['storyCountries'];
+
+
   }
 
   static deleteUser() {

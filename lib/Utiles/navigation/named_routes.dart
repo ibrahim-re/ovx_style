@@ -40,4 +40,5 @@ class NamedRoutes {
   static const CREATE_GROUP_SCREEN = "CREATE_GROUP_SCREEN";
   static const CREATE_CHAT_SCREEN = "CREATE_CHAT_SCREEN";
   static const IMAGE_SCREEN = "IMAGE_SCREEN";
+  static const POINTS_CHECKOUT_SCREEN = "POINTS_CHECKOUT_SCREEN";
 }

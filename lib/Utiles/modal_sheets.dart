@@ -4,6 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offers/widgets/add_offers_widgets/offer_type_widget.dart';
+import 'package:ovx_style/UI/widgets/country_picker.dart';
 import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
 import 'package:ovx_style/UI/widgets/custom_text_form_field.dart';
 import 'package:ovx_style/UI/widgets/filters_widget.dart';
@@ -196,102 +197,105 @@ class ModalSheets {
       context: context,
       builder: (ctx) {
         return Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    SvgPicture.asset('assets/images/gift.svg',
-                        fit: BoxFit.scaleDown),
-                    const SizedBox(width: 6),
-                    Text(
-                      'send gift'.tr(),
-                      style: TextStyle(
-                        fontSize: 20,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  SvgPicture.asset('assets/images/gift.svg',
+                      fit: BoxFit.scaleDown),
+                  const SizedBox(width: 6),
+                  Text(
+                    'send gift'.tr(),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: MyColors.secondaryColor,
+                    ),
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'enter friend code'.tr(),
+                  style: Constants.TEXT_STYLE4,
+                ),
+              ),
+              CustomTextFormField(
+                controller: userCodeController,
+                hint: 'friend code'.tr(),
+                validateInput: (p) {},
+                saveInput: (p) {},
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              BlocConsumer<PaymentBloc, PaymentState>(
+                listener: (ctx, state) {
+                  if (state is PaymentForGiftSuccess) {
+                    EasyLoading.showInfo('Success');
+                    final basketItems = ctx.read<BasketBloc>().basketItems;
+                    ctx.read<GiftsBloc>().add(SendGift(
+                          basketItems,
+                          user,
+                        ));
+                  } else if (state is PaymentForGiftFailed)
+                    EasyLoading.showError(state.message);
+                },
+                builder: (ctx, state) {
+                  if (state is PaymentForGiftLoading)
+                    return Center(
+                      child: CircularProgressIndicator(
                         color: MyColors.secondaryColor,
                       ),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'enter friend code'.tr(),
-                    style: Constants.TEXT_STYLE4,
-                  ),
-                ),
-                CustomTextFormField(
-                  controller: userCodeController,
-                  hint: 'friend code'.tr(),
-                  validateInput: (p) {},
-                  saveInput: (p) {},
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                BlocConsumer<PaymentBloc, PaymentState>(
-                  listener: (ctx, state) {
-                    if (state is PaymentForGiftSuccess) {
-                      EasyLoading.showInfo('Success');
-                      final basketItems = ctx.read<BasketBloc>().basketItems;
-                      ctx.read<GiftsBloc>().add(SendGift(
-                            basketItems,
-                            user,
-                          ));
-                    } else if (state is PaymentForGiftFailed)
-                      EasyLoading.showError(state.message);
-                  },
-                  builder: (ctx, state) {
-                    if (state is PaymentForGiftLoading)
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: MyColors.secondaryColor,
-                        ),
-                      );
-                    else
-                      return CustomElevatedButton(
-                        color: MyColors.secondaryColor,
-                        text: 'send'.tr(),
-                        function: () async {
-                          try {
-                            DatabaseRepositoryImpl _databaseRepositoryImpl =
-                                DatabaseRepositoryImpl();
+                    );
+                  else
+                    return CustomElevatedButton(
+                      color: MyColors.secondaryColor,
+                      text: 'send'.tr(),
+                      function: () async {
+                        try {
+                          DatabaseRepositoryImpl _databaseRepositoryImpl =
+                              DatabaseRepositoryImpl();
 
-                            user = await _databaseRepositoryImpl
-                                .getUserByUserCode(userCodeController.text);
-                            print('user is ${user.toMap()}');
-                            if (user.id != null) {
-                              print(user.id! + 'hhh');
-                              ctx.read<PaymentBloc>().add(PayForGift());
-                            } else {
-                              EasyLoading.showError('no user found'.tr());
-                            }
-                          } catch (e) {
-                            if (e == 'Bad state: No element')
-                              EasyLoading.showError('no user found'.tr());
-                            else {
-                              print('error us  ');
-                              EasyLoading.showError('error occurred'.tr());
-                            }
+                          user = await _databaseRepositoryImpl
+                              .getUserByUserCode(userCodeController.text);
+                          print('user is ${user.toMap()}');
+                          if (user.id != null) {
+                            print(user.id! + 'hhh');
+                            ctx.read<PaymentBloc>().add(PayForGift());
+                          } else {
+                            EasyLoading.showError('no user found'.tr());
                           }
-                        },
-                      );
-                  },
-                ),
-                //to left the screen up as much as the bottom keyboard takes, so we can scroll down
-                Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(ctx).viewInsets.bottom)),
-              ],
-            ),
+                        } catch (e) {
+                          if (e == 'Bad state: No element')
+                            EasyLoading.showError('no user found'.tr());
+                          else {
+                            print('error us  ');
+                            EasyLoading.showError('error occurred'.tr());
+                          }
+                        }
+                      },
+                    );
+                },
+              ),
+              //to left the screen up as much as the bottom keyboard takes, so we can scroll down
+              Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(ctx).viewInsets.bottom)),
+            ],
+          ),
         );
       },
     );
   }
 
-  void showSendPoints(BuildContext context, TextEditingController amountController, TextEditingController codeController) {
+  void showSendPoints(
+      BuildContext context,
+      TextEditingController amountController,
+      TextEditingController codeController) {
     showModalBottomSheet(
       isScrollControlled: true,
       shape: OutlineInputBorder(
@@ -323,13 +327,15 @@ class ModalSheets {
                   style: Constants.TEXT_STYLE4,
                 ),
               ),
-              BlocBuilder<PointsBloc, PointsState>(builder: (ctx, state) => Text(
-                '${ctx.read<PointsBloc>().points}' +
-                    ' ' +
-                    'available points'.tr(),
-                style: Constants.TEXT_STYLE6
-                    .copyWith(color: MyColors.secondaryColor),
-              ),),
+              BlocBuilder<PointsBloc, PointsState>(
+                builder: (ctx, state) => Text(
+                  '${ctx.read<PointsBloc>().points}' +
+                      ' ' +
+                      'available points'.tr(),
+                  style: Constants.TEXT_STYLE6
+                      .copyWith(color: MyColors.secondaryColor),
+                ),
+              ),
               const SizedBox(
                 height: 8,
               ),
@@ -498,91 +504,176 @@ class ModalSheets {
               const SizedBox(
                 height: 8,
               ),
-              BlocConsumer<PointsBloc, PointsState>(
-                listener: (ctx, state) {
-                  if(state is GetPointsSucceed){
-                    // int points = ctx.read<PointsBloc>().points;
-                    // if(points < 150)
-                    //   EasyLoading.showError('no 150 points'.tr());
-                    // else {
-                      //pop to close bottom sheet first
-                      NamedNavigatorImpl().pop();
-                      NamedNavigatorImpl().push(
-                          NamedRoutes.CREATE_GROUP_SCREEN, arguments: {
-                        'groupName': groupNameController.text,
-                      });
-                    //}
-                  }
-                },
-                builder: (ctx, state) {
-                if(state is GetPointsLoading)
-                  return Center(child: CircularProgressIndicator(color: MyColors.secondaryColor,),);
+              BlocConsumer<PointsBloc, PointsState>(listener: (ctx, state) {
+                if (state is GetPointsSucceed) {
+                  // int points = ctx.read<PointsBloc>().points;
+                  // if(points < 150)
+                  //   EasyLoading.showError('no 150 points'.tr());
+                  // else {
+                  //pop to close bottom sheet first
+                  NamedNavigatorImpl().pop();
+                  NamedNavigatorImpl()
+                      .push(NamedRoutes.CREATE_GROUP_SCREEN, arguments: {
+                    'groupName': groupNameController.text,
+                  });
+                  //}
+                }
+              }, builder: (ctx, state) {
+                if (state is GetPointsLoading)
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: MyColors.secondaryColor,
+                    ),
+                  );
                 else
                   return CustomElevatedButton(
                     color: MyColors.secondaryColor,
                     text: 'create'.tr(),
                     function: () {
-                      if(groupNameController.text.isEmpty)
+                      if (groupNameController.text.isEmpty)
                         EasyLoading.showError('please enter group name'.tr());
                       else
                         ctx.read<PointsBloc>().add(GetPoints());
                     },
                   );
               }),
-              // BlocConsumer<PaymentBloc, PaymentState>(
-              //   listener: (ctx, state) {
-              //     if (state is PaymentForGiftSuccess) {
-              //       EasyLoading.showInfo('Success');
-              //       final basketItems = ctx.read<BasketBloc>().basketItems;
-              //       ctx.read<GiftsBloc>().add(SendGift(
-              //         basketItems,
-              //         user,
-              //       ));
-              //     } else if (state is PaymentForGiftFailed)
-              //       EasyLoading.showError(state.message);
-              //   },
-              //   builder: (ctx, state) {
-              //     if (state is PaymentForGiftLoading)
-              //       return Center(
-              //         child: CircularProgressIndicator(
-              //           color: MyColors.secondaryColor,
-              //         ),
-              //       );
-              //     else
-              //       return CustomElevatedButton(
-              //         color: MyColors.secondaryColor,
-              //         text: 'send'.tr(),
-              //         function: () async {
-              //           try {
-              //             DatabaseRepositoryImpl _databaseRepositoryImpl =
-              //             DatabaseRepositoryImpl();
-              //
-              //             user = await _databaseRepositoryImpl
-              //                 .getUserByUserCode(userCodeController.text);
-              //             print('user is ${user.toMap()}');
-              //             if (user.id != null) {
-              //               print(user.id! + 'hhh');
-              //               ctx.read<PaymentBloc>().add(PayForGift());
-              //             } else {
-              //               EasyLoading.showError('no user found'.tr());
-              //             }
-              //           } catch (e) {
-              //             if (e == 'Bad state: No element')
-              //               EasyLoading.showError('no user found'.tr());
-              //             else {
-              //               print('error us  ');
-              //               EasyLoading.showError('error occurred'.tr());
-              //             }
-              //           }
-              //         },
-              //       );
-              //   },
-              // ),
-              //to left the screen up as much as the bottom keyboard takes, so we can scroll down
               Padding(
                   padding: EdgeInsets.only(
                       bottom: MediaQuery.of(ctx).viewInsets.bottom)),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void showBuyPointsSheet(context) {
+    TextEditingController pointsController = TextEditingController();
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        borderSide: BorderSide(color: MyColors.primaryColor),
+      ),
+      context: context,
+      builder: (ctx) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'buy points'.tr(),
+                style: TextStyle(
+                  fontSize: 20,
+                  color: MyColors.secondaryColor,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'each 1000 points'.tr(),
+                  style: Constants.TEXT_STYLE4,
+                ),
+              ),
+              CustomTextFormField(
+                controller: pointsController,
+                hint: 'points amount'.tr(),
+                keyboardType: TextInputType.number,
+                validateInput: (p) {},
+                saveInput: (p) {},
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              CustomElevatedButton(
+                color: MyColors.secondaryColor,
+                text: 'buy'.tr(),
+                function: () {
+                  if (pointsController.text.isEmpty)
+                    EasyLoading.showError('please enter points amount'.tr());
+                  else
+                    NamedNavigatorImpl()
+                        .push(NamedRoutes.IMAGE_SCREEN, arguments: {
+                      'points amount': pointsController.text,
+                    });
+                },
+              ),
+              Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(ctx).viewInsets.bottom)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void showAddChatCountriesSheet(context) {
+    List<String> countries = [];
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        borderSide: BorderSide(color: MyColors.primaryColor),
+      ),
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setNewState) => Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'add chat countries'.tr(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: MyColors.secondaryColor,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    'each country 5000 points'.tr(),
+                    style: Constants.TEXT_STYLE4,
+                  ),
+                ),
+                CountryPicker(
+                  saveCountry: (val) {
+                    setNewState((){
+                      countries.add(val.toString());
+                    });
+                  },
+                  saveCity: (val) {},
+                  showCities: false,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: countries.map((country) => Text('$country', style: Constants.TEXT_STYLE4,),).toList(),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                CustomElevatedButton(
+                  color: MyColors.secondaryColor,
+                  text: 'add'.tr(),
+                  function: () {},
+                ),
+              ],
+            ),
           ),
         );
       },

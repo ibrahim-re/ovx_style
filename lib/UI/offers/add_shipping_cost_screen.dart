@@ -1,6 +1,7 @@
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/UI/widgets/country_picker.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'widgets/add_offers_widgets/circular_add_button.dart';
@@ -81,37 +82,16 @@ class _AddShippingCostsScreenState extends State<AddShippingCostsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           flex: 4,
-                          child: CSCPicker(
-                            onCountryChanged: (newVal) {
-                              print(newVal);
-                              _selectedCountry = newVal.toString();
+                          child: CountryPicker(
+                            saveCountry: (val){
+                              _selectedCountry = val.toString();
                             },
-                            onStateChanged: (newVal) {
-                              print(newVal);
-                            },
-                            onCityChanged: (newVal) {
-                              print(newVal);
-                            },
+                            saveCity: (val){print(val.toString());},
                             showCities: false,
-                            showStates: false,
-                            selectedItemStyle: Constants.TEXT_STYLE1,
-                            dropdownItemStyle: Constants.TEXT_STYLE1,
-                            dropdownHeadingStyle: Constants.TEXT_STYLE1,
-
-                            dropdownDecoration: BoxDecoration(
-                              color: MyColors.primaryColor,
-                              border: Border.fromBorderSide(BorderSide.none),
-                            ),
-                            disabledDropdownDecoration: BoxDecoration(
-                              color: MyColors.lightGrey,
-                              border: Border.fromBorderSide(BorderSide.none),
-                            ),
-
-                            // dropdownDialogRadius: 16,
-                            // searchBarRadius: 16,
                           ),
                         ),
                         HorizontalSpaceWidget(widthPercentage: 0.015),
@@ -119,6 +99,7 @@ class _AddShippingCostsScreenState extends State<AddShippingCostsScreen> {
                           flex: 3,
                           child: CustomTextFormField(
                             controller: _priceController,
+                            height: 1,
                             hint: 'price'.tr() + ' (${SharedPref.getCurrency()})',
                             keyboardType: TextInputType.number,
                             validateInput: (p) {},

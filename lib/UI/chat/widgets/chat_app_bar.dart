@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'add_chat_icon.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import '../../widgets/notification_icon.dart';
+import 'chat_countries_icon.dart';
 
 class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   const ChatAppBar({Key? key, required this.getSelectedIndex})
@@ -40,6 +42,7 @@ class _ChatAppBarState extends State<ChatAppBar> with SingleTickerProviderStateM
       ),
       actions: [
         NotificationIcon(),
+        ChatCountriesIcon(),
         AddChatIcon(
           selectedIndex: selectedIndex,
         ),

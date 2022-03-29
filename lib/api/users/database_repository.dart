@@ -72,12 +72,11 @@ class DatabaseRepositoryImpl extends DatabaseRepository {
   @override
   Future<QuerySnapshot<Object?>> GetContacts() async {
     try {
+      List<String> chatCountries = SharedPref.getChatCountries();
       final data = await _users
           .limit(20)
-          .where(
-            'userId',
-            isNotEqualTo: SharedPref.getUser().id,
-          )
+          .where('userId', isNotEqualTo: SharedPref.getUser().id,)
+          .where('country', whereIn: chatCountries)
           .get();
 
       return data;

@@ -82,6 +82,10 @@ class AuthRepositoryImpl extends AuthRepository {
 
         userInfo['searchStrings'] = Helper().generateSearchStrings(userInfo['userName']);
 
+        //initialize story and chat countries with user country
+        userInfo['storyCountries'] = [userInfo['country']];
+        userInfo['chatCountries'] = [userInfo['country']];
+
         //set user id as path to his info
         await _databaseRepositoryImpl.addUserData(uId, userInfo);
 

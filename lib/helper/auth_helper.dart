@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:min_id/min_id.dart';
@@ -35,12 +36,17 @@ class AuthHelper {
 
   static bool submitSignUpForm(GlobalKey<FormState> formKey) {
     if (formKey.currentState!.validate()){
+      if(AuthHelper.userInfo['country'] == null || AuthHelper.userInfo['city'] == null){
+        EasyLoading.showInfo('please enter country'.tr());
+        return false;
+      }
+
       if(agreedOnTerms){
         formKey.currentState!.save();
         return true;
       }
       else {
-        EasyLoading.showInfo('You should agree on terms and conditions');
+        EasyLoading.showInfo('you should agree on terms and conditions'.tr());
         return false;
       }
     }

@@ -95,6 +95,8 @@ class User {
 class PersonUser extends User {
   String? gender;
   String? dateBirth;
+  List<String>? chatCountries;
+  List<String>? storyCountries;
 
   PersonUser({
     image,
@@ -115,6 +117,8 @@ class PersonUser extends User {
     required password,
     required userType,
     id,
+    this.chatCountries,
+    this.storyCountries,
     this.dateBirth,
     this.gender,
   }) : super(
@@ -142,6 +146,8 @@ class PersonUser extends User {
       : super.fromMap(userInfo, uId) {
     this.gender = userInfo['gender'] ?? '';
     this.dateBirth = userInfo['dateBirth'] ?? '';
+    this.storyCountries = ((userInfo['storyCountries'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
+    this.chatCountries = ((userInfo['chatCountries'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
   }
 
   Map<String, dynamic> toMap() => {
@@ -166,6 +172,8 @@ class PersonUser extends User {
         'offersLiked': offersLiked,
         'comments': comments,
         'points': points,
+    'chatCountries': chatCountries,
+    'storyCountries': storyCountries,
       };
 }
 

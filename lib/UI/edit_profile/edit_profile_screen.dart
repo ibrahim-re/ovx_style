@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
-import 'package:ovx_style/UI/auth/widgets/country_picker.dart';
+import '../widgets/country_picker.dart';
 import 'package:ovx_style/UI/auth/widgets/phone_text_field.dart';
 import 'package:ovx_style/UI/auth/widgets/profile_image.dart';
 import 'package:ovx_style/UI/auth/widgets/registration_image_picker.dart';

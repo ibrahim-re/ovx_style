@@ -16,6 +16,7 @@ class CustomTextFormField extends StatelessWidget {
   final enabled;
   final onChanged;
   final initialValue;
+  final height;
 
   CustomTextFormField({
     this.controller,
@@ -28,6 +29,7 @@ class CustomTextFormField extends StatelessWidget {
     this.enabled = true,
     this.onChanged,
     this.initialValue,
+    this.height,
     @required this.validateInput,
     @required this.saveInput,
   });
@@ -39,7 +41,7 @@ class CustomTextFormField extends StatelessWidget {
       controller: controller,
       cursorColor: MyColors.secondaryColor,
       cursorWidth: 3,
-      style: Constants.TEXT_STYLE1,
+      style: height != null ? Constants.TEXT_STYLE1.copyWith(height: 1) : Constants.TEXT_STYLE1,
       keyboardType: keyboardType ?? TextInputType.text,
       obscureText: showPassword ? false : true,
       validator: validateInput,

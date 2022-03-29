@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
-import 'package:ovx_style/UI/auth/widgets/country_picker.dart';
+import '../../widgets/country_picker.dart';
 import 'package:ovx_style/UI/auth/widgets/phone_text_field.dart';
 import 'package:ovx_style/UI/checkout/widgets/send_as_gift_container.dart';
 import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
