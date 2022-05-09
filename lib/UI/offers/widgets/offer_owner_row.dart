@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offers/widgets/waiting_offer_owner_row.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
@@ -36,7 +38,8 @@ class OfferOwnerRow extends StatelessWidget {
                   if(offerOwnerId == SharedPref.getUser().id)
                     return;
                   else
-                    NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});
+                    user.id != null ? NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user})
+                        : EasyLoading.showToast('user not found'.tr());
                 },
                 child: Row(
                   children: [

@@ -1,102 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ovx_style/UI/widgets/guest_sign_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
-
-class SubscriptionSection extends StatelessWidget {
+import 'package:ovx_style/Utiles/constants.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/bloc/packages_bloc/packages_bloc.dart';
+import 'package:ovx_style/bloc/packages_bloc/packages_event.dart';
+import 'package:ovx_style/bloc/packages_bloc/packages_state.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'current_package_widget.dart';
+import 'package:ovx_style/model/package.dart';
+class SubscriptionSection extends StatefulWidget {
   const SubscriptionSection({Key? key}) : super(key: key);
 
   @override
+  State<SubscriptionSection> createState() => _SubscriptionSectionState();
+}
+
+class _SubscriptionSectionState extends State<SubscriptionSection> {
+  late final userType;
+  @override
+  void initState() {
+    userType = SharedPref.getUser().userType;
+    if (userType != UserType.Guest.toString())
+      context.read<PackagesBloc>().add(GetCurrentPackage());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      padding: const EdgeInsets.all(10),
+      height: screenHeight * 0.3,
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       decoration: BoxDecoration(
+        color: MyColors.lightBlue.withOpacity(0.2),
         borderRadius: BorderRadius.circular(10),
-        color: Colors.blue.shade100.withOpacity(0.2),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Row(
             children: [
-              Image(
-                image: NetworkImage(
-                    'https://image.freepik.com/free-vector/3d-tiger-characters-set_317810-3181.jpg'),
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
+              SvgPicture.asset('assets/images/subscription.svg'),
+              const SizedBox(
+                width: 8,
               ),
-              const SizedBox(width: 10),
               Text(
-                'Subscription',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                ),
-              )
-            ],
-          ),
-          itemBuilder(
-            text: 'Package is done, need to renew it ?',
-            icon: null,
-            clr: Colors.blue.shade100.withOpacity(0.3),
-            textcolor: Colors.black,
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: itemBuilder(
-                      text: 'Renew',
-                      icon: Icons.published_with_changes_sharp,
-                      clr: Colors.amber,
-                      textcolor: Colors.black)),
-              const SizedBox(width: 10),
-              Expanded(
-                child: itemBuilder(
-                  text: 'Update',
-                  icon: Icons.update,
-                  textcolor: Colors.white,
-                  clr: Colors.indigo.shade400,
-                ),
+                'subscription'.tr(),
+                style: Constants.TEXT_STYLE4,
               ),
             ],
           ),
+          const SizedBox(
+            height: 8,
+          ),
+          userType != UserType.Guest.toString()
+              ? BlocBuilder<PackagesBloc, PackagesState>(
+                  builder: (ctx, state) {
+                    if (state is GetCurrentPackageFailed)
+                      return Center(
+                        child: Text(
+                          state.message,
+                          style: Constants.TEXT_STYLE6,
+                        ),
+                      );
+                    else if (state is GetCurrentPackageLoading || state is PackagesInitialState)
+                      return Center(
+                        child: RefreshProgressIndicator(
+                          color: MyColors.secondaryColor,
+                        ),
+                      );
+                    else {
+                      Package? package = context.read<PackagesBloc>().currentPackage;
+                      return package != null ? CurrentPackageWidget(
+                        package: package,
+                      ) : Container();
+                    }
+                  },
+                )
+              : Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        'sign in to subscribe'.tr(),
+                        style: Constants.TEXT_STYLE6,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      GuestSignWidget(),
+                    ],
+                  ),
+                ),
         ],
       ),
     );
   }
-}
-
-Widget itemBuilder({
-  required String text,
-  required IconData? icon,
-  required Color clr,
-  required Color textcolor,
-}) {
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 8),
-    padding: const EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(15),
-      color: clr,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        icon == null
-            ? Container()
-            : Icon(
-                icon,
-                color: textcolor,
-              ),
-        Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            color: textcolor,
-          ),
-        ),
-      ],
-    ),
-  );
 }

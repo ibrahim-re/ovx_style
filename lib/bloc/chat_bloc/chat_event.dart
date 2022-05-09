@@ -70,3 +70,5 @@ class GetMoreGroupMessages extends ChatEvents {
 
   GetMoreGroupMessages(this.groupId, this.lastFetchedMessageId);
 }
+
+class FilterChats extends ChatEvents {}

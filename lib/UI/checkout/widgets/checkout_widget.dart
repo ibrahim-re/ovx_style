@@ -23,7 +23,7 @@ import 'package:ovx_style/bloc/payment_bloc/payment_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ovx_style/bloc/payment_bloc/payment_events.dart';
 import 'package:ovx_style/bloc/payment_bloc/payment_states.dart';
-import 'checkout_item.dart';
+import '../../widgets/checkout_item.dart';
 
 class CheckOutWidget extends StatefulWidget {
   CheckOutWidget({
@@ -155,17 +155,17 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
                   ],
                 ),
               ),
-            checkoutItem(
+            CheckoutItem(
               text: 'subtotal'.tr(),
               value: widget.subtotal,
             ),
             VerticalSpaceWidget(heightPercentage: 0.03),
-            checkoutItem(
+            CheckoutItem(
               text: 'vat'.tr(),
               value: widget.vat,
             ),
             VerticalSpaceWidget(heightPercentage: 0.03),
-            checkoutItem(
+            CheckoutItem(
               text: 'shipping costs'.tr(),
               value: widget.shippingCost,
             ),
@@ -176,7 +176,7 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
                 thickness: 4,
               ),
             ),
-            checkoutItem(
+            CheckoutItem(
               text: 'total'.tr(),
               value: total,
             ),
@@ -226,8 +226,9 @@ class _CheckOutWidgetState extends State<CheckOutWidget> {
                 else
                   return BlocListener<BillsBloc, BillsState>(
                     listener: (context, state) {
-                      if(state is AddBillsSucceed)
+                      if(state is AddBillsSucceed){
                         context.read<BasketBloc>().add(ClearBasket());
+                      }
                     },
                     child: CustomElevatedButton(
                       color: MyColors.secondaryColor,

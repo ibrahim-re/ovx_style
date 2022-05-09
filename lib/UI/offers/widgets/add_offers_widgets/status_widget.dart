@@ -7,13 +7,17 @@ import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 
 class StatusWidget extends StatelessWidget {
+  final String whereToUse;
+
+  StatusWidget({required this.whereToUse});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showStatusPicker(context);
+        showStatusPicker(context, whereToUse);
       },
       child: CustomRedirectWidget(
         iconName: 'status',
@@ -22,8 +26,7 @@ class StatusWidget extends StatelessWidget {
     );
   }
 
-  showStatusPicker(BuildContext context) {
-
+  showStatusPicker(BuildContext context, String whereToUse) {
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -32,50 +35,88 @@ class StatusWidget extends StatelessWidget {
         ),
       ),
       context: context,
-      builder: (ctx) => StatefulBuilder(
-          builder: (ctx, setNewState) {
-            return SafeArea(
-              child: Container(
-                child: Wrap(
-                  children: <Widget>[
-                    ListTile(
-                      title: Text(
-                        'new'.tr(),
-                        style: Constants.TEXT_STYLE3,
-                      ),
-                      trailing: context.read<AddOfferBloc>().status == OfferStatus.New.toString() ? Icon(
-                        Icons.done,
-                        size: 20,
-                        color: MyColors.secondaryColor,
-                      ) : CircleAvatar(backgroundColor: Colors.transparent,),
-                      onTap: (){
-                        setNewState((){
-                          context.read<AddOfferBloc>().updateStatus(OfferStatus.New.toString());
-                        });
-                      },
-                    ),
-                    ListTile(
-                      title: Text(
-                        'used'.tr(),
-                        style: Constants.TEXT_STYLE3,
-                      ),
-                      trailing: context.read<AddOfferBloc>().status == OfferStatus.Used.toString() ? Icon(
-                        Icons.done,
-                        size: 20,
-                        color: MyColors.secondaryColor,
-                      ): CircleAvatar(backgroundColor: Colors.transparent,),
-                      onTap: (){
-                        setNewState((){
-                          context.read<AddOfferBloc>().updateStatus(OfferStatus.Used.toString());
-                        });
-                      },
-                    ),
-                  ],
+      builder: (ctx) => StatefulBuilder(builder: (ctx, setNewState) {
+        return SafeArea(
+          child: Container(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                  title: Text(
+                    'new'.tr(),
+                    style: Constants.TEXT_STYLE3,
+                  ),
+                  trailing: whereToUse == 'Add Offer'
+                      ? context.read<AddOfferBloc>().status ==
+                              OfferStatus.New.toString()
+                          ? Icon(
+                              Icons.done,
+                              size: 20,
+                              color: MyColors.secondaryColor,
+                            )
+                          : CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                            )
+                      : OfferHelper.status == OfferStatus.New.toString()
+                          ? Icon(
+                              Icons.done,
+                              size: 20,
+                              color: MyColors.secondaryColor,
+                            )
+                          : CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                            ),
+                  onTap: () {
+                    setNewState(() {
+                      if (whereToUse == 'Add Offer')
+                        context
+                            .read<AddOfferBloc>()
+                            .updateStatus(OfferStatus.New.toString());
+                      else
+                        OfferHelper.status = OfferStatus.New.toString();
+                    });
+                  },
                 ),
-              ),
-            );
-          }
-      ),
+                ListTile(
+                  title: Text(
+                    'used'.tr(),
+                    style: Constants.TEXT_STYLE3,
+                  ),
+                  trailing: whereToUse == 'Add Offer'
+                      ? context.read<AddOfferBloc>().status ==
+                      OfferStatus.Used.toString()
+                      ? Icon(
+                    Icons.done,
+                    size: 20,
+                    color: MyColors.secondaryColor,
+                  )
+                      : CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                  )
+                      : OfferHelper.status == OfferStatus.Used.toString()
+                      ? Icon(
+                    Icons.done,
+                    size: 20,
+                    color: MyColors.secondaryColor,
+                  )
+                      : CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                  ),
+                  onTap: () {
+                    setNewState(() {
+                      if (whereToUse == 'Add Offer')
+                        context
+                            .read<AddOfferBloc>()
+                            .updateStatus(OfferStatus.Used.toString());
+                      else
+                        OfferHelper.status = OfferStatus.Used.toString();
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 }

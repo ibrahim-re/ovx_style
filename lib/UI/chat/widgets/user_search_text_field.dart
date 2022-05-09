@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
-import 'package:ovx_style/bloc/user_search_bloc/user_search_bloc.dart';
-import 'package:ovx_style/bloc/user_search_bloc/user_search_events.dart';
+import 'package:ovx_style/bloc/user_bloc/user_bloc.dart';
+import 'package:ovx_style/bloc/user_bloc/user_events.dart';
 import 'package:provider/src/provider.dart';
 
 class UserSearchTextField extends StatelessWidget {
@@ -18,8 +19,14 @@ class UserSearchTextField extends StatelessWidget {
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.search,
       onFieldSubmitted: (userInput) {
-        if (userInput.isNotEmpty)
-          context.read<UserSearchBloc>().add(SearchUser(userInput));
+        if (userInput.isNotEmpty && userInput.length > 3)
+          context.read<UserBloc>().add(SearchUser(userInput));
+        else
+          EasyLoading.showToast('5 chars at least'.tr());
+      },
+      onChanged: (userInput) {
+        if (userInput.isNotEmpty && userInput.length > 3)
+          context.read<UserBloc>().add(SearchUser(userInput));
       },
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 16),

@@ -82,6 +82,17 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                               AssetImage('assets/images/default_profile.jpg'),
                         ),
                 ),
+                Positioned(
+                  bottom: -75,
+                  child: CircleAvatar(
+                    radius: 15,
+                    backgroundColor: Colors.transparent,
+                    child: Text(
+                      widget.user.countryFlag!,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -193,6 +204,7 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                 return Center(
                   child: Text(
                     'no offers yet'.tr(),
+                    textAlign: TextAlign.center,
                     style: Constants.TEXT_STYLE8.copyWith(
                       color: MyColors.secondaryColor,
                       fontWeight: FontWeight.w500,

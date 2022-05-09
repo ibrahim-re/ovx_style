@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/helper/helper.dart';
 import '../widgets/country_picker.dart';
 import 'package:ovx_style/UI/auth/widgets/phone_text_field.dart';
 import 'package:ovx_style/UI/auth/widgets/profile_image.dart';
@@ -155,7 +156,7 @@ class _EditProfileState extends State<EditProfile> {
                       icon: 'email',
                       hint: '',
                       validateInput: (userInput) {
-                        bool validEmail = AuthHelper.isEmailValid(userInput);
+                        bool validEmail = AuthHelper.isEmailValid(userInput.trim());
                         if (validEmail)
                           return null;
                         else
@@ -237,9 +238,9 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     CountryPicker(
                       currentCity: user.city.isEmpty ? null : user.city,
-                      currentCountry: user.country.isEmpty ? null : user.country ,
+                      currentCountry: user.countryFlag.isEmpty ? null : user.countryFlag ,
                       saveCountry: (val) {
-                        user.country = val;
+                        user.countryFlag = Helper().getCountryFlag(val);
                       },
                       saveCity: (val) {
                         user.city = val;
@@ -251,9 +252,11 @@ class _EditProfileState extends State<EditProfile> {
                     GestureDetector(
                       onTap: () {
                         NamedNavigatorImpl().push(NamedRoutes.GOOGLE_MAPS_SCREEN, arguments: {
-                          'onSave': (latitude, longitude) {
+                          'onSave': (latitude, longitude, country) {
                             user.latitude = latitude;
                             user.longitude = longitude;
+                            print(country + 'poopop');
+                            user.country = country;
                           },
                         });
                       },

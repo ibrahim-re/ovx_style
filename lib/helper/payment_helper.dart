@@ -147,8 +147,9 @@ class PaymentHelper {
         shipCost = item.shippingCost ?? 0;
 
       double billTotalAmount = item.price! + shipCost + BasketHelper.calculateVAT(item.price!, item.vat!);
-      //remove company's share 15% from the total amount
-      billTotalAmount = billTotalAmount - (billTotalAmount * 0.15);
+      
+      //remove company's share 10% from the total amount
+      billTotalAmount = billTotalAmount - (billTotalAmount * 0.1);
       Bill newBill = Bill(
         id: billId,
         isRequested: false,

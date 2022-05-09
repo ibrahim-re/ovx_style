@@ -50,6 +50,7 @@ class BasketHelper{
 
     basketItems.forEach((item) {
 
+      print('cost ${item.shippingCost} ${item.productName}');
       if(!calculatedProductIds.contains(item.productId!)){
         calculatedProductIds.add(item.productId!);
         total += item.shippingCost!;

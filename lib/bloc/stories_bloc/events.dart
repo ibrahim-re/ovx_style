@@ -1,8 +1,16 @@
 import 'dart:io';
 
+import 'package:ovx_style/bloc/stories_bloc/states.dart';
+
 abstract class StoriesBlocEvents {}
 
 class FetchALLStories extends StoriesBlocEvents {}
+
+class FetchMoreStories extends StoriesBlocEvents {
+  String lastFetchedStoryId;
+
+  FetchMoreStories(this.lastFetchedStoryId);
+}
 
 class AddStory extends StoriesBlocEvents {
   final List<File> images;
@@ -23,3 +31,5 @@ class DeleteStory extends StoriesBlocEvents {
 
   DeleteStory(this.storyId, this.imageUrls);
 }
+
+class FilterStories extends StoriesBlocEvents {}

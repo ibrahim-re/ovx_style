@@ -7,6 +7,8 @@ import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/stories_bloc/bloc.dart';
 import 'package:ovx_style/bloc/stories_bloc/events.dart';
+import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/story_model.dart';
 import 'package:provider/src/provider.dart';
 
@@ -15,7 +17,7 @@ class StoryDetails extends StatefulWidget {
       : super(key: key);
 
   final navigator;
-  final oneStoryModel model;
+  final StoryModel model;
 
   @override
   State<StoryDetails> createState() => _StoryDetailsState();
@@ -106,7 +108,7 @@ class _StoryDetailsState extends State<StoryDetails> {
                       Spacer(),
                       OwnerRow(model: widget.model),
                       Description(desc: widget.model.storyDesc!),
-                      Reply(),
+                      //Reply(),
                     ],
                   ),
                 ),
@@ -116,68 +118,11 @@ class _StoryDetailsState extends State<StoryDetails> {
         ),
       ),
     );
-
-    /*return GestureDetector(
-      onTap: () {},
-      child: Scaffold(
-        body: Container(
-          width: w,
-          height: h,
-          child: Stack(
-            children: [
-              Container(
-                width: w,
-                height: h,
-                child: Image(
-                  image: NetworkImage(widget.model.storyUrls!.first),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: h * 0.05,
-                left: 0,
-                right: 0,
-                child: TopProgress(story: widget.model,),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16, left: 16, bottom: 10),
-                child: Column(
-                  children: [
-                    Spacer(),
-                    OwnerRow(model: widget.model),
-                    Description(desc: widget.model.storyDesc!),
-                    Reply(),
-                  ],
-                ),
-              ),
-              // Positioned(
-              //   top: h * 0.75,
-              //   left: w * 0.05,
-              //   right: w * 0.05,
-              //   child: OwnerRow(model: widget.model),
-              // ),
-              // Positioned(
-              //   top: h * 0.82,
-              //   left: w * 0.05,
-              //   right: w * 0.15,
-              //   child: Description(desc: widget.model.storyDesc!),
-              // ),
-              // Positioned(
-              //   bottom: h * 0.05,
-              //   left: 0,
-              //   right: 0,
-              //   child: reply(),
-              // ),
-            ],
-          ),
-        ),
-      ),
-    );*/
   }
 }
 
 class TopProgress extends StatelessWidget {
-  final oneStoryModel story;
+  final StoryModel story;
   final PageController pageController;
   final int currentIndex;
 
@@ -245,6 +190,13 @@ class TopProgress extends StatelessWidget {
             CustomPopUpMenu(
               color: Colors.white,
               ownerId: story.ownerId,
+              reportFunction: (){
+                String body = 'I want to report this story because of: \n\n\n\nStory ID: ${story.storyId}';
+                Helper().sendEmail('Report Story [OVX Style App]', body, []);
+              },
+              shareFunction: () async {
+                OfferHelper.sharePostOrStory(story.storyUrls!, story.storyDesc ?? ' ');
+              },
               deleteFunction: () {
                 context
                     .read<StoriesBloc>()
@@ -259,7 +211,7 @@ class TopProgress extends StatelessWidget {
 }
 
 class OwnerRow extends StatelessWidget {
-  final oneStoryModel model;
+  final StoryModel model;
 
   OwnerRow({required this.model});
 
@@ -267,6 +219,7 @@ class OwnerRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(bottom: 20),
       child: Row(
         children: [
           if (model.ownerImage != '')
@@ -293,7 +246,7 @@ class OwnerRow extends StatelessWidget {
           Spacer(),
           IconButton(
               onPressed: () {},
-              icon: model.liked.contains(SharedPref.getUser().id)
+              icon: model.likedBy.contains(SharedPref.getUser().id)
                   ? SvgPicture.asset(
                       'assets/images/heart.svg',
                       color: MyColors.red,
@@ -321,30 +274,30 @@ class Description extends StatelessWidget {
   }
 }
 
-class Reply extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RotatedBox(
-              quarterTurns: -45,
-              child: Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.white60,
-                size: 20,
-              ),
-            ),
-            Text(
-              'Relpy',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-              ),
-            ),
-          ],
-        ));
-  }
-}
+// class Reply extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//         alignment: Alignment.center,
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             RotatedBox(
+//               quarterTurns: -45,
+//               child: Icon(
+//                 Icons.arrow_forward_ios,
+//                 color: Colors.white60,
+//                 size: 20,
+//               ),
+//             ),
+//             Text(
+//               'Relpy',
+//               style: TextStyle(
+//                 color: Colors.white,
+//                 fontSize: 10,
+//               ),
+//             ),
+//           ],
+//         ));
+//   }
+// }

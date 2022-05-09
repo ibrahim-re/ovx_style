@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offers/widgets/add_offers_widgets/categories_widget.dart';
+import 'package:ovx_style/UI/offers/widgets/add_offers_widgets/status_widget.dart';
 import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
@@ -43,9 +44,10 @@ class _FiltersWidgetState extends State<FiltersWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(25.0),
+      padding: const EdgeInsets.all(12.0),
       child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
+        //crossAxisAlignment: WrapCrossAlignment.center,
+        //mainAxisSize: MainAxisSize.min,
         children: [
           Center(
             child: Text(
@@ -56,8 +58,9 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                   letterSpacing: 0.5),
             ),
           ),
-          Wrap(
-            //crossAxisAlignment: CrossAxisAlignment.stretch,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+           // mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'show only'.tr(),
@@ -107,7 +110,7 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                     .toList(),
               ),
               const SizedBox(
-                height: 100,
+                height: 8,
               ),
               if (showOnly.contains(OfferType.Product.toString()))
                 Column(
@@ -138,6 +141,10 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                     const SizedBox(
                       height: 8,
                     ),
+                    StatusWidget(whereToUse: 'Filter',),
+                    const SizedBox(
+                      height: 8,
+                    ),
                   ],
                 ),
               Center(
@@ -147,7 +154,7 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                     color: MyColors.secondaryColor,
                     text: 'apply'.tr(),
                     function: () {
-                      context.read<OfferBloc>().add(GetFilteredOffers(val.start, val.end, OfferHelper.categories, showOnly, widget.userType));
+                      context.read<OfferBloc>().add(GetFilteredOffers(val.start, val.end, OfferHelper.categories, OfferHelper.status, showOnly, widget.userType));
                       NamedNavigatorImpl().pop();
                     },
                   ),

@@ -62,41 +62,78 @@ class SharedPref {
 
   static User getUser(){
 
-    String userInfo = _sharedPreferences.getString('User Info') ?? '';
-    Map<String, dynamic> decodedMap = {};
-    if(userInfo.isNotEmpty)
-      decodedMap = json.decode(userInfo);
+    try {
+      String userInfo = _sharedPreferences.getString('User Info') ?? '';
+      Map<String, dynamic> decodedMap = {};
+      if(userInfo.isNotEmpty)
+        decodedMap = json.decode(userInfo);
 
-    if(decodedMap['userType'] == UserType.Company.toString())
-      return CompanyUser.fromMap(decodedMap, decodedMap['id'] ?? '');
-    else
-      return PersonUser.fromMap(decodedMap, decodedMap['id'] ?? '');
+      if(decodedMap['userType'] == UserType.Company.toString())
+        return CompanyUser.fromMap(decodedMap, decodedMap['id'] ?? '');
+      else
+        return PersonUser.fromMap(decodedMap, decodedMap['id'] ?? '');
+    } catch (e) {
+      throw e;
+    }
   }
 
-  static List<String> getChatCountries(){
+  static String getChatCountries(){
 
     String userInfo = _sharedPreferences.getString('User Info') ?? '';
     Map<String, dynamic> decodedMap = {};
     if(userInfo.isNotEmpty)
       decodedMap = json.decode(userInfo);
-    else return [];
+    else return '';
 
-    List<String> countries = (decodedMap['chatCountries'] as List<dynamic>).map((e) => e.toString()).toList();
+    String countries = decodedMap['chatCountries'];
 
     return countries;
   }
 
-  static List<String> getStoryCountries(){
+  static updateChatCountries(String countries){
+    User user = getUser();
+    user.chatCountries = countries;
+    setUser(user);
+  }
+
+  static String getStoryCountries(){
 
     String userInfo = _sharedPreferences.getString('User Info') ?? '';
     Map<String, dynamic> decodedMap = {};
     if(userInfo.isNotEmpty)
       decodedMap = json.decode(userInfo);
-    else return [];
+    else return '';
 
-    return decodedMap['storyCountries'];
+    String countries = decodedMap['storyCountries'];
 
+    return countries;
 
+  }
+
+  static updateStoryCountries(String countries){
+    User user = getUser();
+    user.storyCountries = countries;
+    setUser(user);
+  }
+
+  static String getPostsCountries(){
+
+    String userInfo = _sharedPreferences.getString('User Info') ?? '';
+    Map<String, dynamic> decodedMap = {};
+    if(userInfo.isNotEmpty)
+      decodedMap = json.decode(userInfo);
+    else return '';
+
+    String countries = decodedMap['postsCountries'];
+
+    return countries;
+
+  }
+
+  static updatePostsCountries(String countries){
+    User user = getUser();
+    user.postsCountries = countries;
+    setUser(user);
   }
 
   static deleteUser() {

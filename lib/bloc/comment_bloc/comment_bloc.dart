@@ -40,7 +40,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           event.offerOwnerId,
           {
             'id': id,
-            'userId': event.userId,
+            'ownerId': event.userId,
             'content': event.content,
             'userImage': event.userImage,
             'userName': event.userName,

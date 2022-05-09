@@ -11,13 +11,8 @@ import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/bills_bloc/bills_bloc.dart';
 import 'package:ovx_style/bloc/bills_bloc/bills_events.dart';
-import 'package:ovx_style/bloc/bills_bloc/bills_states.dart';
 import 'package:ovx_style/bloc/currencies_bloc/currencies_bloc.dart';
 import 'package:ovx_style/bloc/currencies_bloc/currencies_states.dart';
-import 'package:ovx_style/bloc/gifts_bloc/gifts_bloc.dart';
-import 'package:ovx_style/bloc/gifts_bloc/gifts_events.dart';
-import 'package:ovx_style/bloc/gifts_bloc/gifts_states.dart';
-import 'package:ovx_style/bloc/points_bloc/points_bloc.dart';
 import 'package:provider/src/provider.dart';
 
 import 'gift_item.dart';

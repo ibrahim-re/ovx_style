@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
-import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/api/offers/offers_repository.dart';
+import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
 import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/offer.dart';
@@ -12,7 +12,7 @@ class OfferBloc extends Bloc<OfferEvent, OfferState> {
   OfferBloc() : super(OfferStateInitial());
 
   OffersRepositoryImpl offersRepositoryImpl = OffersRepositoryImpl();
-
+  DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
   List<Offer> fetchedOffers = [];
 
   //in case many requests sent at same time
@@ -25,7 +25,6 @@ class OfferBloc extends Bloc<OfferEvent, OfferState> {
       yield FetchOffersLoading();
       try {
         fetchedOffers = await offersRepositoryImpl.getOffers(event.offerOwnerType);
-        print('length is ${fetchedOffers.length}');
         yield FetchOffersSucceed();
       } catch (e) {
         print('error is ${e.toString()}');
@@ -51,6 +50,7 @@ class OfferBloc extends Bloc<OfferEvent, OfferState> {
       yield GetUserOffersLoading();
       try{
         List<Offer> offers = await offersRepositoryImpl.getUserOffers(event.uId, event.offerOwnerType);
+        print('user offers ${offers.length}');
         yield GetUserOffersDone(offers);
       }catch(e){
         yield GetUserOffersFailed('error occurred'.tr());
@@ -68,43 +68,13 @@ class OfferBloc extends Bloc<OfferEvent, OfferState> {
     else if(event is GetFilteredOffers){
       yield GetFilteredOffersLoading();
       try{
-        List<Offer> offers = await offersRepositoryImpl.getFilteredOffers(event.minPrice, event.maxPrice, event.categories, event.offerTypes, event.userType);
+        List<Offer> offers = await offersRepositoryImpl.getFilteredOffers(event.minPrice, event.maxPrice, event.status, event.categories, event.offerTypes, event.userType);
+        OfferHelper.categories.clear();
+        OfferHelper.status = '';
         yield GetFilteredOffersDone(offers);
       }catch (e){
         yield GetFilteredOffersFailed('error occurred'.tr());
       }
     }
-    // else if (event is FilterOffers) {
-    //   yield FetchOffersLoading();
-    //
-    //   if (showOnly.isEmpty)
-    //     yield FetchOffersSucceed(fetchedOffers);
-    //
-    //   //check if show only contains product to filter by price and categories
-    //   else if (showOnly.contains(OfferType.Product.toString())) {
-    //     //first filter by types
-    //     List<Offer> filteredOffers = fetchedOffers
-    //         .where((offer) => showOnly.contains(offer.offerType))
-    //         .toList();
-    //     print(filteredOffers.length);
-    //
-    //     //then filter product offer type by categories
-    //     if (event.categories.isNotEmpty)
-    //       filteredOffers =
-    //           OfferHelper.filterCategories(filteredOffers, event.categories);
-    //
-    //     //then filter product offer type by price
-    //     filteredOffers = OfferHelper.filterPrices(
-    //         filteredOffers, event.minPrice, event.maxPrice);
-    //
-    //     print(filteredOffers.length);
-    //     yield FetchOffersSucceed(filteredOffers);
-    //   } else {
-    //     List<Offer> filteredOffers = fetchedOffers
-    //         .where((offer) => showOnly.contains(offer.offerType))
-    //         .toList();
-    //     yield FetchOffersSucceed(filteredOffers);
-    //   }
-    // }
   }
 }

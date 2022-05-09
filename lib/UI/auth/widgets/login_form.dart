@@ -57,7 +57,7 @@ class _LoginFormState extends State<LoginForm> {
               icon: 'person',
               keyboardType: TextInputType.emailAddress,
               validateInput: (userInput) {
-                bool validEmail = AuthHelper.isEmailValid(userInput);
+                bool validEmail = AuthHelper.isEmailValid(userInput.trim());
                 if (validEmail)
                   return null;
                 else

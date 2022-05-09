@@ -1,10 +1,9 @@
-import 'package:country_code_picker/country_code_picker.dart';
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/UI/widgets/country_picker.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
-import 'package:ovx_style/helper/auth_helper.dart';
-
 
 class PhoneTextField extends StatefulWidget {
   final save;
@@ -26,11 +25,12 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
       controller: widget.controller,
       cursorColor: MyColors.secondaryColor,
       cursorWidth: 3,
+      keyboardType: TextInputType.phone,
       style: Constants.TEXT_STYLE1,
       validator: widget.validate,
-      onSaved: (userInput){
-        if(userInput != null){
-          widget.save(_phoneNumber+userInput);
+      onSaved: (userInput) {
+        if (userInput != null) {
+          widget.save(_phoneNumber + userInput);
         }
       },
       decoration: InputDecoration(
@@ -40,17 +40,22 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
           color: MyColors.grey,
           size: 27,
         ),
-        suffixIcon: CountryCodePicker(
-          showFlag: false,
-          searchStyle: Constants.TEXT_STYLE1.copyWith(fontWeight: FontWeight.w500),
-          dialogTextStyle: Constants.TEXT_STYLE1.copyWith(fontWeight: FontWeight.w500),
-          textStyle: Constants.TEXT_STYLE1.copyWith(fontWeight: FontWeight.w500),
-          initialSelection: 'SA',
-          onChanged: (code){
-            setState(() {
-              _phoneNumber = code.toString();
-            });
-            print(_phoneNumber);
+        suffixIcon: TextButton(
+          child: Text(
+            '$_phoneNumber',
+            style: Constants.TEXT_STYLE6.copyWith(color: MyColors.grey),
+          ),
+          onPressed: () {
+            showCountryPicker(
+              context: context,
+              showPhoneCode: true,
+              onSelect: (country) {
+                print('+${country.phoneCode}');
+                setState(() {
+                  _phoneNumber = '+${country.phoneCode}';
+                });
+              },
+            );
           },
         ),
         hintText: 'mobile'.tr(),

@@ -1,16 +1,23 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/model/offer.dart';
 import 'package:ovx_style/model/product_property.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class OfferHelper {
   //temporary variables to hold property color
   static Color tempColor = Colors.transparent;
-  static Map<String, double> shippingCosts = {};
 
+  //used for filters
   static List<String> categories = [];
+  static String status = '';
 
   static updateCategories(String categoryName) {
     categories.contains(categoryName)
@@ -18,7 +25,8 @@ class OfferHelper {
         : categories.add(categoryName);
   }
 
-  static List<Offer> filterPrices(List<Offer> offers, double minPrice, double maxPrice) {
+  static List<Offer> filterPrices(
+      List<Offer> offers, double minPrice, double maxPrice) {
     List<String> offersToRemove = [];
 
     for (var offer in offers) {
@@ -75,14 +83,14 @@ class OfferHelper {
     String convertTo = SharedPref.getCurrency();
 
     //already USD don't convert
-    if(convertTo == 'USD')
-      return double.parse(amount.toStringAsFixed(2));
+    if (convertTo == 'USD') return double.parse(amount.toStringAsFixed(2));
 
     double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(convertTo);
     double total = amount * currencyPriceAgainstDollar;
 
     //return total amount
-    return double.parse(total.toStringAsFixed(2));
+    return
+      double.parse(total.toStringAsFixed(2));
   }
 
   //this function is to convert NONE USD (value chosen by user) values to the currency used in database USD
@@ -90,11 +98,10 @@ class OfferHelper {
     String convertFrom = SharedPref.getCurrency();
 
     //already USD don't convert
-    if(convertFrom == 'USD')
-      return amount;
+    if (convertFrom == 'USD') return amount;
 
-    double currencyPriceAgainstDollar = SharedPref.getCurrencyPrice(
-        convertFrom);
+    double currencyPriceAgainstDollar =
+        SharedPref.getCurrencyPrice(convertFrom);
     double total = amount / currencyPriceAgainstDollar;
 
     //return total amount
@@ -110,7 +117,7 @@ class OfferHelper {
     }
   }
 
-  static List<Offer> fromDocumentSnapshotToOffer(QuerySnapshot querySnapshot){
+  static List<Offer> fromDocumentSnapshotToOffer(QuerySnapshot querySnapshot) {
     List<Offer> offers = [];
 
     for (var e in querySnapshot.docs) {
@@ -132,8 +139,93 @@ class OfferHelper {
       }
     }
 
-
     return offers;
   }
 
+  static void shareProduct(List<String> offerMedia, String offerName, String offerDesc,
+      List<String> categories, String status) async {
+    try {
+      List<String> paths = [];
+      for (var image in offerMedia) {
+        final url = Uri.parse(image);
+        final response = await http.get(url);
+        final bytes = response.bodyBytes;
+
+        final temp = await getTemporaryDirectory();
+        final index = offerMedia.indexOf(image);
+        final path = '${temp.path}/image$index.jpg';
+        await File(path).writeAsBytes(bytes);
+        paths.add(path);
+      }
+
+      Share.shareFiles(paths,
+          subject: offerName,
+          text: '${offerName}\n${offerDesc}\n${categories.toString()}\n${status}');
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  static void sharePostOrStory(List<String> offerMedia, String text) async {
+    try {
+      if(offerMedia.isEmpty)
+        Share.share(text);
+      else{
+        List<String> paths = [];
+        for (var image in offerMedia) {
+          final url = Uri.parse(image);
+          final response = await http.get(url);
+          final bytes = response.bodyBytes;
+
+          final temp = await getTemporaryDirectory();
+          final index = offerMedia.indexOf(image);
+          final path = '${temp.path}/image$index.jpg';
+          await File(path).writeAsBytes(bytes);
+          paths.add(path);
+        }
+        Share.shareFiles(paths, text: text);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  static void shareImage(List<String> offerMedia) async {
+    try {
+      List<String> paths = [];
+      for (var image in offerMedia) {
+        final url = Uri.parse(image);
+        final response = await http.get(url);
+        final bytes = response.bodyBytes;
+
+        final temp = await getTemporaryDirectory();
+        final index = offerMedia.indexOf(image);
+        final path = '${temp.path}/image$index.jpg';
+        await File(path).writeAsBytes(bytes);
+        paths.add(path);
+      }
+
+      Share.shareFiles(paths);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  static void shareVideo(String link) async {
+    try {
+      EasyLoading.show(status: 'please wait'.tr());
+      final url = Uri.parse(link);
+      final response = await http.get(url);
+      final bytes = response.bodyBytes;
+
+      EasyLoading.dismiss();
+      final temp = await getTemporaryDirectory();
+      final path = '${temp.path}/video.mp4';
+      await File(path).writeAsBytes(bytes);
+
+      Share.shareFiles([path]);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

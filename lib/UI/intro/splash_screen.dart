@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ovx_style/UI/intro/intro_screen.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
-import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/login_bloc/login_bloc.dart';
 import 'package:ovx_style/bloc/login_bloc/login_states.dart';
@@ -48,12 +46,9 @@ class _SplashScreenState extends State<SplashScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: MyColors.secondaryColor,
+        backgroundColor: Colors.white,
         body: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 40),
-            child: Image.asset('assets/images/logo.png'),
-          ),
+          child: Image.asset('assets/images/logo.png'),
         ),
       ),
     );

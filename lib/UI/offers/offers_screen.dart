@@ -16,6 +16,7 @@ import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_states.dart';
 import 'package:badges/badges.dart';
+import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/model/offer.dart';
 
 class OffersScreen extends StatefulWidget {
@@ -30,7 +31,7 @@ class _OffersScreenState extends State<OffersScreen> {
 
   @override
   void initState() {
-    context.read<OfferBloc>().add(FetchOffers(UserType.Person));
+    context.read<OfferBloc>().add(FetchOffers(UserType.User));
     context.read<NotificationsBloc>().add(FetchNotifications());
     scrollController.addListener(() {
       if (scrollController.offset >=
@@ -38,7 +39,7 @@ class _OffersScreenState extends State<OffersScreen> {
           !scrollController.position.outOfRange) {
         context
             .read<OfferBloc>()
-            .add(FetchMoreOffers(UserType.Person, _lastFetchedOfferId));
+            .add(FetchMoreOffers(UserType.User, _lastFetchedOfferId));
       }
     });
     super.initState();
@@ -64,14 +65,14 @@ class _OffersScreenState extends State<OffersScreen> {
 
           //filter icon
           FilterIcon(ontap: () {
-            ModalSheets().showFilters(context, UserType.Person);
+            ModalSheets().showFilters(context, UserType.User);
           }),
         ],
       ),
       body: RefreshIndicator(
         color: MyColors.secondaryColor,
         onRefresh: () async {
-          context.read<OfferBloc>().add(FetchOffers(UserType.Person));
+          context.read<OfferBloc>().add(FetchOffers(UserType.User));
         },
         child: BlocBuilder<OfferBloc, OfferState>(
           builder: (ctx, state) {
@@ -104,18 +105,24 @@ class _OffersScreenState extends State<OffersScreen> {
                 );
               else {
                 _lastFetchedOfferId = offers.last.id ?? '';
-                return OffersListView(
-                  fetchedOffers: offers,
-                  scrollController: scrollController,
-                  child: state is FetchMoreOffersLoading
-                      ? Center(
-                          child: RefreshProgressIndicator(
-                            color: MyColors.secondaryColor,
-                          ),
-                        )
-                      : state is FetchMoreOffersFailed
-                          ? Center(child: Text('error occurred'.tr()))
-                          : Container(),
+                return Column(
+                  children: [
+                    Expanded(
+                      child: OffersListView(
+                        fetchedOffers: offers,
+                        scrollController: scrollController,
+                      ),
+                    ),
+                    state is FetchMoreOffersLoading
+                        ? Center(
+                            child: RefreshProgressIndicator(
+                              color: MyColors.secondaryColor,
+                            ),
+                          )
+                        : state is FetchMoreOffersFailed
+                            ? Center(child: Text('error occurred'.tr()))
+                            : Container(),
+                  ],
                 );
               }
             }

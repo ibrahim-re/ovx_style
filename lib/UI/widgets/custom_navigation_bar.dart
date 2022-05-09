@@ -5,7 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
-import 'package:ovx_style/api/users/database_repository.dart';
+import 'package:ovx_style/api/chats/chats_repository.dart';
+import 'package:ovx_style/model/message_model.dart';
 
 class CustomNavigationBar extends StatefulWidget {
   final int selectedIndex;
@@ -39,7 +40,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
     'profile',
   ];
 
-  DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
+  ChatsRepositoryImpl chatsRepositoryImpl = ChatsRepositoryImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +58,14 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
           ),
         ],
       ),
-      child: StreamBuilder<int>(
-        stream: databaseRepositoryImpl.checkForUnreadMessages(SharedPref.getUser().id!),
+      child: StreamBuilder<List<UnreadMessage>>(
+        stream: chatsRepositoryImpl.checkForUnreadMessages(SharedPref.getUser().id!),
         builder: (ctx, snapshot) {
-          int unreadMessages = 0;
+          List<UnreadMessage> unreadMessages = [];
+         // int unreadMessages = 0;
           if (snapshot.hasData) unreadMessages = snapshot.data!;
 
+          print('unread ${unreadMessages.length}');
           return ListView.builder(
             itemCount: 5,
             physics: NeverScrollableScrollPhysics(),
@@ -94,7 +97,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                               : MyColors.grey,
                           fit: BoxFit.scaleDown,
                         ),
-                        if (index == 2 && unreadMessages > 0)
+                        if (index == 2 && unreadMessages.length > 0)
                           Positioned(
                             top: 0,
                             right: 0,

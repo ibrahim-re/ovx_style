@@ -23,6 +23,7 @@ import 'package:ovx_style/bloc/signup_bloc/signup_bloc.dart';
 import 'package:ovx_style/bloc/signup_bloc/signup_events.dart';
 import 'package:ovx_style/bloc/signup_bloc/signup_states.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
+import 'package:ovx_style/helper/helper.dart';
 import '../../widgets/country_picker.dart';
 
 class SignupForm extends StatefulWidget {
@@ -105,15 +106,16 @@ class _SignupFormState extends State<SignupForm> {
             CustomTextFormField(
               icon: 'email',
               hint: 'email'.tr(),
+              keyboardType: TextInputType.emailAddress,
               validateInput: (userInput) {
-                bool validEmail = AuthHelper.isEmailValid(userInput);
+                bool validEmail = AuthHelper.isEmailValid(userInput.trim());
                 if (validEmail)
                   return null;
                 else
                   return 'enter email'.tr();
               },
               saveInput: (userInput) {
-                AuthHelper.userInfo['email'] = userInput.toString().trim();
+                AuthHelper.userInfo['email'] = userInput.toString().trim().toLowerCase();
               },
             ),
             SizedBox(
@@ -132,7 +134,7 @@ class _SignupFormState extends State<SignupForm> {
             SizedBox(
               height: screenHeight * 0.015,
             ),
-            if (AuthHelper.userInfo['userType'] == UserType.Person.toString())
+            if (AuthHelper.userInfo['userType'] == UserType.User.toString())
               Row(
                 children: [
                   Expanded(
@@ -154,7 +156,7 @@ class _SignupFormState extends State<SignupForm> {
                   ),
                 ],
               ),
-            if (AuthHelper.userInfo['userType'] == UserType.Person.toString())
+            if (AuthHelper.userInfo['userType'] == UserType.User.toString())
               SizedBox(
                 height: screenHeight * 0.015,
               ),
@@ -187,6 +189,7 @@ class _SignupFormState extends State<SignupForm> {
                   ),
                   CustomTextFormField(
                     hint: 'reg no'.tr(),
+                    keyboardType: TextInputType.number,
                     validateInput: (userInput) {
                       if (userInput == "") return 'enter reg no'.tr();
                       return null;
@@ -209,7 +212,7 @@ class _SignupFormState extends State<SignupForm> {
             ),
             CountryPicker(
               saveCountry: (val) {
-                AuthHelper.userInfo['country'] = val;
+                AuthHelper.userInfo['countryFlag'] = Helper().getCountryFlag(val);
               },
               saveCity: (val) {
                 AuthHelper.userInfo['city'] = val;
@@ -221,9 +224,10 @@ class _SignupFormState extends State<SignupForm> {
             GestureDetector(
               onTap: () {
                 NamedNavigatorImpl().push(NamedRoutes.GOOGLE_MAPS_SCREEN, arguments: {
-                  'onSave': (latitude, longitude) {
+                  'onSave': (latitude, longitude, country) {
                     AuthHelper.userInfo['latitude'] = latitude;
                     AuthHelper.userInfo['longitude'] = longitude;
+                    AuthHelper.userInfo['country'] = country;
                   },
                 });
               },
@@ -276,6 +280,12 @@ class _SignupFormState extends State<SignupForm> {
                 color: MyColors.secondaryColor,
                 text: 'signup'.tr(),
                 function: () {
+                  //if it's a company, reg info is required
+                  if(AuthHelper.userInfo['userType'] == UserType.Company.toString()
+                  && AuthHelper.userInfo['regImages'] == null){
+                    EasyLoading.showError('reg images required'.tr());
+                    return null;
+                  }
                   bool isSubmitted = AuthHelper.submitSignUpForm(_signUpFormKey);
                   if (isSubmitted)
                     bloc.add(SignUpButtonPressed(AuthHelper.userInfo));

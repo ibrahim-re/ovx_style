@@ -15,3 +15,15 @@ class SendPoint extends PointsEvent {
      );
 
 }
+
+class AddPoints extends PointsEvent {
+ int totalAmount;
+
+ AddPoints(this.totalAmount);
+}
+
+class RemovePoints extends PointsEvent {
+ int totalAmount;
+
+ RemovePoints(this.totalAmount);
+}

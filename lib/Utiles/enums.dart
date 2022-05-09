@@ -1,6 +1,6 @@
 
 enum UserType {
-  Person,
+  User,
   Company,
   Guest,
 }
@@ -29,12 +29,8 @@ enum TimerAction {
   Resume,
 }
 
-// enum ProductSize {
-//   Small,
-//   Medium,
-//   Large,
-//   XLarge,
-//   XXLarge,
-//   XXXLarge,
-//   XXXXLarge,
-// }
+enum CountriesFor {
+  Chat,
+  Story,
+  Posts,
+}

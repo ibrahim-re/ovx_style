@@ -7,7 +7,7 @@ class CustomRedirectWidget extends StatelessWidget {
   final title;
   final iconName;
 
-  CustomRedirectWidget({@required this.iconName, @required this.title});
+  CustomRedirectWidget({this.iconName, @required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +24,8 @@ class CustomRedirectWidget extends StatelessWidget {
           title,
           style: Constants.TEXT_STYLE1,
         ),
-        trailing: Icon(Icons.arrow_forward_ios),
-        leading: SvgPicture.asset('assets/images/$iconName.svg', fit: BoxFit.scaleDown,),
+        trailing: Icon(Icons.keyboard_arrow_right),
+        leading: iconName != null ? SvgPicture.asset('assets/images/$iconName.svg', fit: BoxFit.scaleDown,) : null,
       ),
     );
   }

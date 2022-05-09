@@ -1,5 +1,6 @@
 // offer type= image
-
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,10 @@ import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
+import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer_image/shimmer_image.dart';
 
 class ImageItemBuilder extends StatelessWidget {
@@ -99,6 +104,13 @@ class ImageItemBuilder extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: CustomPopUpMenu(
+                reportFunction: (){
+                  String body = 'I want to report this image offer because of: \n\n\n\nOffer ID: ${imageOffer.id}';
+                  Helper().sendEmail('Report Image Offer [OVX Style App]', body, []);
+                },
+                shareFunction: () async {
+                  OfferHelper.shareImage(imageOffer.offerMedia);
+                },
                 ownerId: imageOffer.offerOwnerId,
                 deleteFunction: () {
                   context.read<AddOfferBloc>().add(

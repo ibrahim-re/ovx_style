@@ -97,3 +97,18 @@ class Message {
 
   };
 }
+
+class UnreadMessage {
+  String? msgId;
+  String? chatType;
+
+  UnreadMessage({
+    required this.msgId,
+    required this.chatType,
+});
+
+  UnreadMessage.fromMap(Map<String, dynamic> map){
+    msgId = map['msgId'];
+    chatType = map['chatType'];
+  }
+}

@@ -21,8 +21,7 @@ class MyOffersScreen extends StatefulWidget {
 class _MyOffersScreenState extends State<MyOffersScreen> {
   @override
   void initState() {
-    context.read<OfferBloc>().add(GetUserOffers(
-        SharedPref.getUser().id!, SharedPref.getUser().userType!));
+    context.read<OfferBloc>().add(GetUserOffers(SharedPref.getUser().id!, SharedPref.getUser().userType!));
     super.initState();
   }
 
@@ -45,7 +44,7 @@ class _MyOffersScreenState extends State<MyOffersScreen> {
           else
             return Center(
               child: Text(
-                'no offers yet'.tr(),
+                'no added offers yet'.tr(),
                 style: Constants.TEXT_STYLE8.copyWith(
                   color: MyColors.secondaryColor,
                   fontWeight: FontWeight.w500,

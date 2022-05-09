@@ -4,7 +4,6 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'circular_add_button.dart';
-import 'size_picker.dart';
 import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
 import 'package:ovx_style/UI/widgets/custom_text_form_field.dart';
 import 'package:ovx_style/UI/widgets/space_widget.dart';
@@ -21,15 +20,9 @@ class AddSizeProperty extends StatefulWidget {
 }
 
 class _AddSizePropertyState extends State<AddSizeProperty> {
-  String _chosenSize = 'Small';
+  TextEditingController _sizeController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
   List<ProductSize> _sizes = [];
-
-  void _changeSize(newSize) {
-    setState(() {
-      _chosenSize = newSize;
-    });
-  }
 
   @override
   void dispose() {
@@ -46,9 +39,12 @@ class _AddSizePropertyState extends State<AddSizeProperty> {
           children: [
             Expanded(
               flex: 3,
-              child: SizePicker(
-                chosenSize: _chosenSize,
-                changeSize: _changeSize,
+              child: CustomTextFormField(
+                controller: _sizeController,
+                hint: 'size'.tr(),
+                keyboardType: TextInputType.number,
+                validateInput: (p) {},
+                saveInput: (p) {},
               ),
             ),
             HorizontalSpaceWidget(widthPercentage: 0.015),
@@ -67,11 +63,11 @@ class _AddSizePropertyState extends State<AddSizeProperty> {
               flex: 1,
               child: CircularAddButton(
                 onPressed: () {
-                  if (_chosenSize.isNotEmpty &&
+                  if (_sizeController.text.isNotEmpty &&
                       _priceController.text.isNotEmpty) {
                     setState(() {
                       _sizes.add(ProductSize(
-                        size: _chosenSize,
+                        size: _sizeController.text,
                         price: double.tryParse(_priceController.text) ?? 0,
                       ));
                     });
@@ -135,6 +131,8 @@ class _AddSizePropertyState extends State<AddSizeProperty> {
           color: MyColors.secondaryColor,
           text: 'add'.tr(),
           function: () {
+            if(_sizes.isEmpty)
+              return;
             context.read<AddOfferBloc>().updateProperties(_sizes, OfferHelper.tempColor);
             NamedNavigatorImpl().pop();
           },

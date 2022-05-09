@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
@@ -11,7 +13,9 @@ import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/comment_bloc/comment_bloc.dart';
 import 'package:ovx_style/bloc/comment_bloc/comment_events.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
+import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/model/user.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CommentBuilder extends StatelessWidget {
   const CommentBuilder({
@@ -49,8 +53,15 @@ class CommentBuilder extends StatelessWidget {
               if(userId == SharedPref.getUser().id)
                 return;
               else{
-                User user = await AuthHelper.getUser(userId);
-                NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});
+                try {
+                  User user = await AuthHelper.getUser(userId);
+                  NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});
+                } catch (e) {
+                  if(e.toString() == 'no user found'.tr())
+                    EasyLoading.showToast('no user found'.tr());
+
+                  print(e.toString());
+                }
               }
 
             },
@@ -66,10 +77,30 @@ class CommentBuilder extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  userName.toString(),
-                  style: Constants.TEXT_STYLE4
-                      .copyWith(fontWeight: FontWeight.w500),
+                GestureDetector(
+                  onTap: () async {
+
+                    //check if offer owner is the logged in user
+                    if(userId == SharedPref.getUser().id)
+                      return;
+                    else{
+                      try {
+                        User user = await AuthHelper.getUser(userId);
+                        NamedNavigatorImpl().push(NamedRoutes.OTHER_USER_PROFILE, arguments: {'user': user});
+                      }  catch (e) {
+                        if(e.toString() == 'no user found'.tr())
+                          EasyLoading.showToast('no user found'.tr());
+
+                        print(e.toString());
+                      }
+                    }
+
+                  },
+                  child: Text(
+                    userName.toString(),
+                    style: Constants.TEXT_STYLE4
+                        .copyWith(fontWeight: FontWeight.w500),
+                  ),
                 ),
                 const SizedBox(
                   height: 4,
@@ -89,6 +120,9 @@ class CommentBuilder extends StatelessWidget {
           ),
           CustomPopUpMenu(
             ownerId: userId,
+            shareFunction: () async {
+              Share.share(comment);
+            },
             deleteFunction: () {
               bloc.add(
                 DeleteCommentButtonPressed(
@@ -103,6 +137,10 @@ class CommentBuilder extends StatelessWidget {
                   offerOwnerId,
                 ),
               );
+            },
+            reportFunction: (){
+              String body = 'I want to report this comment because of: \n\n\n\nOffer ID: ${offerId}\nUserName: ${userName}\nComment: ${comment}';
+              Helper().sendEmail('Report Comment [OVX Style App]', body, []);
             },
           ),
         ],

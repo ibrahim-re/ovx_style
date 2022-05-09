@@ -6,7 +6,10 @@ import 'package:ovx_style/UI/basket/basket_screen.dart';
 import 'package:ovx_style/UI/chat/create_chat_screen.dart';
 import 'package:ovx_style/UI/chat/create_group_screen.dart';
 import 'package:ovx_style/UI/chat/group_chat_screen.dart';
-import 'package:ovx_style/full_screen_image.dart';
+import 'package:ovx_style/UI/profile/points_checkout_screen.dart';
+import 'package:ovx_style/UI/profile/subscription_checkout_screen.dart';
+import 'package:ovx_style/UI/profile/subscription_screen.dart';
+import '../../UI/full_screen_image.dart';
 import 'package:ovx_style/model/group_model.dart';
 import '../../UI/chat/chat_room_screen.dart';
 import 'package:ovx_style/UI/checkout/checkout_screen.dart';
@@ -295,7 +298,7 @@ class NamedNavigatorImpl implements NamedNavigator {
       case NamedRoutes.StoryDetailsScreen:
         {
           final data = settings.arguments as Map<String, dynamic>;
-          final oneStoryModel story = data['oneStory'];
+          final StoryModel story = data['oneStory'];
           return PageTransition(
               child: StoryDetails(
                 navigator: navigatorState,
@@ -310,6 +313,7 @@ class NamedNavigatorImpl implements NamedNavigator {
           final String anotherUserName = data['name'];
           final String anotherUserImage = data['image'];
           final String roomId = data['roomId'];
+          final String userId = data['userId'];
 
           return PageTransition(
               child: ChatRoomScreen(
@@ -317,6 +321,7 @@ class NamedNavigatorImpl implements NamedNavigator {
                 anotherUserName: anotherUserName,
                 navigator: navigatorState,
                 roomId: roomId,
+                userId: userId,
               ),
               type: PageTransitionType.rightToLeft,
               duration: const Duration(milliseconds: 500));
@@ -373,6 +378,42 @@ class NamedNavigatorImpl implements NamedNavigator {
               ),
               type: PageTransitionType.rightToLeft,
               duration: const Duration(milliseconds: 500));
+
+      case NamedRoutes.POINTS_CHECKOUT_SCREEN:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final pointsAmount = data['pointsAmount'];
+          
+          return PageTransition(
+              child: PointsCheckoutScreen(
+                navigator: navigatorState,
+                pointsAmount: pointsAmount,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
+
+      case NamedRoutes.SUBSCRIPTION_CHECKOUT_SCREEN:
+        {
+          final data = settings.arguments as Map<String, dynamic>;
+          final package = data['package'];
+
+          return PageTransition(
+              child: SubscriptionCheckoutScreen(
+                navigator: navigatorState,
+                package: package,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(milliseconds: 500));
+        }
+
+      case NamedRoutes.SUBSCRIPTION_SCREEN:
+        return PageTransition(
+            child: SubscriptionScreen(
+              navigator: navigatorState,
+            ),
+            type: PageTransitionType.rightToLeft,
+            duration: const Duration(milliseconds: 500));
 
       default:
         return MaterialPageRoute(

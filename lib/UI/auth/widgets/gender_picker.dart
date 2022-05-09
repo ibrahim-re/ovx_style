@@ -6,15 +6,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class GenderPicker extends StatefulWidget {
   final onSaved;
+  final onChanged;
 
-  GenderPicker({required this.onSaved});
+  GenderPicker({required this.onSaved, this.onChanged});
   @override
   _GenderPickerState createState() => _GenderPickerState();
 }
 
 class _GenderPickerState extends State<GenderPicker> {
-  List<String> _genderList = ['Male', 'Female'];
-  String _chosenGender = 'Male';
+  List<String> _genderList = ['Gender' ,'Male', 'Female'];
+  String _chosenGender = 'Gender';
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class _GenderPickerState extends State<GenderPicker> {
         ),
       )
           .toList(),
-      onChanged: (val) {
+      onChanged: widget.onChanged ?? (val) {
         setState(() {
           _chosenGender = val.toString();
         });

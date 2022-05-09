@@ -24,7 +24,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>{
           NotificationsHelper.saveDeviceTokenToDatabase();
           yield LoginSucceed();
         } else
-          yield LoginFailed('Login failed');
+          yield LoginFailed('login failed'.tr());
       } catch (e) {
         print('e is $e');
         String message = 'something wrong'.tr();
@@ -38,13 +38,22 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>{
         yield LoginFailed(message);
       }
     }else if(event is AppStarted){
-      User user = SharedPref.getUser();
-      if(user.id != ''){
-        print('user logged in');
-        yield LoginSucceed();
-      }else{
-        print('no user logged');
-        yield LoginFailed('no user logged in');
+      try {
+        User user = SharedPref.getUser();
+        if(user.id != ''){
+          String userSignedInId = await _authRepositoryImpl.checkSignInUser();
+          if(userSignedInId.isNotEmpty && userSignedInId == user.id)
+            yield LoginSucceed();
+          else{
+            SharedPref.deleteUser();
+            yield LoginFailed('no user logged in'.tr());
+          }
+        }else{
+          print('no user logged');
+          yield LoginFailed('no user logged in'.tr());
+        }
+      } catch (e) {
+        yield LoginFailed('no user logged in'.tr());
       }
     }else if(event is LoginAsGuest){
       yield LoginLoading();
@@ -54,7 +63,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>{
           SharedPref.setUser(user);
           yield LoginSucceed();
         } else
-          yield LoginFailed('Login failed');
+          yield LoginFailed('login failed'.tr());
       } catch (e) {
         print('e is $e');
         String message = 'something wrong'.tr();

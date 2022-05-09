@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
-import 'package:ovx_style/helper/auth_helper.dart';
 
 class CountryPicker extends StatelessWidget {
   final saveCountry, saveCity;
@@ -34,6 +33,7 @@ class CountryPicker extends StatelessWidget {
       //flagState: showFlag ? CountryFlag.ENABLE : CountryFlag.DISABLE,
       showStates: showCities,
       showCities: false,
+
       selectedItemStyle: Constants.TEXT_STYLE1,
       dropdownItemStyle: Constants.TEXT_STYLE1,
       dropdownHeadingStyle: Constants.TEXT_STYLE1,

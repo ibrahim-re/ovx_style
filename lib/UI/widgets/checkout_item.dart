@@ -4,15 +4,17 @@ import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 
-class checkoutItem extends StatelessWidget {
-  const checkoutItem({
+class CheckoutItem extends StatelessWidget {
+  const CheckoutItem({
     Key? key,
     required this.text,
     required this.value,
+    this.showCurrency = true,
   }) : super(key: key);
 
   final String text;
-  final double value;
+  final value;
+  final showCurrency;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,7 +32,7 @@ class checkoutItem extends StatelessWidget {
             ),
           ),
           Text(
-            '$value ${SharedPref.getCurrency()}',
+            showCurrency ? '$value ${SharedPref.getCurrency()}' : '$value',
             style: Constants.TEXT_STYLE9,
           ),
         ],

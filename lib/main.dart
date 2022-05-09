@@ -14,9 +14,11 @@ import 'package:ovx_style/bloc/bills_bloc/bills_bloc.dart';
 import 'package:ovx_style/bloc/currencies_bloc/currencies_bloc.dart';
 import 'package:ovx_style/bloc/login_bloc/login_events.dart';
 import 'package:ovx_style/bloc/offer_bloc/offer_bloc.dart';
+import 'package:ovx_style/bloc/packages_bloc/packages_bloc.dart';
 import 'package:ovx_style/bloc/payment_bloc/payment_bloc.dart';
 import 'package:ovx_style/bloc/points_bloc/points_bloc.dart';
 import 'package:ovx_style/bloc/stories_bloc/bloc.dart';
+import 'package:ovx_style/bloc/user_bloc/user_bloc.dart';
 import 'Utiles/navigation/named_navigator_impl.dart';
 import 'bloc/chat_bloc/chat_bloc.dart';
 import 'bloc/comment_bloc/comment_bloc.dart';
@@ -59,7 +61,7 @@ void main() async {
     'high_importance_channel', // id
     'High Importance Notifications', // title
     description:
-        'This channel is used for important notifications.', // description
+    'This channel is used for important notifications.', // description
     importance: Importance.high,
   );
 
@@ -71,7 +73,7 @@ void main() async {
   /// default FCM channel to enable heads up notifications.
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+      AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   /// Update the iOS foreground notification presentation options to allow
@@ -124,6 +126,12 @@ void main() async {
           ),
           BlocProvider<PointsBloc>(
             create: (context) => PointsBloc(),
+          ),
+          BlocProvider<PackagesBloc>(
+            create: (context) => PackagesBloc(),
+          ),
+          BlocProvider<UserBloc>(
+            create: (context) => UserBloc(),
           ),
         ],
         child: const MarketingApp(),

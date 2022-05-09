@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/chat/widgets/one_chat_item_shape.dart';
+import 'package:ovx_style/UI/widgets/no_available_days_widget.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 import 'package:ovx_style/UI/offers/widgets/waiting_offer_owner_row.dart';
@@ -39,13 +40,18 @@ class _ContactsScreenState extends State<ContactsScreen> {
           ),
           BlocBuilder<ChatBloc, ChatStates>(
             builder: (context, state) {
-              if (state is GetContactsFailed)
-                return Center(
-                  child: Text(
-                    state.err,
-                    style: Constants.TEXT_STYLE9,
-                  ),
-                );
+              if (state is GetContactsFailed) {
+                if (state.err == 'no available days'.tr())
+                  return NoAvailableDaysWidget();
+                else
+                  return Center(
+                    child: Text(
+                      state.err,
+                      style: Constants.TEXT_STYLE9,
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+              }
               else if (state is ChatInitial || state is GetContactsLoading)
                 return Expanded(
                   child: ListView(
@@ -87,7 +93,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   ),
                 );
               else {
-                List<ChatUserModel> chats = context.read<ChatBloc>().contactsModel.allChats;
+                List<ChatUserModel> chats = context.read<ChatBloc>().contactsModel;
                 return chats.isNotEmpty
                     ? Expanded(
                         child: Container(

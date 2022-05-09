@@ -6,8 +6,9 @@ import 'package:ovx_style/Utiles/colors.dart';
 class NoDataWidget extends StatefulWidget {
   final String iconName;
   final String text;
+  final child;
 
-  NoDataWidget({required this.text, required this.iconName});
+  NoDataWidget({required this.text, required this.iconName, this.child});
 
   @override
   State<NoDataWidget> createState() => _NoDataWidgetState();
@@ -55,14 +56,20 @@ class _NoDataWidgetState extends State<NoDataWidget> with SingleTickerProviderSt
           ),
         ),
         Expanded(
-          child: Text(
-            widget.text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: MyColors.secondaryColor,
-            ),
+          child: Column(
+            children: [
+              Text(
+                widget.text,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: MyColors.secondaryColor,
+                ),
+              ),
+              const SizedBox(height: 8,),
+              widget.child ?? Container(),
+            ],
           ),
         ),
       ],

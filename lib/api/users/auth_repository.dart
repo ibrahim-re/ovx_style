@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:location/location.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/helper/auth_helper.dart';
 import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/location_helper.dart';
 import 'database_repository.dart';
 import 'package:ovx_style/model/user.dart';
 
@@ -13,6 +16,7 @@ abstract class AuthRepository {
   Future<void> signOutUser();
   Future<User> signInAsGuest();
   Future<void> requestResetPasswordCode(String email);
+  Future<String> checkSignInUser();
 }
 
 class AuthRepositoryImpl extends AuthRepository {
@@ -56,8 +60,7 @@ class AuthRepositoryImpl extends AuthRepository {
     try {
       String email = userInfo['email'];
       String password = userInfo['password'];
-      firebase.UserCredential userCredential = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      firebase.UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       //add user data to database
       if (userCredential.user != null) {
         //get user id
@@ -83,8 +86,11 @@ class AuthRepositoryImpl extends AuthRepository {
         userInfo['searchStrings'] = Helper().generateSearchStrings(userInfo['userName']);
 
         //initialize story and chat countries with user country
-        userInfo['storyCountries'] = [userInfo['country']];
-        userInfo['chatCountries'] = [userInfo['country']];
+        userInfo['storyCountries'] = userInfo['country'];
+        userInfo['chatCountries'] = userInfo['country'];
+        userInfo['postsCountries'] = userInfo['country'];
+        //do not store user password in firestore
+        userInfo.remove('password');
 
         //set user id as path to his info
         await _databaseRepositoryImpl.addUserData(uId, userInfo);
@@ -123,8 +129,7 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<User> signInAsGuest() async {
     try {
-      firebase.UserCredential userCredential =
-          await _firebaseAuth.signInAnonymously();
+      firebase.UserCredential userCredential = await _firebaseAuth.signInAnonymously();
 
       if (userCredential.user != null) {
         //get user id
@@ -133,12 +138,16 @@ class AuthRepositoryImpl extends AuthRepository {
         //generate guest code and user name
         List<String> data = AuthHelper.generateGuestData();
 
+        LocationData locationData = await LocationHelper().getUserLocation();
+        Placemark address = await LocationHelper().getUserAddress(locationData.latitude!, locationData.longitude!);
+
         Map<String, dynamic> visitorUserINfo = {
           'email': "nomail@nomail.com",
           'gender': "Male",
           'nickName': "guest",
           'password': " ",
           'phoneNumber': " ",
+          'country': address.country,
           'shortDesc': "",
           'userCode': data[1],
           'userName': data[0],
@@ -157,6 +166,20 @@ class AuthRepositoryImpl extends AuthRepository {
       print('error $e');
       throw e.code;
     } catch (e) {
+      print('error $e');
+      throw e;
+    }
+  }
+
+  @override
+  Future<String> checkSignInUser() async {
+    try{
+      firebase.User? user = _firebaseAuth.currentUser;
+      if(user?.uid != null)
+        return user?.uid ?? '';
+      else
+        return '';
+    }catch(e){
       print('error $e');
       throw e;
     }

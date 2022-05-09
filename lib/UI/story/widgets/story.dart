@@ -12,7 +12,7 @@ import 'package:ovx_style/model/story_model.dart';
 class Story extends StatelessWidget {
   Story({Key? key, required this.model}) : super(key: key);
 
-  final oneStoryModel model;
+  final StoryModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class Story extends StatelessWidget {
                   BlocProvider.of<StoriesBloc>(context).add(
                     MakeStoryFavorite(
                       model.storyId!,
-                      model.liked.contains(SharedPref.getUser().id),
+                      model.likedBy.contains(SharedPref.getUser().id),
                     ),
                   );
                 },
@@ -53,18 +53,18 @@ class Story extends StatelessWidget {
                   listener: (context, state) {
                     if (state is MakeStoryFavoriteDoneState) {
                       if (state.storyId == model.storyId) {
-                        if (model.liked.contains(SharedPref.getUser().id)) {
-                          model.liked.removeWhere(
+                        if (model.likedBy.contains(SharedPref.getUser().id)) {
+                          model.likedBy.removeWhere(
                             (element) => element == SharedPref.getUser().id,
                           );
                         } else {
-                          model.liked.add(SharedPref.getUser().id);
+                          model.likedBy.add(SharedPref.getUser().id);
                         }
                       }
                     }
                   },
                   builder: (context, state) {
-                    return model.liked.contains(SharedPref.getUser().id)
+                    return model.likedBy.contains(SharedPref.getUser().id)
                         ? SvgPicture.asset(
                             'assets/images/heart.svg',
                             color: MyColors.red,

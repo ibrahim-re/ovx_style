@@ -50,6 +50,7 @@ class _PropertiesSectionState extends State<PropertiesSection> {
     final currentItemPrice = properties[selectedPropertyIndex].sizes![selectedSizeIndex].price;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         widget.discount == 0
             ? Row(
@@ -160,13 +161,13 @@ class _PropertiesSectionState extends State<PropertiesSection> {
         Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
+          child: Wrap(
             children: [
               Text(
                 'colors'.tr(),
                 style: Constants.TEXT_STYLE8,
               ),
-              Spacer(),
+              const SizedBox(width: 8,),
               Wrap(
                 direction: Axis.horizontal,
                 children: properties
@@ -209,13 +210,13 @@ class _PropertiesSectionState extends State<PropertiesSection> {
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          child: Row(
+          child: Wrap(
             children: [
               Text(
                 'sizes'.tr(),
                 style: Constants.TEXT_STYLE8,
               ),
-              Spacer(),
+              const SizedBox(width: 8,),
               Wrap(
                 direction: Axis.horizontal,
                 children: sizes!

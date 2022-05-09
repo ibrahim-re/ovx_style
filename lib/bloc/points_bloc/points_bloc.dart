@@ -34,7 +34,7 @@ class PointsBloc extends Bloc<PointsEvent, PointsState> {
             HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendPointsNotification');
             await callable.call(<String, dynamic>{
               'userId': receiver.id,
-              'userName': receiver.userName,
+              'senderName': SharedPref.getUser().userName!,
               'pointsAmount': event.pointsAmount,
             });
             yield SendPointsSucceed();
@@ -55,10 +55,35 @@ class PointsBloc extends Bloc<PointsEvent, PointsState> {
       yield GetPointsLoading();
       try{
         points = await _databaseRepositoryImpl.getPoints(SharedPref.getUser().id!);
-        print('pointd on $points');
         yield GetPointsSucceed();
       }catch (e){
         yield GetPointsFailed();
+      }
+    }
+    else if(event is AddPoints){
+      yield AddPointsLoading();
+      try{
+        await _databaseRepositoryImpl.addPoints(event.totalAmount, SharedPref.getUser().id!);
+        yield AddPointsSucceed();
+      }catch (e){
+        yield AddPointsFailed('error occurred'.tr());
+      }
+    }
+    else if(event is RemovePoints){
+      yield RemovePointsLoading();
+      try{
+        int totalPoints = await _databaseRepositoryImpl.getPoints(SharedPref.getUser().id!);
+        if(totalPoints > event.totalAmount) {
+          await _databaseRepositoryImpl.removePoints(
+              event.totalAmount, SharedPref
+              .getUser()
+              .id!);
+          yield RemovePointsSucceed();
+        }
+        else
+          yield RemovePointsFailed('no enough points'.tr());
+      }catch (e){
+        yield RemovePointsFailed('error occurred'.tr());
       }
     }
   }

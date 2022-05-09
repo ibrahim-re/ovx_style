@@ -1,22 +1,33 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/offer_details/img_details_widget/image_section.dart';
 import 'package:ovx_style/UI/offer_details/widget/custom_popup_menu.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
+import 'package:ovx_style/bloc/user_bloc/user_bloc.dart';
+import 'package:ovx_style/bloc/user_bloc/user_events.dart';
+import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/product_property.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:http/http.dart' as http;
 
 class ProductImageSection extends StatelessWidget {
   const ProductImageSection({
@@ -74,6 +85,13 @@ class ProductImageSection extends StatelessWidget {
                 },
                 child: CustomPopUpMenu(
                   ownerId: offerOwnerId,
+                  shareFunction: () async {
+                    OfferHelper.shareProduct(productImages, offerName, description, categories, status);
+                  },
+                  reportFunction: (){
+                    String body = 'I want to report this product offer because of: \n\n\n\nOffer ID: ${offerId}';
+                    Helper().sendEmail('Report Product Offer [OVX Style App]', body, []);
+                  },
                   deleteFunction: () {
                     context.read<AddOfferBloc>().add(
                       DeleteOfferButtonPressed(offerId, SharedPref.getUser().userType!, SharedPref.getUser().id!),
@@ -116,9 +134,15 @@ class ProductImageSection extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(
-            offerName,
-            style: Constants.TEXT_STYLE9,
+          child: Row(
+            children: [
+              Text(
+                offerName,
+                style: Constants.TEXT_STYLE9,
+              ),
+              Spacer(),
+              UserPrivacyPolicyWidget(offerOwnerId: offerOwnerId,),
+            ],
           ),
         ),
         Padding(
@@ -129,6 +153,33 @@ class ProductImageSection extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+class UserPrivacyPolicyWidget extends StatefulWidget {
+  final String offerOwnerId;
+
+  UserPrivacyPolicyWidget({required this.offerOwnerId});
+
+  @override
+  _UserPrivacyPolicyWidgetState createState() => _UserPrivacyPolicyWidgetState();
+}
+
+class _UserPrivacyPolicyWidgetState extends State<UserPrivacyPolicyWidget> {
+  @override
+  void initState() {
+    context.read<UserBloc>().add(GetUserPrivacyPolicy(widget.offerOwnerId));
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: (){
+        ModalSheets().showUserPolicySheet(context, widget.offerOwnerId);
+      },
+      icon: SvgPicture.asset('assets/images/info.svg'),
     );
   }
 }

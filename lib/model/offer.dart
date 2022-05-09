@@ -14,6 +14,8 @@ class Offer {
 	//a list contains users ids
 	List<String>? likes;
 	List<CommentModel>? comments;
+	//this field is used to fetch offers by countries
+	List<String>? countries;
 
 	Offer({
 		this.id,
@@ -22,6 +24,7 @@ class Offer {
 		required this.offerOwnerType,
 		required this.offerOwnerId,
 		required this.offerCreationDate,
+		required this.countries,
 		this.comments,
 		this.likes,
 	});
@@ -32,6 +35,7 @@ class Offer {
 				.map((e) => e.toString())
 				.toList();
 		this.offerType = offerInfo['offerType'];
+		this.countries = ((offerInfo['countries'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
 		this.offerOwnerType = offerInfo['offerOwnerType'];
 		this.offerOwnerId = offerInfo['offerOwnerId'];
 		this.offerCreationDate = (offerInfo['offerCreationDate'] as Timestamp).toDate();
@@ -66,6 +70,7 @@ class ProductOffer extends Offer {
 		required this.offerName,
 		required this.categories,
 		required this.status,
+		required countries,
 		this.vat = 0,
 		this.discount = 0,
 		this.discountExpireDate = '',
@@ -79,6 +84,7 @@ class ProductOffer extends Offer {
 		id: id,
 		offerMedia: offerMedia,
 		likes: likes,
+		countries: countries,
 		offerCreationDate: offerCreationDate,
 		offerType: offerType,
 		offerOwnerType: offerOwnerType,
@@ -97,6 +103,7 @@ class ProductOffer extends Offer {
 		'categories': categories,
 		'status': status,
 		'vat': vat,
+		'countries': countries,
 		'discount': discount,
 		'discountExpireDate': discountExpireDate,
 		'shortDesc': shortDesc,
@@ -146,6 +153,7 @@ class PostOffer extends Offer {
 		required offerOwnerType,
 		required offerOwnerId,
 		required offerCreationDate,
+		required countries,
 		required offerType,
 		required this.shortDesc,
 	}) : super(
@@ -153,6 +161,7 @@ class PostOffer extends Offer {
 		offerMedia: offerMedia,
 		offerType: offerType,
 		likes: likes,
+		countries: countries,
 		offerCreationDate: offerCreationDate,
 		offerOwnerType: offerOwnerType,
 		offerOwnerId: offerOwnerId,
@@ -166,6 +175,7 @@ class PostOffer extends Offer {
 		'offerCreationDate': offerCreationDate,
 		'offerType': offerType,
 		'shortDesc': shortDesc,
+		'countries': countries,
 		'likes': likes,
 		'id': id,
 		'comments': comments,
@@ -187,11 +197,13 @@ class ImageOffer extends Offer {
 		required offerOwnerId,
 		required offerCreationDate,
 		required offerType,
+		required countries,
 	}) : super(
 		id: id,
 		likes: likes,
 		offerMedia: offerMedia,
 		offerType: offerType,
+		countries: countries,
 		offerOwnerType: offerOwnerType,
 		offerCreationDate: offerCreationDate,
 		offerOwnerId: offerOwnerId,
@@ -205,6 +217,7 @@ class ImageOffer extends Offer {
 		'offerCreationDate': offerCreationDate,
 		'offerType': offerType,
 		'id': id,
+		'countries': countries,
 		'likes': likes,
 		'comments': comments,
 	};
@@ -223,11 +236,13 @@ class VideoOffer extends Offer {
 		required offerOwnerId,
 		required offerCreationDate,
 		required offerType,
+		required countries,
 	}) : super(
 		id: id,
 		likes: likes,
 		offerMedia: offerMedia,
 		offerType: offerType,
+		countries: countries,
 		offerOwnerType: offerOwnerType,
 		offerCreationDate: offerCreationDate,
 		offerOwnerId: offerOwnerId,
@@ -243,6 +258,7 @@ class VideoOffer extends Offer {
 		'id': id,
 		'likes': likes,
 		'comments': comments,
+		'countries': countries,
 	};
 
 	VideoOffer.fromMap(Map<String, dynamic> offerInfo, String offerId)

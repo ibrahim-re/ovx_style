@@ -15,7 +15,7 @@ class CommentModel {
 
   CommentModel.fromMap(Map<String, dynamic> map) {
     id = map['id'];
-    ownerId = map['userId'];
+    ownerId = map['ownerId'];
     content = map['content'];
     userName = map['userName'];
     userImage = map['userImage'];

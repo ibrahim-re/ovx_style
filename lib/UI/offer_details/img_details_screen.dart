@@ -12,6 +12,8 @@ import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
+import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:provider/src/provider.dart';
 import 'widget/add_comment_section.dart';
 import 'package:ovx_style/UI/offers/widgets/offer_owner_row.dart';
@@ -52,6 +54,13 @@ class ImageDetailsScreen extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: CustomPopUpMenu(
                 ownerId: offer.offerOwnerId,
+                shareFunction: () async {
+                  OfferHelper.shareImage(offer.offerMedia!);
+                },
+                reportFunction: (){
+                  String body = 'I want to report this image offer because of: \n\n\n\nOffer ID: ${offer.id}';
+                  Helper().sendEmail('Report Image Offer [OVX Style App]', body, []);
+                },
                 deleteFunction: () {
                   context.read<AddOfferBloc>().add(
                         DeleteOfferButtonPressed(

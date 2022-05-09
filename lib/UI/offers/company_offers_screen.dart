@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
@@ -34,7 +33,9 @@ class _CompanyOffersScreenState extends State<CompanyOffersScreen> {
       if (scrollController.offset >=
               scrollController.position.maxScrollExtent &&
           !scrollController.position.outOfRange) {
-        context.read<OfferBloc>().add(FetchMoreOffers(UserType.Company, _lastFetchedOfferId));
+        context
+            .read<OfferBloc>()
+            .add(FetchMoreOffers(UserType.Company, _lastFetchedOfferId));
       }
     });
     super.initState();
@@ -74,8 +75,9 @@ class _CompanyOffersScreenState extends State<CompanyOffersScreen> {
         },
         child: BlocBuilder<OfferBloc, OfferState>(
           builder: (ctx, state) {
-            print('state is $state');
-            if (state is FetchOffersLoading  || state is OfferStateInitial || state is GetFilteredOffersLoading)
+            if (state is FetchOffersLoading ||
+                state is OfferStateInitial ||
+                state is GetFilteredOffersLoading)
               return WaitingOffersListView();
             else if (state is FetchOffersFailed)
               return Center(
@@ -93,22 +95,33 @@ class _CompanyOffersScreenState extends State<CompanyOffersScreen> {
               return OffersListView(fetchedOffers: state.offers);
             else {
               List<Offer> offers = context.read<OfferBloc>().fetchedOffers;
-              if(offers.isEmpty)
-                return Center(child: Text('no offer yet'.tr(), style: Constants.TEXT_STYLE9,),);
+              if (offers.isEmpty)
+                return Center(
+                  child: Text(
+                    'no offer yet'.tr(),
+                    style: Constants.TEXT_STYLE9,
+                  ),
+                );
               else {
                 _lastFetchedOfferId = offers.last.id ?? '';
-                return OffersListView(
-                  fetchedOffers: offers,
-                  scrollController: scrollController,
-                  child: state is FetchMoreOffersLoading
-                      ? Center(
-                    child: RefreshProgressIndicator(
-                      color: MyColors.secondaryColor,
+                return Column(
+                  children: [
+                    Expanded(
+                      child: OffersListView(
+                        fetchedOffers: offers,
+                        scrollController: scrollController,
+                      ),
                     ),
-                  )
-                      : state is FetchMoreOffersFailed
-                      ? Center(child: Text('error occurred'.tr()))
-                      : Container(),
+                    state is FetchMoreOffersLoading
+                        ? Center(
+                            child: RefreshProgressIndicator(
+                              color: MyColors.secondaryColor,
+                            ),
+                          )
+                        : state is FetchMoreOffersFailed
+                            ? Center(child: Text('error occurred'.tr()))
+                            : Container(),
+                  ],
                 );
               }
             }

@@ -25,6 +25,7 @@ exports.sendGifts = functions.https.onCall((data, context) => {
     "from": from,
     "to": to,
     });
+
 });
 
 exports.sendGiftNotification = functions.firestore
@@ -45,9 +46,17 @@ exports.sendGiftNotification = functions.firestore
           tokens.push(tokenDoc.data().token);
       });
 
+        const snapshot = await db.doc(`users/${from}`).get();
+        const fromName = snapshot.data().userName;
+
+        db.collection(`users/${userId}/notifications`).add({
+          "date": date,
+          "content": `Gift received from ${fromName},
+click here to see more information.`,
+          "title": "Gift Received",
+        });
+
         if(tokens.length > 0){
-            const snapshot = await db.doc(`users/${from}`).get();
-            const fromName = snapshot.data().userName;
 
             const payload = {
                 notification : {
@@ -60,17 +69,8 @@ click here to see more information.`,
                 	click_action: "Flutter_NOTIFICATION_CLICK"
                 },
             };
-
-            db.collection(`users/${userId}/notifications`).add({
-            	"date": date,
-            	"content": `Gift received from ${fromName},
-click here to see more information.`,
-                "title": "Gift Received",
-            });
-
             return fcm.sendToDevice(tokens, payload);
-
-        }
+          }
 
      
     }
@@ -91,32 +91,30 @@ exports.sendSellNotification = functions.firestore
         tokens.push(tokenDoc.data().token);
       });
 
+      db.collection(`users/${userId}/notifications`).add({
+        "date": date,
+        "content": `Product ${productName} you added has been sold to ${buyerName},
+click here to see more information.`,
+        "title": "Product Sold",
+      });
+
       if(tokens.length > 0){
-      	console.log(`not empty tokens ${tokens.length}`);
+        console.log(`not empty tokens ${tokens.length}`);
       	const payload = {
       	notification : {
       		title: "Product Sold",
       		body: `A product you added ${productName} has been sold to ${buyerName},
 click to see more info, and start the shipping proccess`,
       		sound: "default",
-      	},
-      	data: {
+        },
+        data: {
            click_action: "Flutter_NOTIFICATION_CLICK"
       	},
       };
 
-      db.collection(`users/${userId}/notifications`).add({
-        "date": date,
-        "content": `Product ${productName} you added has been sold to ${buyerName},
-click here to see more information.`,
-        "title": "Product Sold",
-  });
-
       return fcm.sendToDevice(tokens, payload);
-
-  }
-
-    });
+    }
+  });
 
 exports.sendBills = functions.https.onCall((data, context) => {
   // get data from the mobile app
@@ -170,32 +168,33 @@ exports.sendBills = functions.https.onCall((data, context) => {
 exports.sendPointsNotification = functions.https.onCall(async(data, context) => {
   // get data from the mobile app
   const userId = data.userId;
-  const userName = data.userName;
+  const senderName = data.senderName;
   const pointsAmount = data.pointsAmount;
   const date = admin.firestore.FieldValue.serverTimestamp();
+
   const querySnapshot = await db.collection(`users/${userId}/device tokens`).get();
   const tokens = [];
   querySnapshot.forEach((tokenDoc) => {
           tokens.push(tokenDoc.data().token);
       });
 
+  db.collection(`users/${userId}/notifications`).add({
+    "date": date,
+    "content": `${pointsAmount} points received from ${senderName},`,
+    "title": "Points Received",
+  });
+
   if(tokens.length > 0){
     const payload = {
         notification : {
             title: "Points Received",
-            body: `${pointsAmount} points received from ${userName},`,
+            body: `${pointsAmount} points received from ${senderName},`,
             sound: "default",
         },
         data: {
             click_action: "Flutter_NOTIFICATION_CLICK"
       	},
       };
-
-      db.collection(`users/${userId}/notifications`).add({
-        "date": date,
-        "content": `${pointsAmount} points received from ${userName},`,
-        "title": "Points Received",
-  });
 
       return fcm.sendToDevice(tokens, payload);
   }
@@ -204,22 +203,11 @@ exports.sendPointsNotification = functions.https.onCall(async(data, context) => 
 
 );
 
-//exports.deleteOldItems = functions.firestore
-//    .document('stories')
- //   .onWrite(async (change, context) => {
-  //      const querySnapshot = await db.collection('stories').where('createdAt', '>', Date.now()).get();
-   //     const promises = [];
-   //     querySnapshot.forEach((doc) => {
-     //       promises.push(doc.ref.delete());
-   //     });
-    //    return Promise.all(promises);
-  //  });
-
-exports.deleteExpiredStories = functions.pubsub.schedule("every 5 hours").onRun(async(context) => {
+exports.deleteExpiredStories = functions.pubsub.schedule("every 1 hours").onRun(async(context) => {
   const now = admin.firestore.Timestamp.now();
   const ts = admin.firestore.Timestamp.fromMillis(now.toMillis() - 86400000); // 24 hours in milliseconds = 86400000
 
-  const snap = await db.collection("stories").where("createdAt", ">", ts).get().then((querySnapshot)=>{
+  const snap = await db.collection("stories").where("createdAt", "<", ts).get().then((querySnapshot)=>{
     querySnapshot.forEach((doc) => {
        doc.ref.delete();
     });
@@ -282,8 +270,9 @@ exports.onMessageRecieved = functions.firestore
 
       const receiverId = senderId == firstUserId ? secondUserId : firstUserId;
 
-      db.doc(`users/${receiverId}/unreadMessages/${messageId}`).set({
+      return db.doc(`users/${receiverId}/unreadMessages/${messageId}`).set({
         'msgId': messageId,
+        'chatType': 'chat',
       });
     });
 
@@ -309,7 +298,204 @@ exports.onGroupMessageRecieved = functions.firestore
       usersId.forEach((userId) => {
         db.doc(`users/${userId}/unreadMessages/${messageId}`).set({
           'msgId': messageId,
+          'chatType': 'group',
         });
       });
       
+    });
+
+exports.onOfferLiked = functions.firestore
+    .document("offers/{offerId}")
+    .onUpdate(async(change, context) => {
+      // Retrieve the current and previous value
+      const data = change.after.data();
+      const previousData = change.before.data();
+
+      // We'll only update if the likes has increased 5 times.
+      if (data.likes.length == previousData.likes.length || 
+        data.likes.length < previousData.likes.length ||
+        data.likes.length % 5 != 0) {
+        console.log("no update needed");
+        return null;
+      }
+
+      const offerOwnerId = data.offerOwnerId;
+
+      return db.doc(`users/${offerOwnerId}`).update({
+        'points': admin.firestore.FieldValue.increment(1),
+      });
+
+    });
+
+
+exports.onCompanyOfferLiked = functions.firestore
+    .document("company offers/{offerId}")
+    .onUpdate(async(change, context) => {
+      // Retrieve the current and previous value
+      const data = change.after.data();
+      const previousData = change.before.data();
+
+      // We'll only update if the likes has increased 5 times.
+      if (data.likes.length == previousData.likes.length || 
+        data.likes.length < previousData.likes.length ||
+        data.likes.length % 5 != 0) {
+        console.log("no update needed");
+        return null;
+      }
+
+      const offerOwnerId = data.offerOwnerId;
+
+      return db.doc(`users/${offerOwnerId}`).update({
+        'points': admin.firestore.FieldValue.increment(1),
+      });
+
+    });
+
+
+exports.updatePackage = functions.pubsub.schedule("every 1 hours").onRun(async(context) => {
+  const now = admin.firestore.Timestamp.now();
+  const ts = admin.firestore.Timestamp.fromMillis(now.toMillis() - 86400000); // 24 hours in milliseconds = 86400000
+
+  const querySnapshot = await db.collection("subscriptions").where("lastUpdated", "<", ts).get();
+  querySnapshot.forEach((doc) => {
+    //check if it's a free package
+    if(doc.data().packageName == 'Free Package'){
+      const uId = doc.id;
+      const chatDays = doc.data().chatInDays;
+      if(chatDays > 0){
+      return db.doc(`subscriptions/${uId}`).update({
+        'chatInDays': admin.firestore.FieldValue.increment(-1),
+        'lastUpdated': admin.firestore.Timestamp.now(),
+      });
+    }
+  }
+
+    //else it's a paid package
+    else{
+      const uId = doc.id;
+      const expires = doc.data().expires > 0 ? doc.data().expires - 1 : doc.data().expires;
+      const chatInDays = doc.data().chatInDays > 0 ? doc.data().chatInDays - 1 : doc.data().chatInDays;
+      const storyInDays = doc.data().storyInDays > 0 ? doc.data().storyInDays - 1 : doc.data().storyInDays;
+
+      if(expires == 0){
+        return db.doc(`subscriptions/${uId}`).update({
+          'expires': 0,
+          'chatInDays': 0,
+          'storyInDays': 0,
+          'storyCount': 0,
+          'products': 0,
+          'posts': 0,
+          'images': 0,
+          'videos': 0,
+          'lastUpdated': admin.firestore.Timestamp.now(),
+        });
+      }else {
+        return db.doc(`subscriptions/${uId}`).update({
+          'expires': expires,
+          'chatInDays': chatInDays,
+          'storyInDays': storyInDays,
+          'lastUpdated': admin.firestore.Timestamp.now(),
+        });
+      }
+    }
+  });
+});
+
+exports.onPackageNearlyEnds = functions.firestore
+    .document("subscriptions/{userId}")
+    .onUpdate(async(change, context) => {
+      const userId = context.params.userId;
+
+      const data = change.after.data();
+
+      if(data.expires > 5){
+
+        return null;
+      }
+
+      //get user device token
+      const querySnapshot = await db.collection(`users/${userId}/device tokens`).get();
+      const tokens = [];
+      querySnapshot.forEach((tokenDoc) => {
+        tokens.push(tokenDoc.data().token);
+      });
+
+      if(data.expires == 0){
+        const date = admin.firestore.FieldValue.serverTimestamp();
+        db.collection(`users/${userId}/notifications`).add({
+          "date": date,
+          "content": `Your subscription is expired, renew it to reopen all features.`,
+          "title": "Package Expired",
+        });
+
+        if(tokens.length > 0){
+          const payload = {
+            notification : {
+              title: "Package Expired",
+              body: `Your subscription is expired, renew it to reopen all features.`,
+              sound: "default",
+            },
+            data: {
+              click_action: "Flutter_NOTIFICATION_CLICK"
+            },
+          };
+          return fcm.sendToDevice(tokens, payload);
+        }
+      }else{
+        const date = admin.firestore.FieldValue.serverTimestamp();
+        db.collection(`users/${userId}/notifications`).add({
+          "date": date,
+          "content": `Your subscription will end in ${data.expires} days.`,
+          "title": "Package Nearly Ends",
+        });
+
+        if(tokens.length > 0){
+          const payload = {
+            notification : {
+              title: "Package Nearly Ends",
+              body: `Your subscription will end in ${data.expires} days.`,
+              sound: "default",
+            },
+            data: {
+              click_action: "Flutter_NOTIFICATION_CLICK"
+            },
+          };
+          return fcm.sendToDevice(tokens, payload);
+        }
+      }
+    });
+
+
+
+exports.whenChatCreated = functions.firestore
+    .document("chats/{chatId}")
+    .onCreate(async(snapshot, context) => {
+
+      const chatId = context.params.chatId;
+      const firstUserId = snapshot.data().firstUserId;
+      const secondUserId = snapshot.data().secondUserId;
+
+      await db.doc(`users/${firstUserId}/user chats/${chatId}`).set({
+        "roomId": chatId,
+      });
+
+      return db.doc(`users/${secondUserId}/user chats/${chatId}`).set({
+        "roomId": chatId,
+      });
+    });
+
+
+exports.whenGroupChatCreated = functions.firestore
+    .document("group chats/{groupChatId}")
+    .onCreate(async(snapshot, context) => {
+
+      const groupChatId = context.params.groupChatId;
+      const usersId = snapshot.data().usersId;
+
+      return usersId.forEach((userId) => {
+        db.doc(`users/${userId}/user group chats/${groupChatId}`).set({
+        "groupId": groupChatId,
+      });
+
+    });
     });

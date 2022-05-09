@@ -12,7 +12,6 @@ import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_event.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_state.dart';
 import 'package:ovx_style/model/group_model.dart';
-import 'package:ovx_style/bloc/user_search_bloc/user_search_bloc.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   CreateGroupScreen({
@@ -28,25 +27,6 @@ class CreateGroupScreen extends StatefulWidget {
 }
 
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider<UserSearchBloc>(
-      create: (ctx) => UserSearchBloc(),
-      child: CreateGroupWidget(groupName: widget.groupName,),
-    );
-  }
-}
-
-class CreateGroupWidget extends StatefulWidget {
-  final String groupName;
-
-  CreateGroupWidget({required this.groupName});
-
-  @override
-  _CreateGroupWidgetState createState() => _CreateGroupWidgetState();
-}
-
-class _CreateGroupWidgetState extends State<CreateGroupWidget> {
   List<String> usersId = [];
 
   @override
@@ -75,7 +55,7 @@ class _CreateGroupWidgetState extends State<CreateGroupWidget> {
               onPressed: () {
                 String me = SharedPref.getUser().id!;
                 usersId.add(me);
-                GroupModel groupModel = GroupModel(groupAdminId: me, usersId: usersId, groupName: widget.groupName,);
+                GroupModel groupModel = GroupModel(groupAdminId: me, usersId: usersId, groupName: widget.groupName, lastUpdated: DateTime.now());
                 context.read<ChatBloc>().add(CreateGroup(groupModel));
               },
               child: Text(
@@ -103,3 +83,4 @@ class _CreateGroupWidgetState extends State<CreateGroupWidget> {
     );
   }
 }
+

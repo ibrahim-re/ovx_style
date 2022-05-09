@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -12,10 +14,16 @@ import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
+import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/offer.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/src/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:video_player/video_player.dart';
+import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
 
 class videoDetails extends StatefulWidget {
   final navigator;
@@ -147,6 +155,13 @@ class _videoDetailsState extends State<videoDetails> {
                         DeleteOfferButtonPressed(
                             widget.video.id!, SharedPref.getUser().userType!, SharedPref.getUser().id!),
                       );
+                },
+                shareFunction: () async {
+                  OfferHelper.shareVideo(widget.video.offerMedia!.first);
+                },
+                reportFunction: (){
+                  String body = 'I want to report this video offer because of: \n\n\n\nOffer ID: ${widget.video.id}';
+                  Helper().sendEmail('Report Video Offer [OVX Style App]', body, []);
                 },
               ),
             ),

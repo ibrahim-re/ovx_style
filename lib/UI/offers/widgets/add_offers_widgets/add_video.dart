@@ -6,11 +6,20 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/UI/widgets/custom_elevated_button.dart';
 import 'package:ovx_style/UI/widgets/space_widget.dart';
 import 'package:ovx_style/Utiles/colors.dart';
+import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/Utiles/modal_sheets.dart';
+import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
+import 'package:ovx_style/bloc/packages_bloc/packages_bloc.dart';
+import 'package:ovx_style/bloc/packages_bloc/packages_event.dart';
+import 'package:ovx_style/bloc/packages_bloc/packages_state.dart';
 import 'package:ovx_style/helper/pick_image_helper.dart';
+
+import '../posts_countries_widget.dart';
+import 'available_offers_widget.dart';
 
 class AddVideo extends StatefulWidget {
   @override
@@ -20,6 +29,13 @@ class AddVideo extends StatefulWidget {
 class _AddVideoState extends State<AddVideo> {
   PickImageHelper pickImageHelper = PickImageHelper();
   String _videoPath = '';
+  int availableOffers = 0;
+
+  @override
+  void initState() {
+    context.read<PackagesBloc>().add(GetAvailableOffersCount(OfferType.Video));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +44,48 @@ class _AddVideoState extends State<AddVideo> {
       listener: (ctx, state) {
         if (state is AddOfferLoading)
           EasyLoading.show(status: 'please wait'.tr());
-        else if (state is AddOfferSucceed)
+        else if (state is AddOfferSucceed){
           EasyLoading.showSuccess('offer added'.tr());
+          NamedNavigatorImpl().pop();
+        }
         else if (state is AddOfferFailed)
           EasyLoading.showError(state.message);
 
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            BlocBuilder<PackagesBloc, PackagesState>(
+              builder: (ctx, state) {
+                if (state is GetAvailableOffersFailed)
+                  return Center(
+                    child: Text(
+                      state.message,
+                      style: Constants.TEXT_STYLE9,
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                else if (state is GetAvailableOffersDone) {
+                  availableOffers = state.availableOffers;
+                  return AvailableOffersWidget(
+                      availableOffers: availableOffers);
+                } else
+                  return Center(
+                    child: RefreshProgressIndicator(
+                      color: MyColors.secondaryColor,
+                    ),
+                  );
+              },
+            ),
+            VerticalSpaceWidget(
+              heightPercentage: 0.025,
+            ),
+            PostsCountriesWidget(),
+            const SizedBox(
+              height: 16,
+            ),
             GestureDetector(
               onTap: () async {
                 //take the images and add its path to user info
@@ -98,6 +145,10 @@ class _AddVideoState extends State<AddVideo> {
               color: MyColors.secondaryColor,
               text: 'add offer'.tr(),
               function: () {
+                if(availableOffers == 0){
+                  ModalSheets().showNoAvailableOffersDialog(context);
+                  return;
+                }
                 if (_videoPath.isEmpty) {
                   EasyLoading.showError('please add video'.tr());
                 } else

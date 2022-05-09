@@ -18,3 +18,23 @@ class SendPointsFailed extends PointsState {
 
   SendPointsFailed(this.message);
 }
+
+class AddPointsLoading extends PointsState {}
+
+class AddPointsSucceed extends PointsState {}
+
+class AddPointsFailed extends PointsState {
+  String message;
+
+  AddPointsFailed(this.message);
+}
+
+class RemovePointsLoading extends PointsState {}
+
+class RemovePointsSucceed extends PointsState {}
+
+class RemovePointsFailed extends PointsState {
+  String message;
+
+  RemovePointsFailed(this.message);
+}

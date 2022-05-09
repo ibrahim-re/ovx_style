@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
-import 'package:ovx_style/api/users/database_repository.dart';
+import 'package:ovx_style/api/chats/chats_repository.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 import 'package:ovx_style/model/chatUserModel.dart';
 import 'package:ovx_style/model/message_model.dart';
@@ -26,18 +27,26 @@ class OneChatItem extends StatefulWidget {
 }
 
 class _OneChatItemState extends State<OneChatItem> {
-  DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
+  ChatsRepositoryImpl chatsRepositoryImpl = ChatsRepositoryImpl();
 
   @override
   Widget build(BuildContext context) {
     final roomId = widget.model.roomId;
     return BlocListener<ChatBloc, ChatStates>(
       listener: (context, state) {
-        if (state is CreatedRoomDoneState) {
+        if(state is CreatedRoomLoadingState)
+          EasyLoading.show(status: 'please wait'.tr());
+        else if(state is CreatedRoomFailedState){
+          EasyLoading.dismiss();
+          EasyLoading.showError(state.err);
+        }
+        else if (state is CreatedRoomDoneState) {
+          EasyLoading.dismiss();
           if (state.anotherUserId == widget.model.userId)
             NamedNavigatorImpl().push(
               NamedRoutes.ChatRoomScreen,
               arguments: {
+                'userId': widget.model.userId,
                 'name': widget.model.userName,
                 'image': widget.model.userImage ?? 'no image',
                 'roomId': state.roomId,
@@ -93,7 +102,7 @@ class _OneChatItemState extends State<OneChatItem> {
                     */
                     if (roomId != null && roomId.isNotEmpty)
                       StreamBuilder<Message>(
-                        stream: databaseRepositoryImpl.getLastMessage(roomId),
+                        stream: chatsRepositoryImpl.getLastMessage(roomId),
                         builder: (ctx, snapshot) {
                           if (snapshot.hasData) {
                             Message message = snapshot.data!;

@@ -15,7 +15,8 @@ class AddItemToBasketEvent extends BasketEvent {
   String shipTo;
 
   AddItemToBasketEvent(this.productId, this.productOwnerId, this.title, this.imagePath, this.size, this.price,
-      this.color, this.vat, this.shippingCost, this.shipTo);
+      this.color, this.vat, this.shippingCost,
+      this.shipTo);
 }
 
 class RemoveItemFromBasketEvent extends BasketEvent {

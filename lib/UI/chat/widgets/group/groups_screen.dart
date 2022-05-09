@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/UI/widgets/no_available_days_widget.dart';
 import 'one_group_item.dart';
 import 'package:ovx_style/UI/offers/widgets/waiting_offer_owner_row.dart';
 import 'package:ovx_style/Utiles/constants.dart';
@@ -40,13 +41,17 @@ class _GroupsScreenState extends State<GroupsScreen> {
           ),
           BlocBuilder<ChatBloc, ChatStates>(
             builder: (context, state) {
-              if (state is GetGroupsFailed)
-                return Center(
-                  child: Text(
-                    state.message,
-                    style: Constants.TEXT_STYLE9,
-                  ),
-                );
+              if (state is GetGroupsFailed) {
+                if (state.message == 'no available days'.tr())
+                  return NoAvailableDaysWidget();
+                else
+                  return Center(
+                    child: Text(
+                      state.message,
+                      style: Constants.TEXT_STYLE9,
+                    ),
+                  );
+              }
               else if (state is GetGroupsLoading)
                 return Expanded(
                   child: ListView(

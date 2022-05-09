@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:geocoding/geocoding.dart' as Geo;
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -11,6 +9,7 @@ class LocationHelper {
   Set<Marker> markers = {};
   double latitude = 0;
   double longitude = 0;
+  String country = '';
 
   Future<bool> isLocationServiceEnabled()async{
     bool isServiceEnabled;
@@ -43,7 +42,7 @@ class LocationHelper {
 
 
 
-  Future<LocationData> _getUserLocation() async {
+  Future<LocationData> getUserLocation() async {
     LocationData locationData = await location.getLocation();
     return locationData;
   }
@@ -53,9 +52,11 @@ class LocationHelper {
     bool permissionGranted = await isPermissionGranted();
 
     if(serviceEnabled && permissionGranted){
-      LocationData locationData = await _getUserLocation();
+      LocationData locationData = await getUserLocation();
       latitude = locationData.latitude ?? 0;
       longitude = locationData.longitude ?? 0;
+      Geo.Placemark address = await getUserAddress(latitude, longitude);
+      country = address.country ?? '';
       googleMapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(locationData.latitude!, locationData.longitude!),

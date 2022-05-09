@@ -26,7 +26,8 @@ class GiftsBloc extends Bloc<GiftsEvent, GiftsState> {
       }catch (e){
         yield FetchGiftsFailed('error occurred'.tr());
       }
-    }else if(event is SendGift) {
+    }
+    else if(event is SendGift) {
       yield SendGiftLoading();
       try{
         //first get user who will receive the gift

@@ -22,17 +22,19 @@ class SignupScreen extends StatelessWidget {
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.only(top: 35, right: 20, left: 20),
+            padding: const EdgeInsets.only(top: 25, right: 20, left: 20),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Align(
                     alignment: Alignment.topLeft,
-                    child: Image.asset('assets/images/logo2.png'),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      radius: 55, backgroundImage: Image.asset('assets/images/logo.png',).image,),
                   ),
                   SizedBox(
-                    height: screenHeight * 0.025,
+                    height: screenHeight * 0.02,
                   ),
                   Text(
                     'be with us'.tr(),

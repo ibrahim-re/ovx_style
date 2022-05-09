@@ -5,6 +5,7 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/enums.dart';
+import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
@@ -33,7 +34,7 @@ class OfferTypeWidget extends StatelessWidget {
           });
 
         else
-          EasyLoading.showToast('login to add'.tr());
+          ModalSheets().showSignSheet(context);
       },
       highlightColor: MyColors.lightBlue,
       child: Column(

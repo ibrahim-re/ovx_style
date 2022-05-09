@@ -11,9 +11,8 @@ class OffersListView extends StatelessWidget {
   final scrollPhysics;
   final shrinkWrap;
   final scrollController;
-  final child;
 
-  OffersListView({required this.fetchedOffers, this.scrollPhysics, this.shrinkWrap, this.scrollController, this.child});
+  OffersListView({required this.fetchedOffers, this.scrollPhysics, this.shrinkWrap, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +21,8 @@ class OffersListView extends StatelessWidget {
       physics: scrollPhysics ?? const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       shrinkWrap: shrinkWrap ?? false,
       //padding: const EdgeInsets.only(bottom: 20),
-      itemCount: fetchedOffers.length + 1,
+      itemCount: fetchedOffers.length,
       itemBuilder: (ctx, index) {
-        if(index < fetchedOffers.length){
           if (fetchedOffers[index].offerType == OfferType.Product.toString())
             return ProductItemBuilder(
               productOffer: fetchedOffers[index] as ProductOffer,
@@ -43,8 +41,6 @@ class OffersListView extends StatelessWidget {
             );
           else
             return Container();
-        } else
-          return child ?? Container();
       },
     );
   }

@@ -5,6 +5,7 @@ import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/helper/basket_helper.dart';
+import 'package:ovx_style/helper/helper.dart';
 
 class ShipToSection extends StatefulWidget {
   const ShipToSection({Key? key, required this.shippingCosts})
@@ -18,6 +19,13 @@ class ShipToSection extends StatefulWidget {
 
 class _ShipToSectionState extends State<ShipToSection> {
   int currentIndex = 0;
+
+  @override
+  void initState() {
+    //this is in case the user doesn't click on any country
+    BasketHelper.tempShippingCost = widget.shippingCosts.values.first;
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -36,13 +44,6 @@ class _ShipToSectionState extends State<ShipToSection> {
         ),
       );
     else {
-
-      //this is in case the user doesn't click on any country
-      if(BasketHelper.tempShippingCost ==0){
-        BasketHelper.tempShippingCost = widget.shippingCosts.values.first;
-        BasketHelper.shipTo = widget.shippingCosts.keys.first;
-      }
-
 
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -64,13 +65,11 @@ class _ShipToSectionState extends State<ShipToSection> {
                   .map(
                     (key) => GestureDetector(
                   onTap: () {
-                    setState(() => currentIndex =
-                        widget.shippingCosts.keys.toList().indexOf(key));
+                    setState(() => currentIndex = widget.shippingCosts.keys.toList().indexOf(key));
 
                     BasketHelper.tempShippingCost = widget.shippingCosts[key]!;
                     BasketHelper.shipTo = key; //key is the country name
 
-                    print(BasketHelper.tempShippingCost);
                     EasyLoading.showInfo(
                         'Shipping cost for this country is ${widget.shippingCosts[key]} ${SharedPref.getCurrency()}');
                   },
@@ -84,10 +83,12 @@ class _ShipToSectionState extends State<ShipToSection> {
                           ? MyColors.lightBlue
                           : MyColors.lightBlue.withOpacity(0.2),
                     ),
-                    child: Text(key,
+                    child: Text(
+                        Helper().getCountryFlag(key),
                         style: TextStyle(
                           color: Colors.black,
-                        )),
+                        ),
+                    ),
                   ),
                 ),
               )

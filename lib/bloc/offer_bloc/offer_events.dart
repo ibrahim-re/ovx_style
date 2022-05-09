@@ -32,23 +32,9 @@ class GetFilteredOffers extends OfferEvent {
   double minPrice;
   double maxPrice;
   List<String> categories;
+  String status;
   List<String> offerTypes;
   UserType userType;
 
-  GetFilteredOffers(this.minPrice, this.maxPrice, this.categories, this.offerTypes, this.userType);
+  GetFilteredOffers(this.minPrice, this.maxPrice, this.categories, this.status, this.offerTypes, this.userType);
 }
-
-// class FetchOffers extends OfferEvent {
-//   UserType offerOwnerType;
-//
-//   FetchOffers(this.offerOwnerType);
-// }
-//
-//
-// class FilterOffers extends OfferEvent {
-//   double minPrice;
-//   double maxPrice;
-//   List<String> categories;
-//
-//   FilterOffers(this.minPrice, this.maxPrice, this.categories);
-// }

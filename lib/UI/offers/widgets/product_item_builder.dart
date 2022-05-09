@@ -1,4 +1,6 @@
 // offer type= product
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,10 +21,14 @@ import 'package:ovx_style/bloc/basket_bloc/basket_bloc.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_events.dart';
 import 'package:ovx_style/bloc/basket_bloc/basket_states.dart';
 import 'package:ovx_style/helper/helper.dart';
+import 'package:ovx_style/helper/offer_helper.dart';
 import 'package:ovx_style/model/offer.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/src/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer_image/shimmer_image.dart';
 import 'offer_owner_row.dart';
+import 'package:http/http.dart' as http;
 
 class ProductItemBuilder extends StatelessWidget {
   final ProductOffer productOffer;
@@ -74,44 +80,54 @@ class ProductItemBuilder extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      //in case no shipping
-                      double selectedShippingPrice =
-                          productOffer.shippingCosts!.isNotEmpty
-                              ? productOffer.shippingCosts!.values.first
-                              : 0;
-                      String shipTo = productOffer.shippingCosts!.isNotEmpty
-                          ? productOffer.shippingCosts!.keys.first
-                          : '';
-                      //get price and see if there is discount
-                      double price =
-                          productOffer.properties!.first.sizes!.first.price!;
-                      if (productOffer.discount != 0)
-                        price = Helper()
-                            .priceAfterDiscount(price, productOffer.discount!);
 
-                      //add item to basket
-                      context.read<BasketBloc>().add(
-                            AddItemToBasketEvent(
-                              productOffer.id!,
-                              productOffer.offerOwnerId!,
-                              productOffer.offerName!,
-                              productOffer.offerMedia!.first,
-                              productOffer.properties!.first.sizes!.first.size!,
-                              price,
-                              productOffer.properties!.first.color!,
-                              productOffer.vat ?? 0,
-                              selectedShippingPrice,
-                              shipTo,
-                            ),
-                          );
+                      NamedNavigatorImpl().push(
+                        NamedRoutes.Product_Details,
+                        arguments: {'offer': productOffer},
+                      );
+
+                      // //get my country and my shipping cost
+                      // String myCountry = SharedPref.getUser().country!;
+                      // double shipCost = 0;
+                      // for(var key in productOffer.shippingCosts!.keys){
+                      //   if(Helper().deleteCountryFlag(key) == myCountry) {
+                      //     shipCost = productOffer.shippingCosts![key] ?? 0;
+                      //     break;
+                      //   }
+                      // }
+                      // //in case no shipping
+                      // // double selectedShippingPrice =
+                      // //     productOffer.shippingCosts!.isNotEmpty
+                      // //         ? productOffer.shippingCosts![myCountry] ?? 0
+                      // //         : 0;
+                      // // String shipTo = productOffer.shippingCosts!.isNotEmpty
+                      // //     ? productOffer.shippingCosts!.keys.first
+                      // //     : '';
+                      // //get price and see if there is discount
+                      // double price =
+                      //     productOffer.properties!.first.sizes!.first.price!;
+                      // if (productOffer.discount != 0)
+                      //   price = Helper()
+                      //       .priceAfterDiscount(price, productOffer.discount!);
+                      //
+                      // print(myCountry);
+                      // //add item to basket
+                      // context.read<BasketBloc>().add(
+                      //       AddItemToBasketEvent(
+                      //         productOffer.id!,
+                      //         productOffer.offerOwnerId!,
+                      //         productOffer.offerName!,
+                      //         productOffer.offerMedia!.first,
+                      //         productOffer.properties!.first.sizes!.first.size!,
+                      //         price,
+                      //         productOffer.properties!.first.color!,
+                      //         productOffer.vat ?? 0,
+                      //         shipCost,
+                      //         myCountry,
+                      //       ),
+                      //     );
                     },
-                    child: BlocListener<BasketBloc, BasketState>(
-                      listener: (context, state) {
-                        if (state is ItemAddedToBasket)
-                          EasyLoading.showToast('item added to basket'.tr(),
-                              dismissOnTap: true);
-                      },
-                      child: Padding(
+                    child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: CircleAvatar(
                           backgroundColor: MyColors.primaryColor,
@@ -122,7 +138,6 @@ class ProductItemBuilder extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
                   ),
                 ],
               ),
@@ -164,6 +179,13 @@ class ProductItemBuilder extends StatelessWidget {
 											},
 											child: CustomPopUpMenu(
 												ownerId: productOffer.offerOwnerId,
+                        shareFunction: () async {
+												  OfferHelper.shareProduct(productOffer.offerMedia!, productOffer.offerName!, productOffer.shortDesc ?? '', productOffer.categories!, productOffer.status!);
+                        },
+                        reportFunction: (){
+                          String body = 'I want to report this product offer because of: \n\n\n\nOffer ID: ${productOffer.id}';
+                          Helper().sendEmail('Report Product Offer [OVX Style App]', body, []);
+                        },
 												deleteFunction: () {
 													context.read<AddOfferBloc>().add(
 														DeleteOfferButtonPressed(

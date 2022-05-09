@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/bloc/add_offer_bloc/add_offer_bloc.dart';
+import 'package:provider/src/provider.dart';
 import 'countries_shipping_listview.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
@@ -16,7 +19,7 @@ class _ShippingCostsWidgetState extends State<ShippingCostsWidget> {
 
   @override
   void dispose() {
-    OfferHelper.shippingCosts.clear();
+    //OfferHelper.resetShippingCosts();
     super.dispose();
   }
 

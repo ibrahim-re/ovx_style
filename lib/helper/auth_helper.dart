@@ -36,8 +36,14 @@ class AuthHelper {
 
   static bool submitSignUpForm(GlobalKey<FormState> formKey) {
     if (formKey.currentState!.validate()){
-      if(AuthHelper.userInfo['country'] == null || AuthHelper.userInfo['city'] == null){
-        EasyLoading.showInfo('please enter country'.tr());
+      if(AuthHelper.userInfo['country'] == null ||
+          AuthHelper.userInfo['countryFlag'] == null ||
+          AuthHelper.userInfo['country'] == '' ||
+          AuthHelper.userInfo['latitude'] == null ||
+          AuthHelper.userInfo['latitude'] == 0 ||
+          AuthHelper.userInfo['longitude'] == 0 ||
+          AuthHelper.userInfo['longitude'] == null){
+        EasyLoading.showInfo('please enter address'.tr());
         return false;
       }
 
@@ -56,7 +62,7 @@ class AuthHelper {
   //generate user code automatically
   static String generateUserCode() {
     String userCode = '';
-    AuthHelper.userInfo['userType'] == UserType.Person.toString()
+    AuthHelper.userInfo['userType'] == UserType.User.toString()
         ? userCode = MinId.getId('user{6{d}}')
         : userCode = MinId.getId('com{6{d}}');
 

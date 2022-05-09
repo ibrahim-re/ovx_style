@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/UI/profile/widgets/receive_gifts_switch.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
@@ -27,29 +28,37 @@ class MyGiftsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: BlocBuilder<GiftsBloc, GiftsState>(
-          builder: (context, state) {
-            if (state is FetchGiftsLoading)
-              return CircularProgressIndicator(
-                color: MyColors.secondaryColor,
-              );
-            else if (state is FetchGiftsFailed)
-              return Center(
-                child: Text(state.message),
-              );
-            else {
-              List<Gift> myGifts = context.read<GiftsBloc>().myGifts;
-              return ListView.builder(
-                itemCount: myGifts.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: GiftContainer(
-                    gift: myGifts[index],
-                  ),
-                ),
-              );
-            }
-          },
+        child: Column(
+          children: [
+            ReceiveGiftsSwitch(),
+            const SizedBox(height: 8,),
+            Expanded(
+              child: BlocBuilder<GiftsBloc, GiftsState>(
+                builder: (context, state) {
+                  if (state is FetchGiftsLoading)
+                    return CircularProgressIndicator(
+                      color: MyColors.secondaryColor,
+                    );
+                  else if (state is FetchGiftsFailed)
+                    return Center(
+                      child: Text(state.message),
+                    );
+                  else {
+                    List<Gift> myGifts = context.read<GiftsBloc>().myGifts;
+                    return ListView.builder(
+                      itemCount: myGifts.length,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: GiftContainer(
+                          gift: myGifts[index],
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

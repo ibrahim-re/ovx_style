@@ -5,9 +5,6 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
-import 'package:ovx_style/bloc/points_bloc/points_bloc.dart';
-import 'package:ovx_style/bloc/points_bloc/points_events.dart';
-import 'package:provider/src/provider.dart';
 
 class SendPointsWidget extends StatefulWidget {
   @override
@@ -27,14 +24,14 @@ class _SendPointsWidgetState extends State<SendPointsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: (){
+    return IconButton(
+      onPressed: (){
         if(SharedPref.getUser().userType == UserType.Guest.toString())
-          EasyLoading.showToast('login to points'.tr());
+          ModalSheets().showSignSheet(context);
         else
           ModalSheets().showSendPoints(context, amountController, codeController);
       },
-      child: SvgPicture.asset('assets/images/send_points.svg', fit: BoxFit.scaleDown,),
+      icon: SvgPicture.asset('assets/images/send_points.svg', fit: BoxFit.scaleDown,),
     );
   }
 }

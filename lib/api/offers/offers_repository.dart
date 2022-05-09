@@ -8,17 +8,28 @@ import 'package:ovx_style/model/comment_model.dart';
 import 'package:ovx_style/model/offer.dart';
 
 abstract class OffersRepository {
-  Future<void> addOffer(Map<String, dynamic> productOffer);
+  Future<void> addOffer(Map<String, dynamic> offer);
   Future<List<Category>> getCategories();
-  Future<List<Offer>> getOffers(UserType offerOwnerType, {String lastFetchedOfferId});
+  Future<List<Offer>> getOffers(UserType offerOwnerType,
+      {String lastFetchedOfferId});
   Future<List<Offer>> getUserOffers(String uId, String offerOwnerType);
   Future<List<Offer>> getMyLikedOffers(String uId);
-  Future<List<Offer>> getFilteredOffers(double minPrice, double maxPrice, List<String> categories, List<String> offerTypes, UserType userType);
-  Future<void> deleteOffer(String offerId, String offerOwnerType, String userId);
+  Future<List<Offer>> getFilteredOffers(
+      double minPrice,
+      double maxPrice,
+      String status,
+      List<String> categories,
+      List<String> offerTypes,
+      UserType userType);
+  Future<void> deleteOffer(
+      String offerId, String offerOwnerType, String userId);
   Future<void> updateLikes(String offerId, String offerOwnerId, String userId);
-  Future<void> addCommentToOffer(String offerId, String offerOwnerId, Map<String, dynamic> commentData);
-  Future<List<CommentModel>> fetchOfferComments(String offerId, String offerOwnerId);
-  Future<void> deleteComment(String offerId, Map<String, dynamic> data, String offerOwnerId);
+  Future<void> addCommentToOffer(
+      String offerId, String offerOwnerId, Map<String, dynamic> commentData);
+  Future<List<CommentModel>> fetchOfferComments(
+      String offerId, String offerOwnerId);
+  Future<void> deleteComment(
+      String offerId, Map<String, dynamic> data, String offerOwnerId);
   Future<Map<String, double>> getCurrencies();
 }
 
@@ -31,14 +42,13 @@ class OffersRepositoryImpl extends OffersRepository {
   CollectionReference _currencies =
       FirebaseFirestore.instance.collection('currencies');
 
-
   @override
-  Future<void> addOffer(Map<String, dynamic> productOffer) async {
+  Future<void> addOffer(Map<String, dynamic> offer) async {
     try {
-      if (productOffer['offerOwnerType'] == UserType.Person.toString()) {
-        await _offers.doc(productOffer['id']).set(productOffer);
+      if (offer['offerOwnerType'] == UserType.User.toString()) {
+        await _offers.doc(offer['id']).set(offer);
       } else {
-        await _companyOffers.doc(productOffer['id']).set(productOffer);
+        await _companyOffers.doc(offer['id']).set(offer);
       }
     } on FirebaseException catch (e) {
       print('error code is ${e.code}');
@@ -76,20 +86,26 @@ class OffersRepositoryImpl extends OffersRepository {
     try {
       List<Offer> fetchedOffers = [];
 
-      CollectionReference ref = offerOwnerType == UserType.Person ? _offers : _companyOffers;
+      CollectionReference ref = offerOwnerType == UserType.User ? _offers : _companyOffers;
 
+      String userCountry = SharedPref.getUser().country!;
       //initialize query
       QuerySnapshot querySnapshot;
 
-      if(lastFetchedOfferId.isNotEmpty) {
+      if (lastFetchedOfferId.isNotEmpty) {
         final documentSnapshot = await ref.doc(lastFetchedOfferId).get();
-        querySnapshot = await ref.orderBy('offerCreationDate', descending: true)
+        querySnapshot = await ref
+            .orderBy('offerCreationDate', descending: true)
             .startAfterDocument(documentSnapshot)
-            .limit(5).get();
-      }
-      else
-        querySnapshot = await ref.orderBy('offerCreationDate', descending: true)
-            .limit(5).get();
+            .where('countries', arrayContainsAny: [userCountry, 'All countries'])
+            .limit(30)
+            .get();
+      } else
+        querySnapshot = await ref
+            .orderBy('offerCreationDate', descending: true)
+            .where('countries', arrayContainsAny: [userCountry, 'All countries'])
+            .limit(30)
+            .get();
 
       fetchedOffers = OfferHelper.fromDocumentSnapshotToOffer(querySnapshot);
 
@@ -101,8 +117,7 @@ class OffersRepositoryImpl extends OffersRepository {
   }
 
   @override
-  Future<void> updateLikes(
-      String offerId, String offerOwnerId, String userId) async {
+  Future<void> updateLikes(String offerId, String offerOwnerId, String userId) async {
     try {
       DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
 
@@ -111,7 +126,7 @@ class OffersRepositoryImpl extends OffersRepository {
           await databaseRepositoryImpl.getUserType(offerOwnerId);
 
       //check if user is person or company
-      if (offerOwnerType == UserType.Person.toString()) {
+      if (offerOwnerType == UserType.User.toString()) {
         //check and see if this is like or dislike
         if (SharedPref.getUser().offersLiked!.contains(offerId)) {
           await _offers.doc(offerId).update({
@@ -155,7 +170,7 @@ class OffersRepositoryImpl extends OffersRepository {
           await databaseRepositoryImpl.getUserType(offerOwnerId);
 
       //check if user is person or company
-      if (offerOwnerType == UserType.Person.toString()) {
+      if (offerOwnerType == UserType.User.toString()) {
         await _offers.doc(offerId).update({
           'comments': FieldValue.arrayUnion([commentData]),
         });
@@ -181,11 +196,10 @@ class OffersRepositoryImpl extends OffersRepository {
       DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
 
       //first get owner id type (person or company)
-      String offerOwnerType =
-          await databaseRepositoryImpl.getUserType(offerOwnerId);
+      String offerOwnerType = await databaseRepositoryImpl.getUserType(offerOwnerId);
 
       //check if user is person or company
-      if (offerOwnerType == UserType.Person.toString()) {
+      if (offerOwnerType == UserType.User.toString()) {
         final DocumentSnapshot data = await _offers.doc(offerId).get();
         final d = data.data() as Map<String, dynamic>;
         comments = (d['comments'] as List<dynamic>)
@@ -217,7 +231,7 @@ class OffersRepositoryImpl extends OffersRepository {
           await databaseRepositoryImpl.getUserType(offerOwnerId);
 
       //check if user is person or company
-      if (offerOwnerType == UserType.Person.toString()) {
+      if (offerOwnerType == UserType.User.toString()) {
         await _offers.doc(offerId).update({
           'comments': FieldValue.arrayRemove([data])
         });
@@ -275,18 +289,19 @@ class OffersRepositoryImpl extends OffersRepository {
     try {
       List<Offer> fetchedOffers = [];
 
+      String userCountry = SharedPref.getUser().country!;
       //initialize query
       QuerySnapshot querySnapshot;
-      if (offerOwnerType == UserType.Person.toString())
+      if (offerOwnerType == UserType.User.toString())
         querySnapshot = await _offers
             .orderBy('offerCreationDate', descending: true)
-            .where('userId', isEqualTo: uId)
-            .get();
+            .where('offerOwnerId', isEqualTo: uId)
+            .where('countries', arrayContainsAny: [userCountry, 'All countries']).get();
       else
         querySnapshot = await _companyOffers
             .orderBy('offerCreationDate', descending: true)
-            .where('userId', isEqualTo: uId)
-            .get();
+            .where('offerOwnerId', isEqualTo: uId)
+            .where('countries', arrayContains: [userCountry, 'All countries']).get();
 
       fetchedOffers = OfferHelper.fromDocumentSnapshotToOffer(querySnapshot);
 
@@ -335,31 +350,44 @@ class OffersRepositoryImpl extends OffersRepository {
   }
 
   @override
-  Future<List<Offer>> getFilteredOffers(double minPrice, double maxPrice, List<String> categories, List<String> offerTypes, UserType userType) async {
+  Future<List<Offer>> getFilteredOffers(
+      double minPrice,
+      double maxPrice,
+      String status,
+      List<String> categories,
+      List<String> offerTypes,
+      UserType userType) async {
     try {
       List<Offer> fetchedOffers = [];
 
-      CollectionReference ref = userType == UserType.Person ? _offers : _companyOffers;
+      CollectionReference ref = userType == UserType.User ? _offers : _companyOffers;
+
+      String userCountry = SharedPref.getUser().country!;
 
       if (offerTypes.contains(OfferType.Product.toString())) {
         QuerySnapshot querySnapshot;
-        if (categories.isNotEmpty)
-          querySnapshot = await ref
-              .where('offerType', isEqualTo: OfferType.Product.toString())
-              .where('categories', arrayContainsAny: categories)
-              .orderBy('offerCreationDate', descending: true)
-              .get();
-        else
-          querySnapshot = await ref
-              .where('offerType', isEqualTo: OfferType.Product.toString())
-              .orderBy('offerCreationDate', descending: true)
-              .get();
+        querySnapshot = await ref
+            .where('offerType', isEqualTo: OfferType.Product.toString())
+            .where('countries', arrayContainsAny: [userCountry, 'All countries'])
+            .orderBy('offerCreationDate', descending: true)
+            .get();
 
         for (var e in querySnapshot.docs) {
           final data = e.data() as Map<String, dynamic>;
           final offerId = e.id;
           ProductOffer offer = ProductOffer.fromMap(data, offerId);
           fetchedOffers.add(offer);
+        }
+
+        if(categories.isNotEmpty){
+          fetchedOffers = OfferHelper.filterCategories(fetchedOffers, categories);
+        }
+
+        if (status.isNotEmpty) {
+          fetchedOffers.removeWhere((offer) {
+            ProductOffer pOffer = offer as ProductOffer;
+            return pOffer.status != status;
+          });
         }
 
         //filter offers by price
@@ -370,11 +398,20 @@ class OffersRepositoryImpl extends OffersRepository {
       }
 
       if (offerTypes.isNotEmpty) {
-        QuerySnapshot querySnapshot = await ref.where('offerType', whereIn: offerTypes).orderBy('offerCreationDate', descending: true).get();
+        QuerySnapshot querySnapshot = await ref
+            .where('offerType', whereIn: offerTypes)
+            .orderBy('offerCreationDate', descending: true)
+            .get();
         fetchedOffers = OfferHelper.fromDocumentSnapshotToOffer(querySnapshot);
+        fetchedOffers.removeWhere((offer) =>
+            !offer.countries!.contains(userCountry) &&
+            !offer.countries!.contains('All countries'));
       }
 
-      fetchedOffers.sort((a,b){ return b.offerCreationDate!.compareTo(a.offerCreationDate!);});
+      fetchedOffers.sort((a, b) {
+        return b.offerCreationDate!.compareTo(a.offerCreationDate!);
+      });
+
       return fetchedOffers;
     } catch (e) {
       print('error $e');

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
-import 'package:ovx_style/UI/profile/widgets/currency_picker.dart';
 import 'package:ovx_style/UI/profile/widgets/personal_info.dart';
 import 'package:ovx_style/UI/profile/widgets/profile_image_section.dart';
 import 'package:ovx_style/UI/profile/widgets/send_points_widget.dart';
 import 'package:ovx_style/UI/profile/widgets/settings.dart';
+import 'package:ovx_style/UI/profile/widgets/subscription_section.dart';
 import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/modal_sheets.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
@@ -15,7 +15,6 @@ import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_bloc.dart';
 import 'package:ovx_style/bloc/logout_bloc/logout_bloc.dart';
-import 'package:ovx_style/bloc/points_bloc/points_bloc.dart';
 
 class UserProfileScreen extends StatelessWidget {
   final navigator;
@@ -30,15 +29,14 @@ class UserProfileScreen extends StatelessWidget {
           'profile'.tr(),
         ),
         actions: [
-          CurrencyPicker(),
-          GestureDetector(
-            onTap: () => ModalSheets().showOfferTypePicker(context),
-            child: SvgPicture.asset(
+          IconButton(
+            onPressed: () => ModalSheets().showOfferTypePicker(context),
+            icon: SvgPicture.asset(
               'assets/images/add_offer.svg',
               fit: BoxFit.scaleDown,
             ),
           ),
-         const SizedBox(width: 8,),
+         //const SizedBox(width: 8,),
           SendPointsWidget(),
           if (SharedPref.getUser().userType != UserType.Guest.toString())
             IconButton(
@@ -58,7 +56,7 @@ class UserProfileScreen extends StatelessWidget {
             ),
           ),
           PersonalInfo(),
-          //SubscriptionSection(),
+          SubscriptionSection(),
           BlocProvider<LogoutBloc>(
             create: (ctx) => LogoutBloc(),
             child: Settings(),

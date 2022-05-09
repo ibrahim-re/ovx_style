@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
+import 'package:ovx_style/api/chats/chats_repository.dart';
 
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
@@ -24,7 +25,7 @@ class MessagesStreamBuilder extends StatefulWidget {
 
 class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
   final scrollController = ScrollController();
-  DatabaseRepositoryImpl _databaseRepositoryImpl = DatabaseRepositoryImpl();
+  ChatsRepositoryImpl _chatsRepositoryImpl = ChatsRepositoryImpl();
   String lastFetchedMessageId = '';
 
   @override
@@ -45,7 +46,7 @@ class _MessagesStreamBuilderState extends State<MessagesStreamBuilder> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Message>>(
-      stream: _databaseRepositoryImpl.getChatMessages(widget.roomId),
+      stream: _chatsRepositoryImpl.getChatMessages(widget.roomId),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           print(snapshot.error);

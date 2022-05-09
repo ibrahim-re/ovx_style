@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,14 +32,14 @@ class Helper{
       );
   }
 
-  //this function generated search possible strings (more than 5 chars) for a string
+  //this function generated search possible strings (more than 4 chars) for a string
   List<String> generateSearchStrings(String text) {
     List<String> output = [];
     for (int i = 0; i < text.length; i++) {
       List<String> temp = [text[i]];
       for (int j = i + 1; j < text.length; j++) {
         temp.add(text[j]);
-        if(temp.length >= 5)
+        if(temp.length >= 4)
           output.add(temp.join().toLowerCase());
       }
 
@@ -121,6 +122,40 @@ class Helper{
     } catch (e) {
       print('error is $e');
     }
+  }
+
+  String getCountryFlag(String country){
+    if(country == 'All countries')
+      return country;
+
+    return country.replaceAll(RegExp('[A-Za-z0-9]'), '').trim();
+  }
+
+  String deleteCountryFlag(String country){
+    if(country == 'All countries')
+      return country;
+
+    return country.replaceAll(RegExp('[^A-Za-z0-9 ]'), '').trimLeft();
+  }
+
+  int getAgeFromBirthDate(String birthDate){
+
+    if(birthDate.isEmpty)
+      return 0;
+
+    //get year from string formatted like: 17-07-1995
+    int yearOfBirth = int.parse(birthDate.substring(6));
+    //get current year
+    int currentYear = DateTime.now().year;
+
+    return currentYear - yearOfBirth;
+  }
+
+  bool checkBillRequest(DateTime billDate){
+    DateTime dayToRequest = billDate.add(Duration(days: 10));
+    DateTime now = DateTime.now();
+
+    return now.isAfter(dayToRequest);
   }
 
 }

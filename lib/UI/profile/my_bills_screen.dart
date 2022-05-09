@@ -11,6 +11,7 @@ import 'package:ovx_style/bloc/bills_bloc/bills_bloc.dart';
 import 'package:ovx_style/bloc/bills_bloc/bills_events.dart';
 import 'package:ovx_style/bloc/bills_bloc/bills_states.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/helper/location_helper.dart';
 import 'package:ovx_style/model/bill.dart';
 
@@ -75,7 +76,7 @@ class MyBillsScreen extends StatelessWidget {
                   else if(state is BillRequested)
                     EasyLoading.showSuccess('bill requested'.tr());
                   else if(state is BillRequestFailed)
-                    EasyLoading.showSuccess(state.message);
+                    EasyLoading.showError(state.message);
                 },
                 builder: (context, state) {
                   if (state is FetchBillsLoading)
@@ -123,10 +124,17 @@ class BillRow extends StatefulWidget {
 
 class _BillRowState extends State<BillRow> {
   bool isExpanded = false;
+  bool canRequest = false;
+
+  @override
+  void initState() {
+
+    canRequest = Helper().checkBillRequest(widget.bill.date!);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.bill.buyerLatitude);
     return Column(
       children: [
         Row(
@@ -259,7 +267,7 @@ class _BillRowState extends State<BillRow> {
                           'our share'.tr(),
                           style: Constants.TEXT_STYLE6,
                         ),
-                        subtitle: Text('15%'),
+                        subtitle: Text('10%'),
                       ),
                     ),
                   ],
@@ -370,6 +378,10 @@ class _BillRowState extends State<BillRow> {
                   ),
                 TextButton(
                   onPressed: widget.bill.isRequested! ? null : () async {
+                    if(!canRequest){
+                      EasyLoading.showError('can not request bill now'.tr());
+                      return;
+                    }
                     bool b = await showDialog(
                       context: context,
                       barrierDismissible: false,
@@ -442,11 +454,6 @@ class _AddressListTileState extends State<AddressListTile> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${address.name}',
-                  softWrap: true,
-                  overflow: TextOverflow.fade,
-                ),
                 Text(
                   'Country: ${address.country}',
                   softWrap: true,

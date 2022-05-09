@@ -4,6 +4,7 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/api/chats/chats_repository.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_bloc.dart';
 import 'package:ovx_style/bloc/chat_bloc/chat_event.dart';
@@ -27,7 +28,7 @@ class GroupMessagesStreamBuilder extends StatefulWidget {
 class _GroupMessagesStreamBuilderState
     extends State<GroupMessagesStreamBuilder> {
   final scrollController = ScrollController();
-  DatabaseRepositoryImpl _databaseRepositoryImpl = DatabaseRepositoryImpl();
+  ChatsRepositoryImpl _chatsRepositoryImpl = ChatsRepositoryImpl();
   String lastFetchedMessageId = '';
 
   @override
@@ -48,7 +49,7 @@ class _GroupMessagesStreamBuilderState
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<GroupMessage>>(
-      stream: _databaseRepositoryImpl.getGroupChatMessages(widget.groupId),
+      stream: _chatsRepositoryImpl.getGroupChatMessages(widget.groupId),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           print(snapshot.error);

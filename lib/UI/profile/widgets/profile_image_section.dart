@@ -7,6 +7,7 @@ import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_bloc.dart';
 import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_events.dart';
 import 'package:ovx_style/bloc/cover_photo_bloc/cover_photo_states.dart';
+import 'package:ovx_style/helper/helper.dart';
 import 'package:ovx_style/helper/pick_image_helper.dart';
 import 'dart:io';
 
@@ -25,7 +26,7 @@ class ProfileImageSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 16),
       width: double.infinity,
       height: screenHeight * 0.3,
       alignment: Alignment.topCenter,
@@ -46,7 +47,6 @@ class ProfileImageSection extends StatelessWidget {
               coverImage: SharedPref.getUser().coverImage!,
             ),
           ),
-          //if user if current logged in, he can change his cover photo
           Positioned(
             top: 10,
             left: 10,
@@ -55,11 +55,13 @@ class ProfileImageSection extends StatelessWidget {
                 final imageSource = await PickImageHelper().showPicker(context);
                 if (imageSource == null) return;
 
-                File temporaryImage = await PickImageHelper().pickImageFromSource(imageSource);
+                File temporaryImage =
+                    await PickImageHelper().pickImageFromSource(imageSource);
 
-                context.read<CoverPhotoBloc>().add(ChangeCoverPhotoButtonPressed(temporaryImage.path));
-
-                },
+                context
+                    .read<CoverPhotoBloc>()
+                    .add(ChangeCoverPhotoButtonPressed(temporaryImage.path));
+              },
               child: CircleAvatar(
                 radius: 18,
                 backgroundColor: Colors.white,
@@ -88,6 +90,17 @@ class ProfileImageSection extends StatelessWidget {
                     backgroundImage:
                         AssetImage('assets/images/default_profile.jpg'),
                   ),
+          ),
+          Positioned(
+            bottom: -85,
+            child: CircleAvatar(
+              radius: 15,
+              backgroundColor: Colors.transparent,
+              child: Text(
+                SharedPref.getUser().countryFlag!,
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
           ),
         ],
       ),

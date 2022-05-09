@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ovx_style/Utiles/colors.dart';
 import 'package:ovx_style/Utiles/constants.dart';
-import 'package:ovx_style/bloc/user_search_bloc/user_search_bloc.dart';
-import 'package:ovx_style/bloc/user_search_bloc/user_search_states.dart';
+import 'package:ovx_style/bloc/user_bloc/user_bloc.dart';
+import 'package:ovx_style/bloc/user_bloc/user_states.dart';
 import 'package:shimmer_image/shimmer_image.dart';
 
 class AddToGroupListView extends StatefulWidget {
@@ -19,7 +19,7 @@ class _AddToGroupListViewState extends State<AddToGroupListView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserSearchBloc, UserSearchState>(builder: (ctx, state) {
+    return BlocBuilder<UserBloc, UserState>(builder: (ctx, state) {
       if (state is UserSearchLoading)
         return Center(
           child: CircularProgressIndicator(

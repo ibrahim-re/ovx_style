@@ -5,6 +5,7 @@ import 'package:ovx_style/Utiles/constants.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/navigation/named_routes.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
+import 'package:ovx_style/api/chats/chats_repository.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/model/group_model.dart';
 import 'package:ovx_style/model/message_model.dart';
@@ -19,7 +20,7 @@ class OneGroupItem extends StatefulWidget {
 }
 
 class _OneGroupItemState extends State<OneGroupItem> {
-  DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
+  ChatsRepositoryImpl chatsRepositoryImpl = ChatsRepositoryImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class _OneGroupItemState extends State<OneGroupItem> {
                     style: Constants.TEXT_STYLE4,
                   ),
                 StreamBuilder<GroupMessage>(
-                      stream: databaseRepositoryImpl.getGroupLastMessage(widget.groupModel.groupId!),
+                      stream: chatsRepositoryImpl.getGroupLastMessage(widget.groupModel.groupId!),
                       builder: (ctx, snapshot) {
                         if (snapshot.hasData) {
                           GroupMessage message = snapshot.data!;

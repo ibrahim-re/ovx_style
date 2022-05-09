@@ -44,7 +44,7 @@ class _MyLikedOffersScreenState extends State<MyLikedOffersScreen> {
           else
             return Center(
               child: Text(
-                'no offers yet'.tr(),
+                'no liked offers yet'.tr(),
                 style: Constants.TEXT_STYLE8.copyWith(
                   color: MyColors.secondaryColor,
                   fontWeight: FontWeight.w500,

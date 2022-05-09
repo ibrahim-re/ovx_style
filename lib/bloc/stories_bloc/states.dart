@@ -14,9 +14,23 @@ class FetchAllStoriesFailedState extends StoriesBlocStates {
   FetchAllStoriesFailedState(this.message);
 }
 
+class FetchMoreStoriesLoading extends StoriesBlocStates {}
+
+class FetchMoreStoriesDone extends StoriesBlocStates {}
+
+class FetchMoreStoriesFailed extends StoriesBlocStates {
+  String message;
+
+  FetchMoreStoriesFailed(this.message);
+}
+
 class AddStoryLoadingState extends StoriesBlocStates {}
 
-class AddStoryDoneState extends StoriesBlocStates {}
+class AddStoryDoneState extends StoriesBlocStates {
+  int storyCountAvailable;
+
+  AddStoryDoneState(this.storyCountAvailable);
+}
 
 class AddStoryFailedState extends StoriesBlocStates {
   String message;
@@ -41,4 +55,18 @@ class DeleteStoryFailed extends StoriesBlocStates {
   String message;
 
   DeleteStoryFailed(this.message);
+}
+
+class FilterStoriesLoading extends StoriesBlocStates {}
+
+class FilterStoriesDone extends StoriesBlocStates {
+  List<StoryModel> stories;
+
+  FilterStoriesDone(this.stories);
+}
+
+class FilterStoriesFailed extends StoriesBlocStates {
+  String message;
+
+  FilterStoriesFailed(this.message);
 }

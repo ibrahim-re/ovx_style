@@ -2,9 +2,11 @@ import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:ovx_style/Utiles/enums.dart';
 import 'package:ovx_style/Utiles/navigation/named_navigator_impl.dart';
 import 'package:ovx_style/Utiles/shared_pref.dart';
 import 'package:ovx_style/api/offers/offers_repository.dart';
+import 'package:ovx_style/api/packags/packages_repository.dart';
 import 'package:ovx_style/api/users/database_repository.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_events.dart';
 import 'package:ovx_style/bloc/add_offer_bloc/add_offer_states.dart';
@@ -17,9 +19,9 @@ import 'package:ovx_style/model/product_property.dart';
 class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
   AddOfferBloc() : super(AddOfferStateInitial());
 
-  OffersRepositoryImpl offersRepositoryImpl = OffersRepositoryImpl();
-  DatabaseRepositoryImpl databaseRepositoryImpl = DatabaseRepositoryImpl();
-  //AuthRepositoryImpl authRepositoryImpl = AuthRepositoryImpl();
+  OffersRepositoryImpl _offersRepositoryImpl = OffersRepositoryImpl();
+  DatabaseRepositoryImpl _databaseRepositoryImpl = DatabaseRepositoryImpl();
+  PackagesRepositoryImpl _packagesRepositoryImpl = PackagesRepositoryImpl();
 
   //offer data
   List<String> _offerImages = [];
@@ -36,32 +38,32 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
   Map<String, double> _shippingCosts = {};
   bool _isReturnAvailable = false;
   bool _isShippingFree = false;
+  List<String> _countries = [];
 
   String get status => _status;
   List<String> get categories => _categories;
   List<ProductProperty> get properties => _properties;
 
-
-
-
   @override
   Stream<AddOfferState> mapEventToState(AddOfferEvent event) async* {
-    if(event is DeleteOfferButtonPressed){
+    if (event is DeleteOfferButtonPressed) {
       yield DeleteOfferLoading();
-      try{
-        await offersRepositoryImpl.deleteOffer(event.offerId, event.offerOwnerType, event.userId);
+      try {
+        await _offersRepositoryImpl.deleteOffer(event.offerId, event.offerOwnerType, event.userId);
         yield DeleteOfferSucceed();
-      }catch (e){
+      } catch (e) {
         yield DeleteOfferFailed('error occurred'.tr());
       }
-    }
-    else if (event is AddProductOfferButtonPressed) {
+    } else if (event is AddProductOfferButtonPressed) {
       yield AddOfferLoading();
-      if ( _offerImages.isEmpty || _offerName == '' || _status == '' || _categories.isEmpty || _properties.isEmpty){
-        yield AddOfferFailed('Please to fill all required * fields');}
-      else {
+      if (_offerImages.isEmpty ||
+          _offerName == '' ||
+          _status == '' ||
+          _categories.isEmpty ||
+          _properties.isEmpty) {
+        yield AddOfferFailed('Please to fill all required * fields');
+      } else {
         try {
-
           //generate offer id
           String offerId = Helper().generateRandomName();
           //get owner id
@@ -75,13 +77,23 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           if (_offerImages.isNotEmpty) {
             EasyLoading.dismiss();
             EasyLoading.show(status: 'uploading images'.tr());
-            urls = await databaseRepositoryImpl.uploadFilesToStorage(
-                _offerImages, offerOwnerId, 'offers', offerId: offerId);
+            urls = await _databaseRepositoryImpl.uploadFilesToStorage(
+                _offerImages, offerOwnerId, 'offers',
+                offerId: offerId);
           }
 
           //convert prices to store in database as USD
           OfferHelper.convertPricesToUSD(_properties);
-          _shippingCosts.updateAll((key, value) => value = OfferHelper.convertToUSD(value));
+          _shippingCosts.updateAll(
+              (key, value) => value = OfferHelper.convertToUSD(value));
+
+          // //if no country added, add default user country
+          // if(_countries.isEmpty)
+         // _shippingCountries;
+          _shippingCosts.addEntries([
+            MapEntry(SharedPref.getUser().countryFlag! + ' ' + SharedPref.getUser().country!, 0),
+          ]);
+          _countries.add(SharedPref.getUser().country!);
 
           ProductOffer productOffer = ProductOffer(
             id: offerId,
@@ -103,13 +115,14 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
             offerCreationDate: DateTime.now(),
             likes: likes,
             comments: comments,
+            countries: _countries,
           );
 
           //add offer then add offerId to user data
-          await offersRepositoryImpl.addOffer(productOffer.toMap());
-          await databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
+          await _offersRepositoryImpl.addOffer(productOffer.toMap());
+          await _databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
+          await _packagesRepositoryImpl.updateAvailableOffers(OfferType.Product);
           clearData();
-          NamedNavigatorImpl().pop();
           yield AddOfferSucceed();
         } catch (e) {
           print('error is ${e.toString()}');
@@ -131,9 +144,13 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
         List<String> urls = [];
         if (event.imagesPath.isNotEmpty) {
           EasyLoading.show(status: 'uploading images'.tr());
-          urls = await databaseRepositoryImpl.uploadFilesToStorage(
-              event.imagesPath, offerOwnerId, 'offers', offerId: offerId);
+          urls = await _databaseRepositoryImpl.uploadFilesToStorage(
+              event.imagesPath, offerOwnerId, 'offers',
+              offerId: offerId);
         }
+
+        //countries which this offer will appear on
+        String postsCountries = SharedPref.getPostsCountries();
 
         PostOffer postOffer = PostOffer(
           id: offerId,
@@ -144,19 +161,19 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           shortDesc: event.shortDesc,
           likes: likes,
           comments: comments,
+          countries: [postsCountries],
           offerCreationDate: DateTime.now(),
         );
 
-        await offersRepositoryImpl.addOffer(postOffer.toMap());
-        await databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
-        NamedNavigatorImpl().pop();
+        await _offersRepositoryImpl.addOffer(postOffer.toMap());
+        await _databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
+        await _packagesRepositoryImpl.updateAvailableOffers(OfferType.Post);
         yield AddOfferSucceed();
       } catch (e) {
         print('error is ${e.toString()}');
         yield AddOfferFailed('error occurred'.tr());
       }
-    }
-    else if (event is AddImageOfferButtonPressed) {
+    } else if (event is AddImageOfferButtonPressed) {
       yield AddOfferLoading();
       try {
         //generate offer id
@@ -170,7 +187,12 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
         //upload offer images to storage if existed
         List<String> urls = [];
         EasyLoading.show(status: 'uploading images'.tr());
-        urls = await databaseRepositoryImpl.uploadFilesToStorage(event.imagesPath, offerOwnerId, 'offers', offerId: offerId);
+        urls = await _databaseRepositoryImpl.uploadFilesToStorage(
+            event.imagesPath, offerOwnerId, 'offers',
+            offerId: offerId);
+
+        //countries which this offer will appear on
+        String postsCountries = SharedPref.getPostsCountries();
 
         ImageOffer imageOffer = ImageOffer(
           id: offerId,
@@ -179,20 +201,20 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           offerOwnerId: offerOwnerId,
           offerType: event.offerType,
           likes: likes,
+          countries: [postsCountries],
           comments: comments,
           offerCreationDate: DateTime.now(),
         );
 
-        await offersRepositoryImpl.addOffer(imageOffer.toMap());
-        await databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
-        NamedNavigatorImpl().pop();
+        await _offersRepositoryImpl.addOffer(imageOffer.toMap());
+        await _databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
+        await _packagesRepositoryImpl.updateAvailableOffers(OfferType.Image);
         yield AddOfferSucceed();
       } catch (e) {
         print('error is ${e.toString()}');
         yield AddOfferFailed('error occurred'.tr());
       }
-    }
-    else if (event is AddVideoOfferButtonPressed) {
+    } else if (event is AddVideoOfferButtonPressed) {
       yield AddOfferLoading();
       try {
         //generate offer id
@@ -206,7 +228,12 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
         //upload offer images to storage if existed
         List<String> urls = [];
         EasyLoading.show(status: 'uploading video'.tr());
-        urls = await databaseRepositoryImpl.uploadFilesToStorage(event.videoPath, offerOwnerId, 'offers', offerId: offerId);
+        urls = await _databaseRepositoryImpl.uploadFilesToStorage(
+            event.videoPath, offerOwnerId, 'offers',
+            offerId: offerId);
+
+        //countries which this offer will appear on
+        String postsCountries = SharedPref.getPostsCountries();
 
         VideoOffer videoOffer = VideoOffer(
           id: offerId,
@@ -215,13 +242,14 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
           offerOwnerId: offerOwnerId,
           offerType: event.offerType,
           likes: likes,
+          countries: [postsCountries],
           comments: comments,
           offerCreationDate: DateTime.now(),
         );
 
-        await offersRepositoryImpl.addOffer(videoOffer.toMap());
-        await databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
-        NamedNavigatorImpl().pop();
+        await _offersRepositoryImpl.addOffer(videoOffer.toMap());
+        await _databaseRepositoryImpl.updateOfferAdded(offerOwnerId, offerId);
+        await _packagesRepositoryImpl.updateAvailableOffers(OfferType.Video);
         yield AddOfferSucceed();
       } catch (e) {
         print('error is ${e.toString()}');
@@ -230,8 +258,21 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
     }
   }
 
-  updateShippingCost(Map<String, double> shippingCosts) {
-    _shippingCosts.addAll(shippingCosts);
+  Map<String, double> get shippingCosts => _shippingCosts;
+
+  addToShippingCosts(MapEntry<String, double> newCost){
+    _shippingCosts.addEntries([newCost]);
+    _countries.add(Helper().deleteCountryFlag(newCost.key));
+  }
+
+  removeFromShippingCosts(String countryToRemove){
+    _shippingCosts.removeWhere((key, value) => key == countryToRemove);
+    _countries.removeWhere((country) => country == Helper().deleteCountryFlag(countryToRemove));
+  }
+
+  clearShippingCosts(){
+    _shippingCosts.clear();
+    _countries.clear();
   }
 
   updateOfferImages(List<String> images) {
@@ -290,6 +331,7 @@ class AddOfferBloc extends Bloc<AddOfferEvent, AddOfferState> {
     _offerImages = [];
     _offerName = '';
     _categories = [];
+    _countries = [];
     _status = '';
     _vat = 0;
     _discount = 0;

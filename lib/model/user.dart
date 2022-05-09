@@ -10,6 +10,7 @@ class User {
   String? phoneNumber;
   String? shortDesc;
   String? country;
+  String? countryFlag;
   String? city;
   double? latitude;
   double? longitude;
@@ -19,6 +20,14 @@ class User {
   List<String>? offersLiked;
   List<String>? comments;
   int? points;
+  /*countries which posts, images,
+  videos will appear on, by default
+  it's only user's country
+  */
+  String? postsCountries;
+  String? chatCountries;
+  String? storyCountries;
+  bool? receiveGifts;
 
   User(
       {this.profileImage,
@@ -30,12 +39,17 @@ class User {
       required this.email,
       required this.phoneNumber,
       this.shortDesc,
-      this.country,
-      this.city,
-      this.latitude,
-      this.longitude,
+      required this.country,
+        required this.countryFlag,
+      required this.city,
+      required this.latitude,
+      required this.longitude,
       required this.password,
       required this.userType,
+      required this.postsCountries,
+        required this.storyCountries,
+        required this.chatCountries,
+        this.receiveGifts,
       this.offersAdded,
       this.offersLiked,
       this.comments,
@@ -53,10 +67,15 @@ class User {
     this.shortDesc = userInfo['shortDesc'] ?? '';
     this.country = userInfo['country'] ?? '';
     this.city = userInfo['city'] ?? '';
+    this.countryFlag = userInfo['countryFlag'] ?? '';
     this.latitude = userInfo['latitude'] ?? 0;
     this.longitude = userInfo['longitude'] ?? 0;
-    this.password = userInfo['password'];
+    //this.password = userInfo['password'];
     this.userType = userInfo['userType'];
+    this.receiveGifts = userInfo['receiveGifts'] ?? false;
+    this.postsCountries = userInfo['postsCountries'] ?? '';
+    this.storyCountries = userInfo['storyCountries'] ?? '';
+    this.chatCountries = userInfo['chatCountries'] ?? '';
     this.offersAdded = ((userInfo['offersAdded'] ?? []) as List<dynamic>)
         .map((e) => e.toString())
         .toList();
@@ -81,22 +100,25 @@ class User {
         'shortDesc': shortDesc,
         'country': country,
         'city': city,
+    'countryFlag': countryFlag,
         'latitude': latitude,
         'longitude': longitude,
-        'password': password,
+        //'password': password,
+    'postsCountries': postsCountries,
+    'chatCountries': chatCountries,
+    'storyCountries': storyCountries,
         'userType': userType,
         'offersAdded': offersAdded,
         'offersLiked': offersLiked,
         'comments': comments,
-        'points': points
+        'points': points,
+    'receiveGifts': receiveGifts ?? false,
       };
 }
 
 class PersonUser extends User {
   String? gender;
   String? dateBirth;
-  List<String>? chatCountries;
-  List<String>? storyCountries;
 
   PersonUser({
     image,
@@ -105,29 +127,37 @@ class PersonUser extends User {
     required userCode,
     required email,
     required phoneNumber,
+    required postsCountries,
     shortDesc,
     country,
     city,
+    countryFlag,
     latitude,
     longitude,
     offersLiked,
     offersAdded,
     comments,
     points,
+    receiveGifts,
     required password,
     required userType,
     id,
-    this.chatCountries,
-    this.storyCountries,
+    required chatCountries,
+    required storyCountries,
     this.dateBirth,
     this.gender,
   }) : super(
           id: id,
+          postsCountries: postsCountries,
+          storyCountries: storyCountries,
+          chatCountries: chatCountries,
           profileImage: image,
           userName: userName,
           nickName: nickName,
           userCode: userCode,
           email: email,
+          receiveGifts: receiveGifts,
+          countryFlag: countryFlag,
           phoneNumber: phoneNumber,
           shortDesc: shortDesc,
           country: country,
@@ -146,8 +176,6 @@ class PersonUser extends User {
       : super.fromMap(userInfo, uId) {
     this.gender = userInfo['gender'] ?? '';
     this.dateBirth = userInfo['dateBirth'] ?? '';
-    this.storyCountries = ((userInfo['storyCountries'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
-    this.chatCountries = ((userInfo['chatCountries'] ?? []) as List<dynamic>).map((e) => e.toString()).toList();
   }
 
   Map<String, dynamic> toMap() => {
@@ -161,10 +189,12 @@ class PersonUser extends User {
         'phoneNumber': phoneNumber,
         'shortDesc': shortDesc,
         'country': country,
+    'countryFlag': countryFlag,
+    'postsCountries': postsCountries,
         'city': city,
         'latitude': latitude,
         'longitude': longitude,
-        'password': password,
+        //'password': password,
         'userType': userType,
         'gender': gender,
         'dateBirth': dateBirth,
@@ -174,6 +204,7 @@ class PersonUser extends User {
         'points': points,
     'chatCountries': chatCountries,
     'storyCountries': storyCountries,
+    'receiveGifts': receiveGifts ?? false,
       };
 }
 
@@ -188,14 +219,19 @@ class CompanyUser extends User {
     required userCode,
     required email,
     required phoneNumber,
+    required postsCountries,
+    required storyCountries,
+    required chatCountries,
     shortDesc,
     country,
+    countryFlag,
     city,
     latitude,
     longitude,
     offersLiked,
     offersAdded,
     comments,
+    receiveGifts,
     points,
     required password,
     required userType,
@@ -213,6 +249,8 @@ class CompanyUser extends User {
             shortDesc: shortDesc,
             country: country,
             city: city,
+            countryFlag: countryFlag,
+            receiveGifts: receiveGifts,
             password: password,
             latitude: latitude,
             longitude: longitude,
@@ -220,6 +258,9 @@ class CompanyUser extends User {
             offersAdded: offersAdded,
             offersLiked: offersLiked,
             comments: comments,
+            postsCountries: postsCountries,
+            storyCountries: storyCountries,
+            chatCountries: chatCountries,
             points: points);
 
   CompanyUser.fromMap(Map<String, dynamic> userInfo, String uId)
@@ -240,9 +281,14 @@ class CompanyUser extends User {
         'shortDesc': shortDesc,
         'country': country,
         'city': city,
+    'receiveGifts': receiveGifts ?? false,
+    'countryFlag': countryFlag,
+    'postsCountries': postsCountries,
+    'chatCountries': chatCountries,
+    'storyCountries': storyCountries,
         'latitude': latitude,
         'longitude': longitude,
-        'password': password,
+        //'password': password,
         'userType': userType,
         'offersAdded': offersAdded,
         'offersLiked': offersLiked,
