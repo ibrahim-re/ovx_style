@@ -8,95 +8,95 @@ import 'package:ovx_style/helper/basket_helper.dart';
 import 'package:ovx_style/helper/helper.dart';
 
 class ShipToSection extends StatefulWidget {
-  const ShipToSection({Key? key, required this.shippingCosts})
-      : super(key: key);
+    const ShipToSection({Key? key, required this.shippingCosts})
+        : super(key: key);
 
-  final Map<String, double> shippingCosts;
+    final Map<String, double> shippingCosts;
 
-  @override
-  State<ShipToSection> createState() => _ShipToSectionState();
+    @override
+    State<ShipToSection> createState() => _ShipToSectionState();
 }
 
 class _ShipToSectionState extends State<ShipToSection> {
-  int currentIndex = 0;
+    int currentIndex = 0;
 
-  @override
-  void initState() {
-    //this is in case the user doesn't click on any country
-    BasketHelper.tempShippingCost = widget.shippingCosts.values.first;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    BasketHelper.tempShippingCost = 0;
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.shippingCosts.isEmpty)
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Text(
-          'no shipping'.tr(),
-          style: Constants.TEXT_STYLE8,
-        ),
-      );
-    else {
-
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Wrap(
-          direction: Axis.horizontal,
-          children: [
-            Text(
-              'ship to'.tr(),
-              style: Constants.TEXT_STYLE8,
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Wrap(
-              spacing: 4,
-              runSpacing: 4,
-              direction: Axis.horizontal,
-              children: widget.shippingCosts.keys
-                  .map(
-                    (key) => GestureDetector(
-                  onTap: () {
-                    setState(() => currentIndex = widget.shippingCosts.keys.toList().indexOf(key));
-
-                    BasketHelper.tempShippingCost = widget.shippingCosts[key]!;
-                    BasketHelper.shipTo = key; //key is the country name
-
-                    EasyLoading.showInfo(
-                        'Shipping cost for this country is ${widget.shippingCosts[key]} ${SharedPref.getCurrency()}');
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 6),
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: currentIndex ==
-                          widget.shippingCosts.keys.toList().indexOf(key)
-                          ? MyColors.lightBlue
-                          : MyColors.lightBlue.withOpacity(0.2),
-                    ),
-                    child: Text(
-                        Helper().getCountryFlag(key),
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                    ),
-                  ),
-                ),
-              )
-                  .toList(),
-            ),
-          ],
-        ),
-      );
+    @override
+    void initState() {
+        //this is in case the user doesn't click on any country
+        BasketHelper.tempShippingCost = widget.shippingCosts.values.first;
+        super.initState();
     }
-  }
+
+    @override
+    void dispose() {
+        BasketHelper.tempShippingCost = 0;
+        super.dispose();
+    }
+
+    @override
+    Widget build(BuildContext context) {
+        if (widget.shippingCosts.isEmpty)
+            return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                    'no shipping'.tr(),
+                    style: Constants.TEXT_STYLE8,
+                ),
+            );
+        else {
+
+            return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Wrap(
+                    direction: Axis.horizontal,
+                    children: [
+                        Text(
+                            'ship to'.tr(),
+                            style: Constants.TEXT_STYLE8,
+                        ),
+                        const SizedBox(
+                            width: 8,
+                        ),
+                        Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            direction: Axis.horizontal,
+                            children: widget.shippingCosts.keys
+                                .map(
+                                    (key) => GestureDetector(
+                                    onTap: () {
+                                        setState(() => currentIndex = widget.shippingCosts.keys.toList().indexOf(key));
+
+                                        BasketHelper.tempShippingCost = widget.shippingCosts[key]!;
+                                        BasketHelper.shipTo = key; //key is the country name
+
+                                        EasyLoading.showInfo(
+                                            'Shipping cost for this country is ${widget.shippingCosts[key]} ${SharedPref.getCurrency()}');
+                                    },
+                                    child: Container(
+                                        margin: const EdgeInsets.only(right: 6),
+                                        padding: const EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            color: currentIndex ==
+                                                widget.shippingCosts.keys.toList().indexOf(key)
+                                                ? MyColors.lightBlue
+                                                : MyColors.lightBlue.withOpacity(0.2),
+                                        ),
+                                        child: Text(
+                                            Helper().getCountryFlag(key),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            )
+                                .toList(),
+                        ),
+                    ],
+                ),
+            );
+        }
+    }
 }
